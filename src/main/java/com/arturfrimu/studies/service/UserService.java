@@ -19,15 +19,16 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User find(long id) {
-        return userRepository.findById(id).orElse(null);
+    public User find(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("User not found with id: %s", id)));
     }
 
     public User create(User user) {
         return userRepository.save(user);
     }
 
-    public User update(long id, User user) {
+    public User update(Long id, User user) {
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser == null) {
             return null;
@@ -37,7 +38,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public void delete(long id) {
+    public void delete(Long id) {
         var existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("User not found with id: %s", id)));
         userRepository.delete(existingUser);

@@ -3,6 +3,7 @@ package com.arturfrimu.studies.component;
 import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.entity.Forum;
 import com.arturfrimu.studies.entity.Topic;
+import com.arturfrimu.studies.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,12 @@ class ComponentTest {
         testGetTopicById();
         testUpdateTopic();
         testDeleteTopic();
+
+        testCreateUser();
+        testGetAllUsers();
+        testGetUserById();
+        testUpdateUser();
+        testDeleteUser();
     }
 
     void testCreateForum() {
@@ -244,10 +251,76 @@ class ComponentTest {
         assertThat(deletedTopic.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
+    void testCreateUser() {
+        var body = new User();
+        body.setName("User 1");
+        body.setEmail("user@email.com");
+
+        var response = restTemplate.exchange(post(USER_BASE_URL).body(body), USER);
+
+        var createdUser = response.getBody();
+
+        assertThat(createdUser).isNotNull();
+        assertThat(createdUser.getName()).isEqualTo("User 1");
+        assertThat(createdUser.getEmail()).isEqualTo("user@email.com");
+    }
+
+    void testGetAllUsers() {
+        var response = restTemplate.exchange(get(USER_BASE_URL).build(), USER_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var users = response.getBody();
+
+        assertThat(users).isNotNull();
+        assertThat(users.size()).isEqualTo(1);
+        assertThat(users.get(0).getName()).isEqualTo("User 1");
+        assertThat(users.get(0).getEmail()).isEqualTo("user@email.com");
+    }
+
+    void testGetUserById() {
+        var response = restTemplate.exchange(get(USER_BASE_URL + "/1").build(), USER);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var user = response.getBody();
+
+        assertThat(user).isNotNull();
+        assertThat(user.getName()).isEqualTo("User 1");
+        assertThat(user.getEmail()).isEqualTo("user@email.com");
+    }
+
+    void testUpdateUser() {
+        var body = new User();
+        body.setName("User 1 Updated");
+        body.setEmail("USER@EMAIL.COM");
+
+        var response = restTemplate.exchange(put(USER_BASE_URL + "/1").body(body), USER);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedUser = response.getBody();
+
+        assertThat(updatedUser).isNotNull();
+        assertThat(updatedUser.getName()).isEqualTo("User 1 Updated");
+        assertThat(updatedUser.getEmail()).isEqualTo("USER@EMAIL.COM");
+    }
+
+    void testDeleteUser() {
+        var response = restTemplate.exchange(delete(USER_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedUser = restTemplate.exchange(get(USER_BASE_URL + "/1").build(), USER);
+
+        assertThat(deletedUser.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
     static final String TOPIC_BASE_URL = "/api/topics";
+    static final String USER_BASE_URL = "/api/users";
 
     static final ParameterizedTypeReference<Forum> FORUM = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Forum>> FORUM_LIST = new ParameterizedTypeReference<>() {};
@@ -255,6 +328,8 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Course>> COURSE_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Topic> TOPIC = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Topic>> TOPIC_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<User> USER = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<User>> USER_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }
