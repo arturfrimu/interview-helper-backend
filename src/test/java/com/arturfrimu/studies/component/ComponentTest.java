@@ -2,8 +2,7 @@ package com.arturfrimu.studies.component;
 
 import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.entity.Forum;
-import com.arturfrimu.studies.repository.ForumRepository;
-import org.junit.jupiter.api.AfterEach;
+import com.arturfrimu.studies.entity.Topic;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +27,6 @@ class ComponentTest {
 
     @Autowired
     BaseRestTemplate restTemplate;
-    @Autowired
-    ForumRepository forumRepository;
-
-    @AfterEach
-    void tearDown() {
-        forumRepository.deleteAll();
-    }
 
     @Test
     void testLifecycle() {
@@ -49,6 +41,12 @@ class ComponentTest {
         testGetCourseById();
         testUpdateCourse();
         testDeleteCourse();
+
+        testCreateTopic();
+        testGetAllTopics();
+        testGetTopicById();
+        testUpdateTopic();
+        testDeleteTopic();
     }
 
     void testCreateForum() {
@@ -181,14 +179,82 @@ class ComponentTest {
         assertThat(deletedCourse.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
+    void testCreateTopic() {
+        var body = new Topic();
+        body.setName("Topic 1");
+        body.setDescription("This is the first topic");
+
+        var response = restTemplate.exchange(post(TOPIC_BASE_URL).body(body), TOPIC);
+
+        var createdTopic = response.getBody();
+
+        assertThat(createdTopic).isNotNull();
+        assertThat(createdTopic.getName()).isEqualTo("Topic 1");
+        assertThat(createdTopic.getDescription()).isEqualTo("This is the first topic");
+    }
+
+    void testGetAllTopics() {
+        var response = restTemplate.exchange(get(TOPIC_BASE_URL).build(), TOPIC_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var topics = response.getBody();
+
+        assertThat(topics).isNotNull();
+        assertThat(topics.size()).isEqualTo(1);
+        assertThat(topics.get(0).getName()).isEqualTo("Topic 1");
+        assertThat(topics.get(0).getDescription()).isEqualTo("This is the first topic");
+    }
+
+    void testGetTopicById() {
+        var response = restTemplate.exchange(get(TOPIC_BASE_URL + "/1").build(), TOPIC);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var topic = response.getBody();
+
+        assertThat(topic).isNotNull();
+        assertThat(topic.getName()).isEqualTo("Topic 1");
+        assertThat(topic.getDescription()).isEqualTo("This is the first topic");
+    }
+
+    void testUpdateTopic() {
+        var body = new Topic();
+        body.setName("Topic 1 Updated");
+        body.setDescription("This is the first topic updated");
+
+        var response = restTemplate.exchange(put(TOPIC_BASE_URL + "/1").body(body), TOPIC);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedTopic = response.getBody();
+
+        assertThat(updatedTopic).isNotNull();
+        assertThat(updatedTopic.getName()).isEqualTo("Topic 1 Updated");
+        assertThat(updatedTopic.getDescription()).isEqualTo("This is the first topic updated");
+    }
+
+    void testDeleteTopic() {
+        var response = restTemplate.exchange(delete(TOPIC_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedTopic = restTemplate.exchange(get(TOPIC_BASE_URL + "/1").build(), TOPIC);
+
+        assertThat(deletedTopic.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
+    static final String TOPIC_BASE_URL = "/api/topics";
 
     static final ParameterizedTypeReference<Forum> FORUM = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Forum>> FORUM_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Course> COURSE = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Course>> COURSE_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Topic> TOPIC = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Topic>> TOPIC_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }
