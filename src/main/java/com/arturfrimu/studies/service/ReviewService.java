@@ -13,6 +13,7 @@ import static java.lang.String.format;
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
+
     private final ReviewRepository reviewRepository;
 
     public List<Review> list() {
@@ -20,25 +21,27 @@ public class ReviewService {
     }
 
     public Review find(Long id) {
-        return reviewRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Review"));
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Review not found with id: %s", id)));
     }
 
     public Review create(Review review) {
         return reviewRepository.save(review);
     }
 
-    public Review update(Long id, Review reviewDetails) {
-        Review review = reviewRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Review"));
+    public Review update(Long id, Review command) {
+        var existingReview = reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Review not found with id: %s", id)));
 
-        review.setContent(reviewDetails.getContent());
-        review.setRating(reviewDetails.getRating());
-        review.setCourse(reviewDetails.getCourse());
-        review.setLesson(reviewDetails.getLesson());
-        review.setQuiz(reviewDetails.getQuiz());
-        review.setExercise(reviewDetails.getExercise());
-        review.setProject(reviewDetails.getProject());
+        existingReview.setContent(command.getContent());
+        existingReview.setRating(command.getRating());
+        existingReview.setCourse(command.getCourse());
+        existingReview.setLesson(command.getLesson());
+        existingReview.setQuiz(command.getQuiz());
+        existingReview.setExercise(command.getExercise());
+        existingReview.setProject(command.getProject());
 
-        return reviewRepository.save(review);
+        return reviewRepository.save(existingReview);
     }
 
     public void delete(Long id) {

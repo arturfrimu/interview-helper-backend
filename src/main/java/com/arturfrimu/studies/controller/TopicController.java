@@ -25,33 +25,27 @@ public class TopicController {
     private final TopicService topicService;
 
     @GetMapping
-    public List<Topic> list() {
-        return topicService.list();
+    public ResponseEntity<List<Topic>> list() {
+        var topics = topicService.list();
+        return ok(topics);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Topic> find(@PathVariable Long id) {
-        Topic topic = topicService.find(id);
-        if (topic != null) {
-            return ResponseEntity.ok(topic);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        var topic = topicService.find(id);
+        return ok(topic);
     }
 
     @PostMapping
-    public Topic create(@RequestBody Topic topic) {
-        return topicService.create(topic);
+    public ResponseEntity<Topic> create(@RequestBody Topic topic) {
+        var createdTopic = topicService.create(topic);
+        return ok(createdTopic);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Topic> update(@PathVariable Long id, @RequestBody Topic topic) {
-        Topic updatedTopic = topicService.update(id, topic);
-        if (updatedTopic != null) {
-            return ResponseEntity.ok(updatedTopic);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        var updatedTopic = topicService.update(id, topic);
+        return ok(updatedTopic);
     }
 
     @DeleteMapping("/{id}")

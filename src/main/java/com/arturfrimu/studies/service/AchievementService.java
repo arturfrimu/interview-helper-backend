@@ -13,6 +13,7 @@ import static java.lang.String.format;
 @Service
 @RequiredArgsConstructor
 public class AchievementService {
+
     private final AchievementRepository achievementRepository;
 
     public List<Achievement> list() {
@@ -20,7 +21,8 @@ public class AchievementService {
     }
 
     public Achievement find(Long id) {
-        return achievementRepository.findById(id).orElse(null);
+        return achievementRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Achievement not found with id: %s", id)));
     }
 
     public List<Achievement> getAchievementsByUserId(Long userId) {
@@ -31,15 +33,13 @@ public class AchievementService {
         return achievementRepository.save(achievement);
     }
 
-    public Achievement update(Long id, Achievement achievement) {
-        Achievement existingAchievement = achievementRepository.findById(id).orElse(null);
+    public Achievement update(Long id, Achievement command) {
+        var existingAchievement = achievementRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Achievement not found with id: %s", id)));
 
-        if (existingAchievement != null) {
-            existingAchievement.setDescription(achievement.getDescription());
-            return achievementRepository.save(existingAchievement);
-        }
+        existingAchievement.setDescription(command.getDescription());
 
-        return null;
+        return achievementRepository.save(existingAchievement);
     }
 
     public void delete(Long id) {

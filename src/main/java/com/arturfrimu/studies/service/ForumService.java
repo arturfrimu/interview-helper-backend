@@ -13,6 +13,7 @@ import static java.lang.String.format;
 @Service
 @RequiredArgsConstructor
 public class ForumService {
+
     private final ForumRepository forumRepository;
 
     public List<Forum> list() {
@@ -20,20 +21,21 @@ public class ForumService {
     }
 
     public Forum find(Long id) {
-        return forumRepository.findById(id).orElse(null);
+        return forumRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Forum not found with id: %s", id)));
     }
 
     public Forum create(Forum forum) {
         return forumRepository.save(forum);
     }
 
-    public Forum update(Long id, Forum forum) {
-        Forum existingForum = forumRepository.findById(id).orElse(null);
-        if (existingForum == null) {
-            return null;
-        }
-        existingForum.setName(forum.getName());
-        existingForum.setDescription(forum.getDescription());
+    public Forum update(Long id, Forum command) {
+        var existingForum = forumRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Forum not found with id: %s", id)));
+
+        existingForum.setName(command.getName());
+        existingForum.setDescription(command.getDescription());
+
         return forumRepository.save(existingForum);
     }
 

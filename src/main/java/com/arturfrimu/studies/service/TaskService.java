@@ -21,18 +21,22 @@ public class TaskService {
     }
 
     public Task find(Long id) {
-        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found with id " + id));
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Task not found with id: %s", id)));
     }
 
-    public Task create(Task task) {
-        return taskRepository.save(task);
+    public Task create(Task command) {
+        return taskRepository.save(command);
     }
 
-    public Task update(Long id, Task task) {
-        Task existingTask = find(id);
-        existingTask.setName(task.getName());
-        existingTask.setDescription(task.getDescription());
-        existingTask.setProject(task.getProject());
+    public Task update(Long id, Task command) {
+        var existingTask = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Task not found with id: %s", id)));
+
+        existingTask.setName(command.getName());
+        existingTask.setDescription(command.getDescription());
+        existingTask.setProject(command.getProject());
+
         return taskRepository.save(existingTask);
     }
 

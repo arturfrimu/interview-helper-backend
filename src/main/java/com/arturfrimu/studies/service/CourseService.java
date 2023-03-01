@@ -13,6 +13,7 @@ import static java.lang.String.format;
 @Service
 @RequiredArgsConstructor
 public class CourseService {
+
     private final CourseRepository courseRepository;
 
     public List<Course> list() {
@@ -21,21 +22,21 @@ public class CourseService {
 
     public Course find(Long id) {
         return courseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Course"));
+                .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", id)));
     }
 
     public Course create(Course course) {
         return courseRepository.save(course);
     }
 
-    public Course update(Long id, Course courseDetails) {
-        Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Course"));
+    public Course update(Long id, Course command) {
+        var existingCourse = courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", id)));
 
-        course.setName(courseDetails.getName());
-        course.setDescription(courseDetails.getDescription());
+        existingCourse.setName(command.getName());
+        existingCourse.setDescription(command.getDescription());
 
-        return courseRepository.save(course);
+        return courseRepository.save(existingCourse);
     }
 
     public void delete(Long id) {

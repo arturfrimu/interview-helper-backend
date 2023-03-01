@@ -28,13 +28,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User update(Long id, User user) {
-        User existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser == null) {
-            return null;
-        }
-        existingUser.setName(user.getName());
-        existingUser.setEmail(user.getEmail());
+    public User update(Long id, User command) {
+        var existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("User not found with id: %s", id)));
+
+        existingUser.setName(command.getName());
+        existingUser.setEmail(command.getEmail());
+
         return userRepository.save(existingUser);
     }
 

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 @Service
 @RequiredArgsConstructor
 public class ExerciseService {
@@ -42,7 +44,7 @@ public class ExerciseService {
 
     public void delete(Long id) {
         var existingExercise = exerciseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Exercise not found with id: %s", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(format("Exercise not found with id: %s", id)));
         exerciseRepository.delete(existingExercise);
     }
 }

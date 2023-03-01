@@ -13,6 +13,7 @@ import static java.lang.String.format;
 @Service
 @RequiredArgsConstructor
 public class SectionService {
+
     private final SectionRepository sectionRepository;
 
     public List<Section> getAllSections() {
@@ -21,21 +22,21 @@ public class SectionService {
 
     public Section getSectionById(Long id) {
         return sectionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Section"));
+                .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
     }
 
     public Section createSection(Section section) {
         return sectionRepository.save(section);
     }
 
-    public Section updateSection(Long id, Section sectionDetails) {
-        Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Section"));
+    public Section updateSection(Long id, Section command) {
+        var section = sectionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
 
-        section.setName(sectionDetails.getName());
-        section.setDescription(sectionDetails.getDescription());
-        section.setCourse(sectionDetails.getCourse());
-        section.setChapter(sectionDetails.getChapter());
+        section.setName(command.getName());
+        section.setDescription(command.getDescription());
+        section.setCourse(command.getCourse());
+        section.setChapter(command.getChapter());
 
         return sectionRepository.save(section);
     }

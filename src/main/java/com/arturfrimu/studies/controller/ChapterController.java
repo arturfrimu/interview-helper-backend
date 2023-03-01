@@ -41,7 +41,7 @@ public class ChapterController {
 
     @PutMapping("/{id}")
     public Chapter update(@PathVariable Long id, @RequestBody Chapter update) {
-        return chapterService.updateChapter(id, update);
+        return chapterService.update(id, update);
     }
 
     @DeleteMapping("/{id}")

@@ -13,6 +13,7 @@ import static java.lang.String.format;
 @Service
 @RequiredArgsConstructor
 public class CommentService {
+
     private final CommentRepository commentRepository;
 
     public List<Comment> list() {
@@ -20,22 +21,21 @@ public class CommentService {
     }
 
     public Comment find(Long id) {
-        return commentRepository.findById(id).orElse(null);
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Comment not found with id: %s", id)));
     }
 
     public Comment create(Comment comment) {
         return commentRepository.save(comment);
     }
 
-    public Comment update(Long id, Comment comment) {
-        Comment existingComment = commentRepository.findById(id).orElse(null);
-        if (existingComment == null) {
-            return null;
-        }
+    public Comment update(Long id, Comment command) {
+        var existingComment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Comment not found with id: %s", id)));
 
-        existingComment.setContent(comment.getContent());
-        existingComment.setPost(comment.getPost());
-        existingComment.setUser(comment.getUser());
+        existingComment.setContent(command.getContent());
+        existingComment.setPost(command.getPost());
+        existingComment.setUser(command.getUser());
 
         return commentRepository.save(existingComment);
     }
