@@ -18,7 +18,7 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/api/achievement")
+@RequestMapping("/api/achievements")
 @RequiredArgsConstructor
 public class AchievementController {
 

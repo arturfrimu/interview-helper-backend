@@ -18,7 +18,7 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/api/section")
+@RequestMapping("/api/sections")
 @RequiredArgsConstructor
 public class SectionController {
 

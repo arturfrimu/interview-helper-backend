@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/api/exercise")
+@RequestMapping("/api/exercises")
 @RequiredArgsConstructor
 public class ExerciseController {
 
