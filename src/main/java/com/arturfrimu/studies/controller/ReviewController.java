@@ -30,7 +30,7 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/{id}")
-    public Review find(@PathVariable(value = "id") Long id) {
+    public Review find(@PathVariable("id") Long id) {
         return reviewService.find(id);
     }
 
@@ -40,12 +40,12 @@ public class ReviewController {
     }
 
     @PutMapping("/reviews/{id}")
-    public Review update(@PathVariable(value = "id") Long id, @RequestBody Review reviewDetails) {
+    public Review update(@PathVariable("id") Long id, @RequestBody Review reviewDetails) {
         return reviewService.update(id, reviewDetails);
     }
 
     @DeleteMapping("/reviews/{id}")
-    public ResponseEntity<Void> delete(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         reviewService.delete(id);
         return ok().build();
     }
