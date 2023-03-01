@@ -17,7 +17,7 @@ public class ProgressService {
     }
 
     public List<Progress> getProgressByUserId(Long userId) {
-        return progressRepository.findByUserId(userId);
+        return progressRepository.findByUser(userId);
     }
 
     public void saveOrUpdateProgress(Progress progress) {
@@ -29,6 +29,6 @@ public class ProgressService {
     }
 
     public Progress getProgressByUserIdAndTopicIdAndLessonIdAndQuizId(Long userId, Long topicId, Long lessonId, Long quizId) {
-        return progressRepository.findByUserIdAndTopicIdAndLessonIdAndQuizId(userId, topicId, lessonId, quizId);
+        return progressRepository.findByUserAndTopicAndLessonAndQuiz(userId, topicId, lessonId, quizId);
     }
 }

@@ -15,34 +15,36 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
-@RequestMapping("/api/forum")
+@RequestMapping("/api/forums")
 @RequiredArgsConstructor
 public class ForumController {
 
     private final ForumService forumService;
 
-    @GetMapping("")
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     public List<Forum> getAllForums() {
         return forumService.getAllForums();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public Forum getForumById(@PathVariable Long id) {
         return forumService.getForumById(id);
     }
 
-    @PostMapping("")
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
     public Forum createForum(@RequestBody Forum forum) {
         return forumService.createForum(forum);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public Forum updateForum(@PathVariable Long id, @RequestBody Forum forum) {
         return forumService.updateForum(id, forum);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteForum(@PathVariable Long id) {
         Boolean deleted = forumService.deleteForum(id);
         if (deleted) {

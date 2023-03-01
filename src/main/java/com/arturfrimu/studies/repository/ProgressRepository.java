@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface ProgressRepository extends JpaRepository<Progress, Long> {
-    List<Progress> findByUserId(Long userId);
+    List<Progress> findByUser(Long userId);
 
-    Progress findByUserIdAndTopicIdAndLessonIdAndQuizId(Long userId, Long topicId, Long lessonId, Long quizId);
+    Progress findByUserAndTopicAndLessonAndQuiz(Long userId, Long topicId, Long lessonId, Long quizId);
 }

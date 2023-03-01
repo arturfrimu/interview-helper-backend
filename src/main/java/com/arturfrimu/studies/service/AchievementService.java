@@ -29,7 +29,7 @@ public class AchievementService {
     }
 
     public List<Achievement> getAchievementsByUserId(Long userId) {
-        return achievementRepository.findAllByUserId(userId);
+        return achievementRepository.findAllByUser(userId);
     }
 
     public Achievement updateAchievement(Long id, Achievement achievement) {
