@@ -8,24 +8,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
 
-    public List<Review> getAllReviews() {
+    public List<Review> list() {
         return reviewRepository.findAll();
     }
 
-    public Review getReviewById(Long id) {
+    public Review find(Long id) {
         return reviewRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Review"));
     }
 
-    public Review createReview(Review review) {
+    public Review create(Review review) {
         return reviewRepository.save(review);
     }
 
-    public Review updateReview(Long id, Review reviewDetails) {
+    public Review update(Long id, Review reviewDetails) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Review"));
 
         review.setContent(reviewDetails.getContent());
@@ -39,8 +41,9 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
-    public void deleteReview(Long id) {
-        Review review = reviewRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Review"));
-        reviewRepository.delete(review);
+    public void delete(Long id) {
+        var existingReview = reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Review not found with id: %s", id)));
+        reviewRepository.delete(existingReview);
     }
 }

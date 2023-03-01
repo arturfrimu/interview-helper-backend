@@ -1,30 +1,33 @@
 package com.arturfrimu.studies.service;
 
 import com.arturfrimu.studies.entity.Project;
+import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
 
-    public List<Project> getAllProjects() {
+    public List<Project> list() {
         return projectRepository.findAll();
     }
 
-    public Project getProjectById(Long projectId) {
+    public Project find(Long projectId) {
         return projectRepository.findById(projectId).orElse(null);
     }
 
-    public Project createProject(Project project) {
+    public Project create(Project project) {
         return projectRepository.save(project);
     }
 
-    public Project updateProject(Long projectId, Project projectDetails) {
+    public Project update(Long projectId, Project projectDetails) {
         Project project = projectRepository.findById(projectId).orElse(null);
         if (project != null) {
             project.setName(projectDetails.getName());
@@ -36,12 +39,9 @@ public class ProjectService {
         return null;
     }
 
-    public boolean deleteProject(Long projectId) {
-        Project project = projectRepository.findById(projectId).orElse(null);
-        if (project != null) {
-            projectRepository.delete(project);
-            return true;
-        }
-        return false;
+    public void delete(Long id) {
+        var project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Project not found with id: %s", id)));
+        projectRepository.delete(project);
     }
 }

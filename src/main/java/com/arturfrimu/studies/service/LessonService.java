@@ -1,6 +1,7 @@
 package com.arturfrimu.studies.service;
 
 import com.arturfrimu.studies.entity.Lesson;
+import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.LessonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,25 +9,27 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 @Service
 @RequiredArgsConstructor
 public class LessonService {
     private final LessonRepository lessonRepository;
 
-    public List<Lesson> getAllLessons() {
+    public List<Lesson> list() {
         return lessonRepository.findAll();
     }
 
-    public Lesson getLessonById(Long id) {
+    public Lesson find(Long id) {
         Optional<Lesson> optionalLesson = lessonRepository.findById(id);
         return optionalLesson.orElse(null);
     }
 
-    public void addLesson(Lesson lesson) {
+    public void create(Lesson lesson) {
         lessonRepository.save(lesson);
     }
 
-    public void updateLesson(Long id, Lesson lesson) {
+    public void update(Long id, Lesson lesson) {
         Optional<Lesson> optionalLesson = lessonRepository.findById(id);
         if (optionalLesson.isPresent()) {
             Lesson existingLesson = optionalLesson.get();
@@ -36,7 +39,9 @@ public class LessonService {
         }
     }
 
-    public void deleteLesson(Long id) {
-        lessonRepository.deleteById(id);
+    public void delete(Long id) {
+        var existingLesson = lessonRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Lesson not found with id: %s", id)));
+        lessonRepository.delete(existingLesson);
     }
 }

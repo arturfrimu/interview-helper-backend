@@ -16,37 +16,40 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/api/exercise")
 @RequiredArgsConstructor
 public class ExerciseController {
+
     private final ExerciseService exerciseService;
 
     @GetMapping
-    public List<Exercise> getAllExercises() {
-        return exerciseService.getAllExercises();
+    public List<Exercise> list() {
+        return exerciseService.list();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Exercise> getExerciseById(@PathVariable Long id) {
-        Optional<Exercise> exercise = exerciseService.getExerciseById(id);
+    public ResponseEntity<Exercise> find(@PathVariable Long id) {
+        Optional<Exercise> exercise = exerciseService.find(id);
         return exercise.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Exercise createExercise(@RequestBody Exercise exercise) {
-        return exerciseService.createExercise(exercise);
+    public Exercise create(@RequestBody Exercise exercise) {
+        return exerciseService.create(exercise);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Exercise> updateExercise(@PathVariable Long id, @RequestBody Exercise exercise) {
-        Exercise updatedExercise = exerciseService.updateExercise(id, exercise);
-        return ResponseEntity.ok(updatedExercise);
+    public ResponseEntity<Exercise> update(@PathVariable Long id, @RequestBody Exercise exercise) {
+        Exercise updatedExercise = exerciseService.update(id, exercise);
+        return ok(updatedExercise);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteExercise(@PathVariable Long id) {
-        exerciseService.deleteExercise(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        exerciseService.delete(id);
+        return ok().build();
     }
 }

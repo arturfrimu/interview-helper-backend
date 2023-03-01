@@ -8,33 +8,37 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 @Service
 @RequiredArgsConstructor
 public class TaskService {
 
     private final TaskRepository taskRepository;
 
-    public List<Task> getAllTasks() {
+    public List<Task> list() {
         return taskRepository.findAll();
     }
 
-    public Task getTaskById(Long id) {
+    public Task find(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found with id " + id));
     }
 
-    public Task createTask(Task task) {
+    public Task create(Task task) {
         return taskRepository.save(task);
     }
 
-    public Task updateTask(Long id, Task task) {
-        Task existingTask = getTaskById(id);
+    public Task update(Long id, Task task) {
+        Task existingTask = find(id);
         existingTask.setName(task.getName());
         existingTask.setDescription(task.getDescription());
         existingTask.setProject(task.getProject());
         return taskRepository.save(existingTask);
     }
 
-    public void deleteTask(Long id) {
-        taskRepository.deleteById(id);
+    public void delete(Long id) {
+        var existingTask = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Task not found with id: %s", id)));
+        taskRepository.delete(existingTask);
     }
 }

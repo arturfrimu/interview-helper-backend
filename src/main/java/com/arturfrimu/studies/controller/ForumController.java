@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/forums")
@@ -24,33 +24,29 @@ public class ForumController {
 
     private final ForumService forumService;
 
-    @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public List<Forum> getAllForums() {
-        return forumService.getAllForums();
+    @GetMapping
+    public List<Forum> list() {
+        return forumService.list();
     }
 
-    @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public Forum getForumById(@PathVariable Long id) {
-        return forumService.getForumById(id);
+    @GetMapping("/{id}")
+    public Forum find(@PathVariable Long id) {
+        return forumService.find(id);
     }
 
-    @PostMapping(produces = APPLICATION_JSON_VALUE)
-    public Forum createForum(@RequestBody Forum forum) {
-        return forumService.createForum(forum);
+    @PostMapping
+    public Forum create(@RequestBody Forum forum) {
+        return forumService.create(forum);
     }
 
-    @PutMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public Forum updateForum(@PathVariable Long id, @RequestBody Forum forum) {
-        return forumService.updateForum(id, forum);
+    @PutMapping("/{id}")
+    public Forum update(@PathVariable Long id, @RequestBody Forum forum) {
+        return forumService.update(id, forum);
     }
 
-    @DeleteMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteForum(@PathVariable Long id) {
-        Boolean deleted = forumService.deleteForum(id);
-        if (deleted) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        forumService.delete(id);
+        return ok().build();
     }
 }

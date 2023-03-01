@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 @Service
 @RequiredArgsConstructor
 public class SectionService {
@@ -39,9 +41,8 @@ public class SectionService {
     }
 
     public void deleteSection(Long id) {
-        Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Section"));
-
-        sectionRepository.delete(section);
+        var existingSection = sectionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
+        sectionRepository.delete(existingSection);
     }
 }

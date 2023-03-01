@@ -3,6 +3,7 @@ package com.arturfrimu.studies.controller;
 import com.arturfrimu.studies.entity.Post;
 import com.arturfrimu.studies.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,38 +15,42 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/api/post")
 @RequiredArgsConstructor
 public class PostController {
+
     private final PostService postService;
 
     @GetMapping
-    public List<Post> getAllPosts() {
-        return postService.getAllPosts();
+    public List<Post> list() {
+        return postService.list();
     }
 
     @GetMapping("/{id}")
-    public Post getPostById(@PathVariable Long id) {
-        return postService.getPostById(id);
+    public Post find(@PathVariable Long id) {
+        return postService.find(id);
     }
 
     @PostMapping
-    public Post createPost(@RequestBody Post post) {
-        return postService.savePost(post);
+    public Post create(@RequestBody Post post) {
+        return postService.create(post);
     }
 
     @PutMapping("/{id}")
-    public Post updatePost(@PathVariable Long id, @RequestBody Post post) {
-        Post existingPost = postService.getPostById(id);
+    public Post update(@PathVariable Long id, @RequestBody Post post) {
+        Post existingPost = postService.find(id);
         existingPost.setTitle(post.getTitle());
         existingPost.setContent(post.getContent());
         existingPost.setForum(post.getForum());
-        return postService.savePost(existingPost);
+        return postService.create(existingPost);
     }
 
     @DeleteMapping("/{id}")
-    public void deletePostById(@PathVariable Long id) {
-        postService.deletePostById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        postService.delete(id);
+        return ok().build();
     }
 }

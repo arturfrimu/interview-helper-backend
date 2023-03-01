@@ -3,6 +3,7 @@ package com.arturfrimu.studies.controller;
 import com.arturfrimu.studies.entity.Lesson;
 import com.arturfrimu.studies.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,34 +15,38 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/api/lessons")
 @RequiredArgsConstructor
 public class LessonController {
+
     private final LessonService lessonService;
 
     @GetMapping
-    public List<Lesson> getAllLessons() {
-        return lessonService.getAllLessons();
+    public List<Lesson> list() {
+        return lessonService.list();
     }
 
     @GetMapping("/{id}")
-    public Lesson getLesson(@PathVariable Long id) {
-        return lessonService.getLessonById(id);
+    public Lesson find(@PathVariable Long id) {
+        return lessonService.find(id);
     }
 
     @PostMapping
-    public void addLesson(@RequestBody Lesson lesson) {
-        lessonService.addLesson(lesson);
+    public void create(@RequestBody Lesson lesson) {
+        lessonService.create(lesson);
     }
 
     @PutMapping("/{id}")
-    public void updateLesson(@PathVariable Long id, @RequestBody Lesson lesson) {
-        lessonService.updateLesson(id, lesson);
+    public void update(@PathVariable Long id, @RequestBody Lesson lesson) {
+        lessonService.update(id, lesson);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteLesson(@PathVariable Long id) {
-        lessonService.deleteLesson(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        lessonService.delete(id);
+        return ok().build();
     }
 }

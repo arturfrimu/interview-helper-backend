@@ -14,19 +14,19 @@ import java.util.Optional;
 public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
 
-    public List<Exercise> getAllExercises() {
+    public List<Exercise> list() {
         return exerciseRepository.findAll();
     }
 
-    public Optional<Exercise> getExerciseById(Long id) {
+    public Optional<Exercise> find(Long id) {
         return exerciseRepository.findById(id);
     }
 
-    public Exercise createExercise(Exercise exercise) {
+    public Exercise create(Exercise exercise) {
         return exerciseRepository.save(exercise);
     }
 
-    public Exercise updateExercise(Long id, Exercise exercise) {
+    public Exercise update(Long id, Exercise exercise) {
         Optional<Exercise> existingExercise = exerciseRepository.findById(id);
         if (existingExercise.isPresent()) {
             Exercise updatedExercise = existingExercise.get();
@@ -40,12 +40,9 @@ public class ExerciseService {
         }
     }
 
-    public void deleteExercise(Long id) {
-        Optional<Exercise> exercise = exerciseRepository.findById(id);
-        if (exercise.isPresent()) {
-            exerciseRepository.delete(exercise.get());
-        } else {
-            throw new ResourceNotFoundException("Exercise not found with id " + id);
-        }
+    public void delete(Long id) {
+        var existingExercise = exerciseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Exercise not found with id: %s", id)));
+        exerciseRepository.delete(existingExercise);
     }
 }

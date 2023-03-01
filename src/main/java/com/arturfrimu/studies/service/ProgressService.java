@@ -12,7 +12,7 @@ import java.util.List;
 public class ProgressService {
     private final ProgressRepository progressRepository;
 
-    public List<Progress> getAllProgress() {
+    public List<Progress> list() {
         return progressRepository.findAll();
     }
 
@@ -24,7 +24,7 @@ public class ProgressService {
         progressRepository.save(progress);
     }
 
-    public void deleteProgress(Long progressId) {
+    public void delete(Long progressId) {
         progressRepository.deleteById(progressId);
     }
 

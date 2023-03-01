@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/api/section")
 @RequiredArgsConstructor
 public class SectionController {
+
     private final SectionService sectionService;
 
     @GetMapping("/sections")
@@ -27,7 +30,7 @@ public class SectionController {
     }
 
     @GetMapping("/sections/{id}")
-    public Section getSectionById(@PathVariable(value = "id") Long id) {
+    public Section getSectionById(@PathVariable("id") Long id) {
         return sectionService.getSectionById(id);
     }
 
@@ -37,14 +40,14 @@ public class SectionController {
     }
 
     @PutMapping("/sections/{id}")
-    public Section updateSection(@PathVariable(value = "id") Long id,
+    public Section updateSection(@PathVariable("id") Long id,
                                  @RequestBody Section sectionDetails) {
         return sectionService.updateSection(id, sectionDetails);
     }
 
     @DeleteMapping("/sections/{id}")
-    public ResponseEntity<?> deleteSection(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<Void> deleteSection(@PathVariable("id") Long id) {
         sectionService.deleteSection(id);
-        return ResponseEntity.ok().build();
+        return ok().build();
     }
 }

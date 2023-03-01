@@ -1,5 +1,6 @@
 package com.arturfrimu.studies.component;
 
+import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.entity.Forum;
 import com.arturfrimu.studies.repository.ForumRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.RequestEntity.delete;
 import static org.springframework.http.RequestEntity.get;
@@ -41,6 +43,12 @@ class ComponentTest {
         testGetForumById();
         testUpdateForum();
         testDeleteForum();
+
+        testCreateCourse();
+        testGetAllCourses();
+        testGetCourseById();
+        testUpdateCourse();
+        testDeleteCourse();
     }
 
     void testCreateForum() {
@@ -108,11 +116,79 @@ class ComponentTest {
         assertThat(deletedForum.getBody()).isNull();
     }
 
+    void testCreateCourse() {
+        var body = new Course();
+        body.setName("Course 1");
+        body.setDescription("This is the first course");
+
+        var response = restTemplate.exchange(post(COURSE_BASE_URL).body(body), COURSE);
+
+        var createdCourse = response.getBody();
+
+        assertThat(createdCourse).isNotNull();
+        assertThat(createdCourse.getName()).isEqualTo("Course 1");
+        assertThat(createdCourse.getDescription()).isEqualTo("This is the first course");
+    }
+
+    void testGetAllCourses() {
+        var response = restTemplate.exchange(get(COURSE_BASE_URL).build(), COURSE_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var courses = response.getBody();
+
+        assertThat(courses).isNotNull();
+        assertThat(courses.size()).isEqualTo(1);
+        assertThat(courses.get(0).getName()).isEqualTo("Course 1");
+        assertThat(courses.get(0).getDescription()).isEqualTo("This is the first course");
+    }
+
+    void testGetCourseById() {
+        var response = restTemplate.exchange(get(COURSE_BASE_URL + "/1").build(), COURSE);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var course = response.getBody();
+
+        assertThat(course).isNotNull();
+        assertThat(course.getName()).isEqualTo("Course 1");
+        assertThat(course.getDescription()).isEqualTo("This is the first course");
+    }
+
+    void testUpdateCourse() {
+        var body = new Course();
+        body.setName("Course 1 Updated");
+        body.setDescription("This is the first course updated");
+
+        var response = restTemplate.exchange(put(COURSE_BASE_URL + "/1").body(body), COURSE);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedCourse = response.getBody();
+
+        assertThat(updatedCourse).isNotNull();
+        assertThat(updatedCourse.getName()).isEqualTo("Course 1 Updated");
+        assertThat(updatedCourse.getDescription()).isEqualTo("This is the first course updated");
+    }
+
+    void testDeleteCourse() {
+        var response = restTemplate.exchange(delete(COURSE_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedCourse = restTemplate.exchange(get(COURSE_BASE_URL + "/1").build(), COURSE);
+
+        assertThat(deletedCourse.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
+    static final String COURSE_BASE_URL = "/api/courses";
 
     static final ParameterizedTypeReference<Forum> FORUM = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Forum>> FORUM_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Course> COURSE = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Course>> COURSE_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }

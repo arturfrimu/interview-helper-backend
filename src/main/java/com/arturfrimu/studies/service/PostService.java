@@ -8,24 +8,29 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
 
-    public List<Post> getAllPosts() {
+    public List<Post> list() {
         return postRepository.findAll();
     }
 
-    public Post getPostById(Long id) {
-        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+    public Post find(Long id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Post not found with id: %s", id)));
     }
 
-    public Post savePost(Post post) {
+    public Post create(Post post) {
         return postRepository.save(post);
     }
 
-    public void deletePostById(Long id) {
-        postRepository.deleteById(id);
+    public void delete(Long id) {
+        Post existingPost = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Post not found with id: %s", id)));
+        postRepository.delete(existingPost);
     }
 }

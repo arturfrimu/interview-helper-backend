@@ -15,20 +15,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
 public class ProjectController {
+
     private final ProjectService projectService;
 
     @GetMapping
-    public List<Project> getAllProjects() {
-        return projectService.getAllProjects();
+    public List<Project> list() {
+        return projectService.list();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable(value = "id") Long projectId) {
-        Project project = projectService.getProjectById(projectId);
+    public ResponseEntity<Project> find(@PathVariable("id") Long projectId) {
+        Project project = projectService.find(projectId);
         if (project == null) {
             return ResponseEntity.notFound().build();
         }
@@ -36,14 +39,14 @@ public class ProjectController {
     }
 
     @PostMapping
-    public Project createProject(@RequestBody Project project) {
-        return projectService.createProject(project);
+    public Project create(@RequestBody Project project) {
+        return projectService.create(project);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable(value = "id") Long projectId,
-                                                 @RequestBody Project projectDetails) {
-        Project updatedProject = projectService.updateProject(projectId, projectDetails);
+    public ResponseEntity<Project> update(@PathVariable("id") Long id,
+                                          @RequestBody Project projectDetails) {
+        Project updatedProject = projectService.update(id, projectDetails);
         if (updatedProject == null) {
             return ResponseEntity.notFound().build();
         }
@@ -51,11 +54,8 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable(value = "id") Long projectId) {
-        boolean deleted = projectService.deleteProject(projectId);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        projectService.delete(id);
+        return ok().build();
     }
 }

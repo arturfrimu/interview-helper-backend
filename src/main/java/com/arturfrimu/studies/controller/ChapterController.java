@@ -15,35 +15,38 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/api/chapters")
 @RequiredArgsConstructor
 public class ChapterController {
+
     private final ChapterService chapterService;
 
     @GetMapping
-    public List<Chapter> getAllChapters() {
-        return chapterService.getAllChapters();
+    public List<Chapter> list() {
+        return chapterService.list();
     }
 
     @GetMapping("/{id}")
-    public Chapter getChapterById(@PathVariable Long id) {
-        return chapterService.getChapterById(id);
+    public Chapter find(@PathVariable Long id) {
+        return chapterService.find(id);
     }
 
     @PostMapping
-    public Chapter createChapter(@RequestBody Chapter chapter) {
-        return chapterService.createChapter(chapter);
+    public Chapter create(@RequestBody Chapter chapter) {
+        return chapterService.create(chapter);
     }
 
     @PutMapping("/{id}")
-    public Chapter updateChapter(@PathVariable Long id, @RequestBody Chapter chapterDetails) {
-        return chapterService.updateChapter(id, chapterDetails);
+    public Chapter update(@PathVariable Long id, @RequestBody Chapter update) {
+        return chapterService.updateChapter(id, update);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteChapter(@PathVariable Long id) {
-        chapterService.deleteChapter(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        chapterService.delete(id);
+        return ok().build();
     }
 }

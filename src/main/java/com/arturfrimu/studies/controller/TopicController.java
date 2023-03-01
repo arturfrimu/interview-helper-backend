@@ -1,8 +1,6 @@
 package com.arturfrimu.studies.controller;
 
-import com.arturfrimu.studies.entity.Task;
 import com.arturfrimu.studies.entity.Topic;
-import com.arturfrimu.studies.service.TaskService;
 import com.arturfrimu.studies.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +15,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/api/topic")
 @RequiredArgsConstructor
 public class TopicController {
+
     private final TopicService topicService;
 
     @GetMapping
-    public List<Topic> getAllTopics() {
-        return topicService.getAllTopics();
+    public List<Topic> list() {
+        return topicService.list();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Topic> getTopicById(@PathVariable Long id) {
-        Topic topic = topicService.getTopicById(id);
+    public ResponseEntity<Topic> find(@PathVariable Long id) {
+        Topic topic = topicService.find(id);
         if (topic != null) {
             return ResponseEntity.ok(topic);
         } else {
@@ -39,13 +40,13 @@ public class TopicController {
     }
 
     @PostMapping
-    public Topic createTopic(@RequestBody Topic topic) {
-        return topicService.createTopic(topic);
+    public Topic create(@RequestBody Topic topic) {
+        return topicService.create(topic);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Topic> updateTopic(@PathVariable Long id, @RequestBody Topic topic) {
-        Topic updatedTopic = topicService.updateTopic(id, topic);
+    public ResponseEntity<Topic> update(@PathVariable Long id, @RequestBody Topic topic) {
+        Topic updatedTopic = topicService.update(id, topic);
         if (updatedTopic != null) {
             return ResponseEntity.ok(updatedTopic);
         } else {
@@ -54,12 +55,8 @@ public class TopicController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTopic(@PathVariable Long id) {
-        boolean deleted = topicService.deleteTopic(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        topicService.delete(id);
+        return ok().build();
     }
 }

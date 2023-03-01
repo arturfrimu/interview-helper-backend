@@ -8,21 +8,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 @Service
 @RequiredArgsConstructor
 public class ChapterService {
     private final ChapterRepository chapterRepository;
 
-    public List<Chapter> getAllChapters() {
+    public List<Chapter> list() {
         return chapterRepository.findAll();
     }
 
-    public Chapter getChapterById(Long id) {
+    public Chapter find(Long id) {
         return chapterRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Chapter not found with id: " + id));
     }
 
-    public Chapter createChapter(Chapter chapter) {
+    public Chapter create(Chapter chapter) {
         return chapterRepository.save(chapter);
     }
 
@@ -37,10 +39,9 @@ public class ChapterService {
         return chapterRepository.save(chapter);
     }
 
-    public void deleteChapter(Long id) {
-        Chapter chapter = chapterRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Chapter not found with id: " + id));
-
+    public void delete(Long id) {
+        var chapter = chapterRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Chapter not found with id: %s", id)));
         chapterRepository.delete(chapter);
     }
 }

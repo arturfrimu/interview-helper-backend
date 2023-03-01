@@ -17,11 +17,12 @@ import java.util.List;
 @RequestMapping("/api/progress")
 @RequiredArgsConstructor
 public class ProgressController {
+
     private final ProgressService progressService;
 
     @GetMapping("/")
-    public List<Progress> getAllProgress() {
-        return progressService.getAllProgress();
+    public List<Progress> list() {
+        return progressService.list();
     }
 
     @GetMapping("/{userId}")
@@ -35,8 +36,8 @@ public class ProgressController {
     }
 
     @DeleteMapping("/{progressId}")
-    public void deleteProgress(@PathVariable Long progressId) {
-        progressService.deleteProgress(progressId);
+    public void delete(@PathVariable Long progressId) {
+        progressService.delete(progressId);
     }
 
     @GetMapping("/{userId}/{topicId}/{lessonId}/{quizId}")
