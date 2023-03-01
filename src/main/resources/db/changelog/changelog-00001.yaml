@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Artur Frimu
+      changes:
+        - sql:
+            sql: >
+              CREATE TABLE test(
+                id UUID NOT NULL,
+                name VARCHAR(128) NOT NULL,
+                CONSTRAINT pk_id PRIMARY KEY (id),
+                CONSTRAINT uq_name UNIQUE (name)
+              );
