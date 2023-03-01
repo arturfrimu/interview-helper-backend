@@ -25,24 +25,27 @@ public class SectionController {
     private final SectionService sectionService;
 
     @GetMapping("/sections")
-    public List<Section> getAllSections() {
-        return sectionService.getAllSections();
+    public ResponseEntity<List<Section>> getAllSections() {
+        var sections = sectionService.getAllSections();
+        return ok(sections);
     }
 
     @GetMapping("/sections/{id}")
-    public Section getSectionById(@PathVariable("id") Long id) {
-        return sectionService.getSectionById(id);
+    public ResponseEntity<Section> getSectionById(@PathVariable("id") Long id) {
+        var section = sectionService.getSectionById(id);
+        return ok(section);
     }
 
     @PostMapping("/sections")
-    public Section createSection(@RequestBody Section section) {
-        return sectionService.createSection(section);
+    public ResponseEntity<Section> createSection(@RequestBody Section section) {
+        var createdSection = sectionService.createSection(section);
+        return ok(createdSection);
     }
 
     @PutMapping("/sections/{id}")
-    public Section updateSection(@PathVariable("id") Long id,
-                                 @RequestBody Section sectionDetails) {
-        return sectionService.updateSection(id, sectionDetails);
+    public ResponseEntity<Section> updateSection(@PathVariable("id") Long id, @RequestBody Section section) {
+        var updatedSection = sectionService.updateSection(id, section);
+        return ok(updatedSection);
     }
 
     @DeleteMapping("/sections/{id}")

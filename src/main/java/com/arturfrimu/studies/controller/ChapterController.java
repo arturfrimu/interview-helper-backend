@@ -25,23 +25,27 @@ public class ChapterController {
     private final ChapterService chapterService;
 
     @GetMapping
-    public List<Chapter> list() {
-        return chapterService.list();
+    public ResponseEntity<List<Chapter>> list() {
+        var chapters = chapterService.list();
+        return ok(chapters);
     }
 
     @GetMapping("/{id}")
-    public Chapter find(@PathVariable Long id) {
-        return chapterService.find(id);
+    public ResponseEntity<Chapter> find(@PathVariable Long id) {
+        var chapter = chapterService.find(id);
+        return ok(chapter);
     }
 
     @PostMapping
-    public Chapter create(@RequestBody Chapter chapter) {
-        return chapterService.create(chapter);
+    public ResponseEntity<Chapter> create(@RequestBody Chapter chapter) {
+        var createdChapter = chapterService.create(chapter);
+        return ok(createdChapter);
     }
 
     @PutMapping("/{id}")
-    public Chapter update(@PathVariable Long id, @RequestBody Chapter update) {
-        return chapterService.update(id, update);
+    public ResponseEntity<Chapter> update(@PathVariable Long id, @RequestBody Chapter update) {
+        var updatedChapter = chapterService.update(id, update);
+        return ok(updatedChapter);
     }
 
     @DeleteMapping("/{id}")

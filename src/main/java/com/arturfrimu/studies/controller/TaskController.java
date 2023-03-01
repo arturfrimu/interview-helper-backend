@@ -25,23 +25,27 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public List<Task> list() {
-        return taskService.list();
+    public ResponseEntity<List<Task>> list() {
+        var tasks = taskService.list();
+        return ok(tasks);
     }
 
     @GetMapping("/{id}")
-    public Task find(@PathVariable Long id) {
-        return taskService.find(id);
+    public ResponseEntity<Task> find(@PathVariable Long id) {
+        var task = taskService.find(id);
+        return ok(task);
     }
 
     @PostMapping
-    public Task create(@RequestBody Task task) {
-        return taskService.create(task);
+    public ResponseEntity<Task> create(@RequestBody Task task) {
+        var createdTask = taskService.create(task);
+        return ok(createdTask);
     }
 
     @PutMapping("/{id}")
-    public Task update(@PathVariable Long id, @RequestBody Task task) {
-        return taskService.update(id, task);
+    public ResponseEntity<Task> update(@PathVariable Long id, @RequestBody Task task) {
+        var updatedTask = taskService.update(id, task);
+        return ok(updatedTask);
     }
 
     @DeleteMapping("/{id}")

@@ -25,23 +25,27 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping
-    public List<Course> list() {
-        return courseService.list();
+    public ResponseEntity<List<Course>> list() {
+        var courses = courseService.list();
+        return ok(courses);
     }
 
     @GetMapping("/{id}")
-    public Course find(@PathVariable Long id) {
-        return courseService.find(id);
+    public ResponseEntity<Course> find(@PathVariable Long id) {
+        var course = courseService.find(id);
+        return ok(course);
     }
 
     @PostMapping
-    public Course create(@RequestBody Course course) {
-        return courseService.create(course);
+    public ResponseEntity<Course> create(@RequestBody Course course) {
+        var createdCourse = courseService.create(course);
+        return ok(createdCourse);
     }
 
     @PutMapping("/{id}")
-    public Course update(@PathVariable Long id, @RequestBody Course courseDetails) {
-        return courseService.update(id, courseDetails);
+    public ResponseEntity<Course> update(@PathVariable Long id, @RequestBody Course courseDetails) {
+        var updatedCourse = courseService.update(id, courseDetails);
+        return ok(updatedCourse);
     }
 
     @DeleteMapping("/{id}")

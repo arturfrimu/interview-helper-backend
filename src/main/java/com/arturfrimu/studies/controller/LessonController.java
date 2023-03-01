@@ -25,23 +25,27 @@ public class LessonController {
     private final LessonService lessonService;
 
     @GetMapping
-    public List<Lesson> list() {
-        return lessonService.list();
+    public ResponseEntity<List<Lesson>> list() {
+        var lessons = lessonService.list();
+        return ok(lessons);
     }
 
     @GetMapping("/{id}")
-    public Lesson find(@PathVariable Long id) {
-        return lessonService.find(id);
+    public ResponseEntity<Lesson> find(@PathVariable Long id) {
+        var lesson = lessonService.find(id);
+        return ok(lesson);
     }
 
     @PostMapping
-    public void create(@RequestBody Lesson lesson) {
-        lessonService.create(lesson);
+    public ResponseEntity<Lesson> create(@RequestBody Lesson lesson) {
+        var createdLesson = lessonService.create(lesson);
+        return ok(createdLesson);
     }
 
     @PutMapping("/{id}")
-    public void update(@PathVariable Long id, @RequestBody Lesson lesson) {
-        lessonService.update(id, lesson);
+    public ResponseEntity<Lesson> update(@PathVariable Long id, @RequestBody Lesson lesson) {
+        var updatedLesson = lessonService.update(id, lesson);
+        return ok(updatedLesson);
     }
 
     @DeleteMapping("/{id}")

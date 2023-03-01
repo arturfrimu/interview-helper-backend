@@ -25,23 +25,27 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    public List<Comment> list() {
-        return commentService.list();
+    public ResponseEntity<List<Comment>> list() {
+        var comments = commentService.list();
+        return ok(comments);
     }
 
     @GetMapping("/{id}")
-    public Comment find(@PathVariable Long id) {
-        return commentService.find(id);
+    ResponseEntity<Comment> find(@PathVariable Long id) {
+        var comment = commentService.find(id);
+        return ok(comment);
     }
 
     @PostMapping
-    public Comment create(@RequestBody Comment comment) {
-        return commentService.create(comment);
+    ResponseEntity<Comment> create(@RequestBody Comment comment) {
+        var createdComment = commentService.create(comment);
+        return ok(createdComment);
     }
 
     @PutMapping("/{id}")
-    public Comment update(@PathVariable Long id, @RequestBody Comment comment) {
-        return commentService.update(id, comment);
+    ResponseEntity<Comment> update(@PathVariable Long id, @RequestBody Comment comment) {
+        var updatedComment = commentService.update(id, comment);
+        return ok(updatedComment);
     }
 
     @DeleteMapping("/{id}")

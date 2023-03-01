@@ -25,27 +25,27 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public List<Post> list() {
-        return postService.list();
+    public ResponseEntity<List<Post>> list() {
+        var posts = postService.list();
+        return ok(posts);
     }
 
     @GetMapping("/{id}")
-    public Post find(@PathVariable Long id) {
-        return postService.find(id);
+    public ResponseEntity<Post> find(@PathVariable Long id) {
+        var post = postService.find(id);
+        return ok(post);
     }
 
     @PostMapping
-    public Post create(@RequestBody Post post) {
-        return postService.create(post);
+    public ResponseEntity<Post> create(@RequestBody Post post) {
+        var createdPost = postService.create(post);
+        return ok(createdPost);
     }
 
     @PutMapping("/{id}")
-    public Post update(@PathVariable Long id, @RequestBody Post post) {
-        Post existingPost = postService.find(id);
-        existingPost.setTitle(post.getTitle());
-        existingPost.setContent(post.getContent());
-        existingPost.setForum(post.getForum());
-        return postService.create(existingPost);
+    public ResponseEntity<Post> update(@PathVariable Long id, @RequestBody Post post) {
+        var updatedPost = postService.update(id, post);
+        return ok(updatedPost);
     }
 
     @DeleteMapping("/{id}")

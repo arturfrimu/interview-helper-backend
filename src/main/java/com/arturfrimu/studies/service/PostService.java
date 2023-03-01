@@ -28,6 +28,17 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    public Post update(Long id, Post command) {
+        Post existingPost = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Post not found with id: %s", id)));
+
+        existingPost.setTitle(command.getTitle());
+        existingPost.setContent(command.getContent());
+        existingPost.setForum(command.getForum());
+
+        return postRepository.save(existingPost);
+    }
+
     public void delete(Long id) {
         Post existingPost = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Post not found with id: %s", id)));

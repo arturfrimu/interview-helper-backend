@@ -25,32 +25,27 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @GetMapping
-    public List<Project> list() {
-        return projectService.list();
+    public ResponseEntity<List<Project>> list() {
+        var projects = projectService.list();
+        return ok().body(projects);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Project> find(@PathVariable("id") Long projectId) {
-        Project project = projectService.find(projectId);
-        if (project == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(project);
+        var project = projectService.find(projectId);
+        return ok().body(project);
     }
 
     @PostMapping
-    public Project create(@RequestBody Project project) {
-        return projectService.create(project);
+    public ResponseEntity<Project> create(@RequestBody Project project) {
+        var createdProject = projectService.create(project);
+        return ok(createdProject);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> update(@PathVariable("id") Long id,
-                                          @RequestBody Project projectDetails) {
-        Project updatedProject = projectService.update(id, projectDetails);
-        if (updatedProject == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedProject);
+    public ResponseEntity<Project> update(@PathVariable("id") Long id, @RequestBody Project project) {
+        var updatedProject = projectService.update(id, project);
+        return ok(updatedProject);
     }
 
     @DeleteMapping("/{id}")

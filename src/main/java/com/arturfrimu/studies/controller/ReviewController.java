@@ -25,23 +25,27 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/reviews")
-    public List<Review> list() {
-        return reviewService.list();
+    public ResponseEntity<List<Review>> list() {
+        var reviews = reviewService.list();
+        return ok(reviews);
     }
 
     @GetMapping("/reviews/{id}")
-    public Review find(@PathVariable("id") Long id) {
-        return reviewService.find(id);
+    public ResponseEntity<Review> find(@PathVariable("id") Long id) {
+        var review = reviewService.find(id);
+        return ok(review);
     }
 
     @PostMapping("/reviews")
-    public Review create(@RequestBody Review review) {
-        return reviewService.create(review);
+    public ResponseEntity<Review> create(@RequestBody Review review) {
+        var createdReview = reviewService.create(review);
+        return ok(createdReview);
     }
 
     @PutMapping("/reviews/{id}")
-    public Review update(@PathVariable("id") Long id, @RequestBody Review reviewDetails) {
-        return reviewService.update(id, reviewDetails);
+    public ResponseEntity<Review> update(@PathVariable("id") Long id, @RequestBody Review reviewDetails) {
+        var updatedReview = reviewService.update(id, reviewDetails);
+        return ok(updatedReview);
     }
 
     @DeleteMapping("/reviews/{id}")

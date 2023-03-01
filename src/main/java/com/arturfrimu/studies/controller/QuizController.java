@@ -25,23 +25,27 @@ public class QuizController {
     private final QuizService quizService;
 
     @GetMapping
-    public List<Quiz> list() {
-        return quizService.list();
+    public ResponseEntity<List<Quiz>> list() {
+        var quizzes = quizService.list();
+        return ok().body(quizzes);
     }
 
     @GetMapping("/{id}")
-    public Quiz find(@PathVariable Long id) {
-        return quizService.find(id);
+    public ResponseEntity<Quiz> find(@PathVariable Long id) {
+        var quiz = quizService.find(id);
+        return ok().body(quiz);
     }
 
     @PostMapping
-    public Quiz create(@RequestBody Quiz quiz) {
-        return quizService.create(quiz);
+    public ResponseEntity<Quiz> create(@RequestBody Quiz quiz) {
+        var createdQuiz = quizService.create(quiz);
+        return ok().body(createdQuiz);
     }
 
     @PutMapping("/{id}")
-    public Quiz update(@PathVariable Long id, @RequestBody Quiz quiz) {
-        return quizService.update(id, quiz);
+    public ResponseEntity<Quiz> update(@PathVariable Long id, @RequestBody Quiz quiz) {
+        var updatedQuiz = quizService.update(id, quiz);
+        return ok().body(updatedQuiz);
     }
 
     @DeleteMapping("/{id}")

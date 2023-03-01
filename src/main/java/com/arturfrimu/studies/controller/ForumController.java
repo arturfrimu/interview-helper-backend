@@ -25,23 +25,27 @@ public class ForumController {
     private final ForumService forumService;
 
     @GetMapping
-    public List<Forum> list() {
-        return forumService.list();
+    public ResponseEntity<List<Forum>> list() {
+        var forums = forumService.list();
+        return ok(forums);
     }
 
     @GetMapping("/{id}")
-    public Forum find(@PathVariable Long id) {
-        return forumService.find(id);
+    public ResponseEntity<Forum> find(@PathVariable Long id) {
+        var forum = forumService.find(id);
+        return ok(forum);
     }
 
     @PostMapping
-    public Forum create(@RequestBody Forum forum) {
-        return forumService.create(forum);
+    public ResponseEntity<Forum> create(@RequestBody Forum forum) {
+        var createdForum = forumService.create(forum);
+        return ok(createdForum);
     }
 
     @PutMapping("/{id}")
-    public Forum update(@PathVariable Long id, @RequestBody Forum forum) {
-        return forumService.update(id, forum);
+    public ResponseEntity<Forum> update(@PathVariable Long id, @RequestBody Forum forum) {
+        var updatedForum = forumService.update(id, forum);
+        return ok(updatedForum);
     }
 
     @DeleteMapping("/{id}")

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.lang.String.format;
 
@@ -20,26 +19,25 @@ public class ExerciseService {
         return exerciseRepository.findAll();
     }
 
-    public Optional<Exercise> find(Long id) {
-        return exerciseRepository.findById(id);
+    public Exercise find(Long id) {
+        return exerciseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Exercise not found with id: %s", id)));
     }
 
     public Exercise create(Exercise exercise) {
         return exerciseRepository.save(exercise);
     }
 
-    public Exercise update(Long id, Exercise exercise) {
-        Optional<Exercise> existingExercise = exerciseRepository.findById(id);
-        if (existingExercise.isPresent()) {
-            Exercise updatedExercise = existingExercise.get();
-            updatedExercise.setName(exercise.getName());
-            updatedExercise.setDescription(exercise.getDescription());
-            updatedExercise.setCourse(exercise.getCourse());
-            updatedExercise.setChapter(exercise.getChapter());
-            return exerciseRepository.save(updatedExercise);
-        } else {
-            throw new ResourceNotFoundException("Exercise not found with id " + id);
-        }
+    public Exercise update(Long id, Exercise command) {
+        var existingExercise = exerciseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Exercise not found with id: %s", id)));
+
+        existingExercise.setName(command.getName());
+        existingExercise.setDescription(command.getDescription());
+        existingExercise.setCourse(command.getCourse());
+        existingExercise.setChapter(command.getChapter());
+
+        return exerciseRepository.save(existingExercise);
     }
 
     public void delete(Long id) {

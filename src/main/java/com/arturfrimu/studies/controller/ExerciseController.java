@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -26,24 +25,26 @@ public class ExerciseController {
     private final ExerciseService exerciseService;
 
     @GetMapping
-    public List<Exercise> list() {
-        return exerciseService.list();
+    public ResponseEntity<List<Exercise>> list() {
+        var exercises = exerciseService.list();
+        return ok(exercises);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Exercise> find(@PathVariable Long id) {
-        Optional<Exercise> exercise = exerciseService.find(id);
-        return exercise.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        var exercise = exerciseService.find(id);
+        return ok(exercise);
     }
 
     @PostMapping
-    public Exercise create(@RequestBody Exercise exercise) {
-        return exerciseService.create(exercise);
+    public ResponseEntity<Exercise> create(@RequestBody Exercise exercise) {
+        var createdExercise = exerciseService.create(exercise);
+        return ok(createdExercise);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Exercise> update(@PathVariable Long id, @RequestBody Exercise exercise) {
-        Exercise updatedExercise = exerciseService.update(id, exercise);
+        var updatedExercise = exerciseService.update(id, exercise);
         return ok(updatedExercise);
     }
 

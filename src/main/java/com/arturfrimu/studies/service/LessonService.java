@@ -25,18 +25,18 @@ public class LessonService {
                 .orElseThrow(() -> new ResourceNotFoundException(format("Lesson not found with id: %s", id)));
     }
 
-    public void create(Lesson lesson) {
-        lessonRepository.save(lesson);
+    public Lesson create(Lesson lesson) {
+        return lessonRepository.save(lesson);
     }
 
-    public void update(Long id, Lesson lesson) {
+    public Lesson update(Long id, Lesson lesson) {
         var existingLesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Lesson not found with id: %s", id)));
 
         existingLesson.setName(lesson.getName());
         existingLesson.setDescription(lesson.getDescription());
 
-        lessonRepository.save(existingLesson);
+        return lessonRepository.save(existingLesson);
     }
 
     public void delete(Long id) {

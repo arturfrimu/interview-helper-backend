@@ -24,23 +24,27 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<User> list() {
-        return userService.list();
+    public ResponseEntity<List<User>> list() {
+        var users = userService.list();
+        return ok(users);
     }
 
     @GetMapping("/{id}")
-    public User find(@PathVariable Long id) {
-        return userService.find(id);
+    public ResponseEntity<User> find(@PathVariable Long id) {
+        var user = userService.find(id);
+        return ok(user);
     }
 
     @PostMapping("")
-    public User create(@RequestBody User user) {
-        return userService.create(user);
+    public ResponseEntity<User> create(@RequestBody User user) {
+        var createdUser = userService.create(user);
+        return ok(createdUser);
     }
 
     @PutMapping("/{id}")
-    public User update(@PathVariable Long id, @RequestBody User user) {
-        return userService.update(id, user);
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
+        var updatedUser = userService.update(id, user);
+        return ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")

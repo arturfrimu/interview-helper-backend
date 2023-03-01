@@ -16,12 +16,18 @@ public class ProgressService {
         return progressRepository.findAll();
     }
 
-    public List<Progress> getProgressByUserId(Long userId) {
-        return progressRepository.findByUser(userId);
+    public List<Progress> getProgressByUserId(Long id) {
+        return progressRepository.findByUser(id);
     }
 
-    public void saveOrUpdateProgress(Progress progress) {
-        progressRepository.save(progress);
+    public Progress create(Progress progress) {
+        // TODO: 02.03.2023  
+        return progressRepository.save(progress);
+    }
+
+    public Progress update(Long id, Progress progress) {
+        // TODO: 02.03.2023  
+        return progressRepository.save(progress);
     }
 
     public void delete(Long progressId) {

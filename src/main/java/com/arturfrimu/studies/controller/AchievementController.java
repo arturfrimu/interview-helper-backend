@@ -24,29 +24,34 @@ public class AchievementController {
 
     private final AchievementService achievementService;
 
-    @GetMapping("")
-    public List<Achievement> list() {
-        return achievementService.list();
+    @GetMapping
+    public ResponseEntity<List<Achievement>> list() {
+        var achievements = achievementService.list();
+        return ok(achievements);
     }
 
     @GetMapping("/{id}")
-    public Achievement find(@PathVariable Long id) {
-        return achievementService.find(id);
+    public ResponseEntity<Achievement> find(@PathVariable Long id) {
+        var achievement = achievementService.find(id);
+        return ok(achievement);
     }
 
     @GetMapping("/users/{userId}")
-    public List<Achievement> getAchievementsByUserId(@PathVariable Long userId) {
-        return achievementService.getAchievementsByUserId(userId);
+    public ResponseEntity<List<Achievement>> findAchievementsByUserId(@PathVariable Long userId) {
+        var achievements = achievementService.getAchievementsByUserId(userId);
+        return ok(achievements);
     }
 
-    @PostMapping("")
-    public Achievement create(@RequestBody Achievement achievement) {
-        return achievementService.create(achievement);
+    @PostMapping
+    public ResponseEntity<Achievement> create(@RequestBody Achievement achievement) {
+        var createdAchievement = achievementService.create(achievement);
+        return ok(createdAchievement);
     }
 
     @PutMapping("/{id}")
-    public Achievement update(@PathVariable Long id, @RequestBody Achievement achievement) {
-        return achievementService.update(id, achievement);
+    public ResponseEntity<Achievement> update(@PathVariable Long id, @RequestBody Achievement achievement) {
+        var updatedAchievement = achievementService.update(id, achievement);
+        return ok(updatedAchievement);
     }
 
     @DeleteMapping("/{id}")
