@@ -28,5 +28,13 @@ public final class Requests {
 
     public record UpdateChapterRequest(String name, String description, Long courseId) {}
 
+    public record CreatePostRequest(String title, String content, Long forumId) {}
+
+    public record UpdatePostRequest(String title, String content, Long forumId) {}
+
+    public record CreateSectionRequest(String name, String description, Long courseId, Long chapterId) {}
+
+    public record UpdateSectionRequest(String name, String description, Long courseId, Long chapterId) {}
+
     //@formatter:oon
 }

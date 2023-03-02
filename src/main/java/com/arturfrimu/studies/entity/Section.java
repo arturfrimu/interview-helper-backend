@@ -35,4 +35,11 @@ public class Section {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "chapter_id", nullable = false)
     private Chapter chapter;
+
+    public Section(String name, String description, Course course, Chapter chapter) {
+        this.name = name;
+        this.description = description;
+        this.course = course;
+        this.chapter = chapter;
+    }
 }

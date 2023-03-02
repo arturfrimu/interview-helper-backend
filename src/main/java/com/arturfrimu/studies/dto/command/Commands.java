@@ -4,11 +4,15 @@ import com.arturfrimu.studies.dto.request.Requests.CreateAchievementRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateForumRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateAchievementRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateForumRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateUserRequest;
 
@@ -97,6 +101,34 @@ public final class Commands {
 
         public static UpdateChapterCommand valueOf(UpdateChapterRequest request) {
             return new UpdateChapterCommand(request.name(), request.description(), request.courseId());
+        }
+    }
+
+    public record CreatePostCommand(String title, String content, Long forumId) {
+
+        public static CreatePostCommand valueOf(CreatePostRequest request) {
+            return new CreatePostCommand(request.title(), request.content(), request.forumId());
+        }
+    }
+
+    public record UpdatePostCommand(String title, String content, Long forumId) {
+
+        public static UpdatePostCommand valueOf(UpdatePostRequest request) {
+            return new UpdatePostCommand(request.title(), request.content(), request.forumId());
+        }
+    }
+
+    public record CreateSectionCommand(String name, String description, Long courseId, Long chapterId) {
+
+        public static CreateSectionCommand valueOf(CreateSectionRequest request) {
+            return new CreateSectionCommand(request.name(), request.description(), request.courseId(), request.chapterId());
+        }
+    }
+
+    public record UpdateSectionCommand(String name, String description, Long courseId, Long chapterId) {
+
+        public static UpdateSectionCommand valueOf(UpdateSectionRequest request) {
+            return new UpdateSectionCommand(request.name(), request.description(), request.courseId(), request.chapterId());
         }
     }
 }

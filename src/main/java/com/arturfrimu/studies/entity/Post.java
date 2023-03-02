@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -28,7 +28,13 @@ public class Post {
 
     private String content;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "forum_id")
     private Forum forum;
+
+    public Post(String title, String content, Forum forum) {
+        this.title = title;
+        this.content = content;
+        this.forum = forum;
+    }
 }

@@ -3,14 +3,18 @@ package com.arturfrimu.studies.component;
 import com.arturfrimu.studies.dto.request.Requests;
 import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateChapterRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
 import com.arturfrimu.studies.entity.Achievement;
 import com.arturfrimu.studies.entity.Chapter;
 import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.entity.Forum;
+import com.arturfrimu.studies.entity.Post;
+import com.arturfrimu.studies.entity.Section;
 import com.arturfrimu.studies.entity.Topic;
 import com.arturfrimu.studies.entity.User;
 import org.junit.jupiter.api.Test;
@@ -73,6 +77,10 @@ class ComponentTest {
         testListChapters();
         testFindChapter();
 
+        testCreatePost();
+        testListPosts();
+        testFindPost();
+
 
         testUpdateForum();
         testUpdateCourse();
@@ -80,14 +88,16 @@ class ComponentTest {
         testUpdateUser();
         testUpdateAchievement();
         testUpdateChapter();
+        testUpdatePost();
 
 
-        testDeleteForum();
         testDeleteChapter();
         testDeleteCourse();
         testDeleteTopic();
         testDeleteAchievement();
         testDeleteUser();
+        testDeletePost();
+        testDeleteForum();
     }
 
     void testCreateForum() {
@@ -529,6 +539,89 @@ class ComponentTest {
         assertThat(deletedChapter.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
+    void testCreatePost() {
+        var body = new CreatePostRequest("Post 1", "This is the first post", 1L);
+
+        var response = restTemplate.exchange(post(POST_BASE_URL).body(body), POST);
+
+        var createdPost = response.getBody();
+
+        assertThat(createdPost).isNotNull();
+
+        assertThat(createdPost.getPostId()).isNotNull();
+        assertThat(createdPost.getTitle()).isEqualTo("Post 1");
+        assertThat(createdPost.getContent()).isEqualTo("This is the first post");
+
+        assertThat(createdPost.getForum().getForumId()).isEqualTo(1L);
+        assertThat(createdPost.getForum().getName()).isEqualTo("Forum 1");
+        assertThat(createdPost.getForum().getDescription()).isEqualTo("This is the first forum");
+    }
+
+    void testListPosts() {
+        var response = restTemplate.exchange(get(POST_BASE_URL).build(), POST_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var posts = response.getBody();
+
+        assertThat(posts).isNotNull();
+        assertThat(posts.size()).isEqualTo(1);
+
+        assertThat(posts.get(0).getTitle()).isEqualTo("Post 1");
+        assertThat(posts.get(0).getContent()).isEqualTo("This is the first post");
+
+        assertThat(posts.get(0).getForum().getForumId()).isEqualTo(1L);
+        assertThat(posts.get(0).getForum().getName()).isEqualTo("Forum 1");
+        assertThat(posts.get(0).getForum().getDescription()).isEqualTo("This is the first forum");
+    }
+
+    void testFindPost() {
+        var response = restTemplate.exchange(get(POST_BASE_URL + "/1").build(), POST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var post = response.getBody();
+
+        assertThat(post).isNotNull();
+
+        assertThat(post.getPostId()).isNotNull();
+        assertThat(post.getTitle()).isEqualTo("Post 1");
+        assertThat(post.getContent()).isEqualTo("This is the first post");
+
+        assertThat(post.getForum().getForumId()).isEqualTo(1L);
+        assertThat(post.getForum().getName()).isEqualTo("Forum 1");
+        assertThat(post.getForum().getDescription()).isEqualTo("This is the first forum");
+    }
+
+    void testUpdatePost() {
+        var body = new UpdatePostRequest("Post 1 Updated", "This is the first post update", 1L);
+
+        var response = restTemplate.exchange(put(POST_BASE_URL + "/1").body(body), POST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedPost = response.getBody();
+
+        assertThat(updatedPost).isNotNull();
+
+        assertThat(updatedPost.getTitle()).isEqualTo("Post 1 Updated");
+        assertThat(updatedPost.getContent()).isEqualTo("This is the first post update");
+
+        assertThat(updatedPost.getForum().getForumId()).isEqualTo(1L);
+        assertThat(updatedPost.getForum().getName()).isEqualTo("Forum 1 Updated");
+        assertThat(updatedPost.getForum().getDescription()).isEqualTo("This is the first forum updated");
+    }
+
+    void testDeletePost() {
+        var response = restTemplate.exchange(delete(POST_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedPost = restTemplate.exchange(get(POST_BASE_URL + "/1").build(), POST);
+
+        assertThat(deletedPost.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
@@ -536,6 +629,8 @@ class ComponentTest {
     static final String USER_BASE_URL = "/api/users";
     static final String ACHIEVEMENT_BASE_URL = "/api/achievements";
     static final String CHAPTER_BASE_URL = "/api/chapters";
+    static final String POST_BASE_URL = "/api/posts";
+    static final String SECTION_BASE_URL = "/api/sections";
 
     static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
 
@@ -551,5 +646,9 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Achievement>> ACHIEVEMENT_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Chapter> CHAPTER = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Chapter>> CHAPTER_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Post> POST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Post>> POST_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Section> SECTION = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Section>> SECTION_LIST = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }

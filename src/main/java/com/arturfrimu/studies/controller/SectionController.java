@@ -1,5 +1,9 @@
 package com.arturfrimu.studies.controller;
 
+import com.arturfrimu.studies.dto.command.Commands.CreateSectionCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateSectionCommand;
+import com.arturfrimu.studies.dto.request.Requests;
+import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
 import com.arturfrimu.studies.entity.Section;
 import com.arturfrimu.studies.service.SectionService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static java.util.Optional.of;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -37,14 +42,16 @@ public class SectionController {
     }
 
     @PostMapping("/sections")
-    public ResponseEntity<Section> createSection(@RequestBody Section section) {
-        var createdSection = sectionService.createSection(section);
+    public ResponseEntity<Section> createSection(@RequestBody CreateSectionRequest body) {
+        var command = of(body).map(CreateSectionCommand::valueOf).get();
+        var createdSection = sectionService.createSection(command);
         return ok(createdSection);
     }
 
     @PutMapping("/sections/{id}")
-    public ResponseEntity<Section> updateSection(@PathVariable("id") Long id, @RequestBody Section section) {
-        var updatedSection = sectionService.updateSection(id, section);
+    public ResponseEntity<Section> updateSection(@PathVariable("id") Long id, @RequestBody Requests.UpdateSectionRequest body) {
+        var command = of(body).map(UpdateSectionCommand::valueOf).get();
+        var updatedSection = sectionService.updateSection(id, command);
         return ok(updatedSection);
     }
 

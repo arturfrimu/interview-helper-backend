@@ -1,7 +1,11 @@
 package com.arturfrimu.studies.service;
 
+import com.arturfrimu.studies.dto.command.Commands.CreateSectionCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateSectionCommand;
 import com.arturfrimu.studies.entity.Section;
 import com.arturfrimu.studies.exception.ResourceNotFoundException;
+import com.arturfrimu.studies.repository.ChapterRepository;
+import com.arturfrimu.studies.repository.CourseRepository;
 import com.arturfrimu.studies.repository.SectionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,8 @@ import static java.lang.String.format;
 public class SectionService {
 
     private final SectionRepository sectionRepository;
+    private final CourseRepository courseRepository;
+    private final ChapterRepository chapterRepository;
 
     public List<Section> getAllSections() {
         return sectionRepository.findAll();
@@ -25,25 +31,40 @@ public class SectionService {
                 .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
     }
 
-    public Section createSection(Section section) {
-        return sectionRepository.save(section);
+    public Section createSection(CreateSectionCommand command) {
+        var existingCourse = courseRepository.findById(command.courseId())
+                .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", command.courseId())));
+
+        var existingChapter = chapterRepository.findById(command.chapterId())
+                .orElseThrow(() -> new ResourceNotFoundException(format("Chapter not found with id: %s", command.chapterId())));
+
+        var newSection = new Section(command.name(), command.description(), existingCourse, existingChapter);
+
+        return sectionRepository.save(newSection);
     }
 
-    public Section updateSection(Long id, Section command) {
-        var section = sectionRepository.findById(id)
+    public Section updateSection(Long id, UpdateSectionCommand command) {
+        var existingSection = sectionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
 
-        section.setName(command.getName());
-        section.setDescription(command.getDescription());
-        section.setCourse(command.getCourse());
-        section.setChapter(command.getChapter());
+        var existingCourse = courseRepository.findById(command.courseId())
+                .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", command.courseId())));
 
-        return sectionRepository.save(section);
+        var existingChapter = chapterRepository.findById(command.chapterId())
+                .orElseThrow(() -> new ResourceNotFoundException(format("Chapter not found with id: %s", command.chapterId())));
+
+        existingSection.setName(command.name());
+        existingSection.setDescription(command.description());
+        existingSection.setCourse(existingCourse);
+        existingSection.setChapter(existingChapter);
+
+        return sectionRepository.save(existingSection);
     }
 
     public void deleteSection(Long id) {
         var existingSection = sectionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
+
         sectionRepository.delete(existingSection);
     }
 }
