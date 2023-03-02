@@ -1,5 +1,8 @@
 package com.arturfrimu.studies.component;
 
+import com.arturfrimu.studies.dto.request.CreateAchievementRequest;
+import com.arturfrimu.studies.dto.request.UpdateAchievementRequest;
+import com.arturfrimu.studies.entity.Achievement;
 import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.entity.Forum;
 import com.arturfrimu.studies.entity.Topic;
@@ -32,27 +35,42 @@ class ComponentTest {
     @Test
     void testLifecycle() {
         testCreateForum();
-        testGetAllForums();
-        testGetForumById();
-        testUpdateForum();
-        testDeleteForum();
+        testListForums();
+        testFindForum();
+
 
         testCreateCourse();
-        testGetAllCourses();
-        testGetCourseById();
-        testUpdateCourse();
-        testDeleteCourse();
+        testListCourses();
+        testFindCourse();
+
 
         testCreateTopic();
-        testGetAllTopics();
-        testGetTopicById();
-        testUpdateTopic();
-        testDeleteTopic();
+        testListTopics();
+        testFindTopic();
+
 
         testCreateUser();
-        testGetAllUsers();
-        testGetUserById();
+        testListUsers();
+        testFindUser();
+
+
+        testCreateAchievement();
+        testListAchievements();
+        testFindAchievement();
+        testFindAchievementsByUserId();
+
+
+        testUpdateForum();
+        testUpdateCourse();
+        testUpdateTopic();
         testUpdateUser();
+        testUpdateAchievement();
+
+
+        testDeleteForum();
+        testDeleteCourse();
+        testDeleteTopic();
+        testDeleteAchievement();
         testDeleteUser();
     }
 
@@ -66,11 +84,12 @@ class ComponentTest {
         var createdForum = response.getBody();
 
         assertThat(createdForum).isNotNull();
+
         assertThat(createdForum.getName()).isEqualTo("Forum 1");
         assertThat(createdForum.getDescription()).isEqualTo("This is the first forum");
     }
 
-    void testGetAllForums() {
+    void testListForums() {
         var response = restTemplate.exchange(get(FORUM_BASE_URL).build(), FORUM_LIST);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -79,11 +98,12 @@ class ComponentTest {
 
         assertThat(forums).isNotNull();
         assertThat(forums.size()).isEqualTo(1);
+
         assertThat(forums.get(0).getName()).isEqualTo("Forum 1");
         assertThat(forums.get(0).getDescription()).isEqualTo("This is the first forum");
     }
 
-    void testGetForumById() {
+    void testFindForum() {
         var response = restTemplate.exchange(get(FORUM_BASE_URL + "/1").build(), FORUM);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -91,6 +111,7 @@ class ComponentTest {
         var forum = response.getBody();
 
         assertThat(forum).isNotNull();
+
         assertThat(forum.getName()).isEqualTo("Forum 1");
         assertThat(forum.getDescription()).isEqualTo("This is the first forum");
     }
@@ -107,6 +128,7 @@ class ComponentTest {
         var updatedForum = response.getBody();
 
         assertThat(updatedForum).isNotNull();
+
         assertThat(updatedForum.getName()).isEqualTo("Forum 1 Updated");
         assertThat(updatedForum.getDescription()).isEqualTo("This is the first forum updated");
     }
@@ -118,7 +140,7 @@ class ComponentTest {
 
         var deletedForum = restTemplate.exchange(get(FORUM_BASE_URL + "/1").build(), FORUM);
 
-        assertThat(deletedForum.getBody()).isNull();
+        assertThat(deletedForum.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
     void testCreateCourse() {
@@ -131,11 +153,12 @@ class ComponentTest {
         var createdCourse = response.getBody();
 
         assertThat(createdCourse).isNotNull();
+
         assertThat(createdCourse.getName()).isEqualTo("Course 1");
         assertThat(createdCourse.getDescription()).isEqualTo("This is the first course");
     }
 
-    void testGetAllCourses() {
+    void testListCourses() {
         var response = restTemplate.exchange(get(COURSE_BASE_URL).build(), COURSE_LIST);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -143,12 +166,13 @@ class ComponentTest {
         var courses = response.getBody();
 
         assertThat(courses).isNotNull();
+
         assertThat(courses.size()).isEqualTo(1);
         assertThat(courses.get(0).getName()).isEqualTo("Course 1");
         assertThat(courses.get(0).getDescription()).isEqualTo("This is the first course");
     }
 
-    void testGetCourseById() {
+    void testFindCourse() {
         var response = restTemplate.exchange(get(COURSE_BASE_URL + "/1").build(), COURSE);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -156,6 +180,7 @@ class ComponentTest {
         var course = response.getBody();
 
         assertThat(course).isNotNull();
+
         assertThat(course.getName()).isEqualTo("Course 1");
         assertThat(course.getDescription()).isEqualTo("This is the first course");
     }
@@ -172,6 +197,7 @@ class ComponentTest {
         var updatedCourse = response.getBody();
 
         assertThat(updatedCourse).isNotNull();
+
         assertThat(updatedCourse.getName()).isEqualTo("Course 1 Updated");
         assertThat(updatedCourse.getDescription()).isEqualTo("This is the first course updated");
     }
@@ -196,11 +222,12 @@ class ComponentTest {
         var createdTopic = response.getBody();
 
         assertThat(createdTopic).isNotNull();
+
         assertThat(createdTopic.getName()).isEqualTo("Topic 1");
         assertThat(createdTopic.getDescription()).isEqualTo("This is the first topic");
     }
 
-    void testGetAllTopics() {
+    void testListTopics() {
         var response = restTemplate.exchange(get(TOPIC_BASE_URL).build(), TOPIC_LIST);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -209,11 +236,12 @@ class ComponentTest {
 
         assertThat(topics).isNotNull();
         assertThat(topics.size()).isEqualTo(1);
+
         assertThat(topics.get(0).getName()).isEqualTo("Topic 1");
         assertThat(topics.get(0).getDescription()).isEqualTo("This is the first topic");
     }
 
-    void testGetTopicById() {
+    void testFindTopic() {
         var response = restTemplate.exchange(get(TOPIC_BASE_URL + "/1").build(), TOPIC);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -221,6 +249,7 @@ class ComponentTest {
         var topic = response.getBody();
 
         assertThat(topic).isNotNull();
+
         assertThat(topic.getName()).isEqualTo("Topic 1");
         assertThat(topic.getDescription()).isEqualTo("This is the first topic");
     }
@@ -237,6 +266,7 @@ class ComponentTest {
         var updatedTopic = response.getBody();
 
         assertThat(updatedTopic).isNotNull();
+
         assertThat(updatedTopic.getName()).isEqualTo("Topic 1 Updated");
         assertThat(updatedTopic.getDescription()).isEqualTo("This is the first topic updated");
     }
@@ -261,11 +291,12 @@ class ComponentTest {
         var createdUser = response.getBody();
 
         assertThat(createdUser).isNotNull();
+
         assertThat(createdUser.getName()).isEqualTo("User 1");
         assertThat(createdUser.getEmail()).isEqualTo("user@email.com");
     }
 
-    void testGetAllUsers() {
+    void testListUsers() {
         var response = restTemplate.exchange(get(USER_BASE_URL).build(), USER_LIST);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -274,11 +305,12 @@ class ComponentTest {
 
         assertThat(users).isNotNull();
         assertThat(users.size()).isEqualTo(1);
+
         assertThat(users.get(0).getName()).isEqualTo("User 1");
         assertThat(users.get(0).getEmail()).isEqualTo("user@email.com");
     }
 
-    void testGetUserById() {
+    void testFindUser() {
         var response = restTemplate.exchange(get(USER_BASE_URL + "/1").build(), USER);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -316,11 +348,119 @@ class ComponentTest {
         assertThat(deletedUser.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
+    @Test
+    void testCreateAchievement() {
+        var body = new CreateAchievementRequest("New Achievement", 1L);
+
+        var response = restTemplate.exchange(post(ACHIEVEMENT_BASE_URL).body(body), ACHIEVEMENT);
+
+        var createdAchievement = response.getBody();
+
+        assertThat(createdAchievement).isNotNull();
+
+        assertThat(createdAchievement.getAchievementId()).isNotNull();
+        assertThat(createdAchievement.getDescription()).isEqualTo("New Achievement");
+
+        assertThat(createdAchievement.getUser().getUserId()).isEqualTo(1L);
+        assertThat(createdAchievement.getUser().getName()).isEqualTo("User 1");
+        assertThat(createdAchievement.getUser().getEmail()).isEqualTo("user@email.com");
+    }
+
+    @Test
+    void testListAchievements() {
+        var response = restTemplate.exchange(get(ACHIEVEMENT_BASE_URL).build(), ACHIEVEMENT_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var achievements = response.getBody();
+
+        assertThat(achievements).isNotNull();
+        assertThat(achievements.size()).isEqualTo(1);
+
+        assertThat(achievements.get(0).getAchievementId()).isEqualTo(1L);
+        assertThat(achievements.get(0).getDescription()).isEqualTo("New Achievement");
+
+        assertThat(achievements.get(0).getUser().getUserId()).isEqualTo(1L);
+        assertThat(achievements.get(0).getUser().getName()).isEqualTo("User 1");
+        assertThat(achievements.get(0).getUser().getEmail()).isEqualTo("user@email.com");
+    }
+
+    @Test
+    void testFindAchievement() {
+        var response = restTemplate.exchange(get(ACHIEVEMENT_BASE_URL + "/1").build(), ACHIEVEMENT);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var achievement = response.getBody();
+
+        assertThat(achievement).isNotNull();
+
+        assertThat(achievement.getAchievementId()).isEqualTo(1L);
+        assertThat(achievement.getDescription()).isEqualTo("New Achievement");
+
+        assertThat(achievement.getUser().getUserId()).isEqualTo(1L);
+        assertThat(achievement.getUser().getName()).isEqualTo("User 1");
+        assertThat(achievement.getUser().getEmail()).isEqualTo("user@email.com");
+    }
+
+    @Test
+    void testFindAchievementsByUserId() {
+        var response = restTemplate.exchange(get(ACHIEVEMENT_BASE_URL + "/users/1").build(), ACHIEVEMENT_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var achievements = response.getBody();
+
+        assertThat(achievements).isNotNull();
+        assertThat(achievements.size()).isEqualTo(1);
+
+        assertThat(achievements.get(0).getAchievementId()).isEqualTo(1L);
+        assertThat(achievements.get(0).getDescription()).isEqualTo("New Achievement");
+
+        assertThat(achievements.get(0).getUser().getUserId()).isEqualTo(1L);
+        assertThat(achievements.get(0).getUser().getName()).isEqualTo("User 1");
+        assertThat(achievements.get(0).getUser().getEmail()).isEqualTo("user@email.com");
+    }
+
+    @Test
+    void testUpdateAchievement() {
+        var body = new UpdateAchievementRequest("Updated Achievement", 1L);
+
+        var response = restTemplate.exchange(put(ACHIEVEMENT_BASE_URL + "/1").body(body), ACHIEVEMENT);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedAchievement = response.getBody();
+
+        assertThat(updatedAchievement).isNotNull();
+
+        assertThat(updatedAchievement.getAchievementId()).isEqualTo(1L);
+        assertThat(updatedAchievement.getDescription()).isEqualTo("Updated Achievement");
+
+        assertThat(updatedAchievement.getUser().getUserId()).isEqualTo(1L);
+        assertThat(updatedAchievement.getUser().getName()).isEqualTo("User 1 Updated");
+        assertThat(updatedAchievement.getUser().getEmail()).isEqualTo("USER@EMAIL.COM");
+    }
+
+    @Test
+    void testDeleteAchievement() {
+        var response = restTemplate.exchange(delete(ACHIEVEMENT_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedAchievement = restTemplate.exchange(get(ACHIEVEMENT_BASE_URL + "/1").build(), ACHIEVEMENT);
+
+        assertThat(deletedAchievement.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
     static final String TOPIC_BASE_URL = "/api/topics";
     static final String USER_BASE_URL = "/api/users";
+    static final String ACHIEVEMENT_BASE_URL = "/api/achievements";
+
+    static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
 
     static final ParameterizedTypeReference<Forum> FORUM = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Forum>> FORUM_LIST = new ParameterizedTypeReference<>() {};
@@ -330,6 +470,7 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Topic>> TOPIC_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<User> USER = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<User>> USER_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Achievement> ACHIEVEMENT = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Achievement>> ACHIEVEMENT_LIST = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }

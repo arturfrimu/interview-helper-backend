@@ -1,5 +1,9 @@
 package com.arturfrimu.studies.controller;
 
+import com.arturfrimu.studies.dto.command.CreateAchievementCommand;
+import com.arturfrimu.studies.dto.command.UpdateAchievementCommand;
+import com.arturfrimu.studies.dto.request.CreateAchievementRequest;
+import com.arturfrimu.studies.dto.request.UpdateAchievementRequest;
 import com.arturfrimu.studies.entity.Achievement;
 import com.arturfrimu.studies.service.AchievementService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static java.util.Optional.of;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -43,14 +48,16 @@ public class AchievementController {
     }
 
     @PostMapping
-    public ResponseEntity<Achievement> create(@RequestBody Achievement achievement) {
-        var createdAchievement = achievementService.create(achievement);
+    public ResponseEntity<Achievement> create(@RequestBody CreateAchievementRequest request) {
+        var command = of(request).map(CreateAchievementCommand::valueOf).get();
+        var createdAchievement = achievementService.create(command);
         return ok(createdAchievement);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Achievement> update(@PathVariable Long id, @RequestBody Achievement achievement) {
-        var updatedAchievement = achievementService.update(id, achievement);
+    public ResponseEntity<Achievement> update(@PathVariable Long id, @RequestBody UpdateAchievementRequest request) {
+        var command = of(request).map(UpdateAchievementCommand::valueOf).get();
+        var updatedAchievement = achievementService.update(id, command);
         return ok(updatedAchievement);
     }
 
