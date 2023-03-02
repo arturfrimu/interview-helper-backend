@@ -5,6 +5,7 @@ import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateForumRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
@@ -12,6 +13,7 @@ import com.arturfrimu.studies.dto.request.Requests.UpdateAchievementRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateForumRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateUserRequest;
@@ -129,6 +131,20 @@ public final class Commands {
 
         public static UpdateSectionCommand valueOf(UpdateSectionRequest request) {
             return new UpdateSectionCommand(request.name(), request.description(), request.courseId(), request.chapterId());
+        }
+    }
+
+    public record CreateProjectCommand(String name, String description, Long courseId, Long sectionId) {
+
+        public static CreateProjectCommand valueOf(CreateProjectRequest request) {
+            return new CreateProjectCommand(request.name(), request.description(), request.courseId(), request.sectionId());
+        }
+    }
+
+    public record UpdateProjectCommand(String name, String description, Long courseId, Long sectionId) {
+
+        public static UpdateProjectCommand valueOf(UpdateProjectRequest request) {
+            return new UpdateProjectCommand(request.name(), request.description(), request.courseId(), request.sectionId());
         }
     }
 }

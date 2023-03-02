@@ -36,5 +36,9 @@ public final class Requests {
 
     public record UpdateSectionRequest(String name, String description, Long courseId, Long chapterId) {}
 
+    public record CreateProjectRequest(String name, String description, Long courseId, Long sectionId) {}
+
+    public record UpdateProjectRequest(String name, String description, Long courseId, Long sectionId) {}
+
     //@formatter:oon
 }
