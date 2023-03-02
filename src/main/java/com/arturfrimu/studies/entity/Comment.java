@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -27,11 +27,17 @@ public class Comment {
 
     private String content;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Comment(String content, Post post, User user) {
+        this.content = content;
+        this.post = post;
+        this.user = user;
+    }
 }

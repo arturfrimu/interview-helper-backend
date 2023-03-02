@@ -30,34 +30,34 @@ public class SectionController {
     private final SectionService sectionService;
 
     @GetMapping
-    public ResponseEntity<List<Section>> getAllSections() {
-        var sections = sectionService.getAllSections();
+    public ResponseEntity<List<Section>> list() {
+        var sections = sectionService.list();
         return ok(sections);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Section> getSectionById(@PathVariable("id") Long id) {
-        var section = sectionService.getSectionById(id);
+    public ResponseEntity<Section> find(@PathVariable("id") Long id) {
+        var section = sectionService.find(id);
         return ok(section);
     }
 
     @PostMapping
-    public ResponseEntity<Section> createSection(@RequestBody CreateSectionRequest body) {
+    public ResponseEntity<Section> create(@RequestBody CreateSectionRequest body) {
         var command = of(body).map(CreateSectionCommand::valueOf).get();
-        var createdSection = sectionService.createSection(command);
+        var createdSection = sectionService.create(command);
         return ok(createdSection);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Section> updateSection(@PathVariable("id") Long id, @RequestBody UpdateSectionRequest body) {
         var command = of(body).map(UpdateSectionCommand::valueOf).get();
-        var updatedSection = sectionService.updateSection(id, command);
+        var updatedSection = sectionService.update(id, command);
         return ok(updatedSection);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSection(@PathVariable("id") Long id) {
-        sectionService.deleteSection(id);
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        sectionService.delete(id);
         return ok().build();
     }
 }

@@ -2,6 +2,7 @@ package com.arturfrimu.studies.dto.command;
 
 import com.arturfrimu.studies.dto.request.Requests.CreateAchievementRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateForumRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
@@ -10,6 +11,7 @@ import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateAchievementRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateForumRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
@@ -145,6 +147,20 @@ public final class Commands {
 
         public static UpdateProjectCommand valueOf(UpdateProjectRequest request) {
             return new UpdateProjectCommand(request.name(), request.description(), request.courseId(), request.sectionId());
+        }
+    }
+
+    public record CreateCommentCommand(String contend, Long userId, Long postId) {
+
+        public static CreateCommentCommand valueOf(CreateCommentRequest request) {
+            return new CreateCommentCommand(request.content(), request.userId(), request.postId());
+        }
+    }
+
+    public record UpdateCommentCommand(String content, Long userId, Long postId) {
+
+        public static UpdateCommentCommand valueOf(UpdateCommentRequest request) {
+            return new UpdateCommentCommand(request.content(), request.userId(), request.postId());
         }
     }
 }

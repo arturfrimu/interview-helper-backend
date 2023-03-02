@@ -40,5 +40,9 @@ public final class Requests {
 
     public record UpdateProjectRequest(String name, String description, Long courseId, Long sectionId) {}
 
+    public record CreateCommentRequest(String content, Long userId, Long postId) {}
+
+    public record UpdateCommentRequest(String content, Long userId, Long postId) {}
+
     //@formatter:oon
 }

@@ -22,16 +22,16 @@ public class SectionService {
     private final CourseRepository courseRepository;
     private final ChapterRepository chapterRepository;
 
-    public List<Section> getAllSections() {
+    public List<Section> list() {
         return sectionRepository.findAll();
     }
 
-    public Section getSectionById(Long id) {
+    public Section find(Long id) {
         return sectionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
     }
 
-    public Section createSection(CreateSectionCommand command) {
+    public Section create(CreateSectionCommand command) {
         var existingCourse = courseRepository.findById(command.courseId())
                 .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", command.courseId())));
 
@@ -43,7 +43,7 @@ public class SectionService {
         return sectionRepository.save(newSection);
     }
 
-    public Section updateSection(Long id, UpdateSectionCommand command) {
+    public Section update(Long id, UpdateSectionCommand command) {
         var existingSection = sectionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
 
@@ -61,7 +61,7 @@ public class SectionService {
         return sectionRepository.save(existingSection);
     }
 
-    public void deleteSection(Long id) {
+    public void delete(Long id) {
         var existingSection = sectionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
 

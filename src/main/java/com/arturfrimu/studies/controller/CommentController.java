@@ -1,5 +1,9 @@
 package com.arturfrimu.studies.controller;
 
+import com.arturfrimu.studies.dto.command.Commands.CreateCommentCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateCommentCommand;
+import com.arturfrimu.studies.dto.request.Requests.CreateCommentRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateCommentRequest;
 import com.arturfrimu.studies.entity.Comment;
 import com.arturfrimu.studies.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static java.util.Optional.of;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -37,14 +42,16 @@ public class CommentController {
     }
 
     @PostMapping
-    ResponseEntity<Comment> create(@RequestBody Comment comment) {
-        var createdComment = commentService.create(comment);
+    ResponseEntity<Comment> create(@RequestBody CreateCommentRequest body) {
+        var command = of(body).map(CreateCommentCommand::valueOf).get();
+        var createdComment = commentService.create(command);
         return ok(createdComment);
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Comment> update(@PathVariable Long id, @RequestBody Comment comment) {
-        var updatedComment = commentService.update(id, comment);
+    ResponseEntity<Comment> update(@PathVariable Long id, @RequestBody UpdateCommentRequest body) {
+        var command = of(body).map(UpdateCommentCommand::valueOf).get();
+        var updatedComment = commentService.update(id, command);
         return ok(updatedComment);
     }
 

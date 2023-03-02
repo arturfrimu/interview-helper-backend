@@ -2,6 +2,7 @@ package com.arturfrimu.studies.component;
 
 import com.arturfrimu.studies.dto.request.Requests;
 import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateProjectRequest;
@@ -9,12 +10,14 @@ import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateChapterRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
 import com.arturfrimu.studies.entity.Achievement;
 import com.arturfrimu.studies.entity.Chapter;
+import com.arturfrimu.studies.entity.Comment;
 import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.entity.Forum;
 import com.arturfrimu.studies.entity.Post;
@@ -97,6 +100,11 @@ class ComponentTest {
         testFindProject();
 
 
+        testCreateComment();
+        testListComments();
+        testFindComment();
+
+
         testUpdateForum();
         testUpdateCourse();
         testUpdateTopic();
@@ -106,8 +114,10 @@ class ComponentTest {
         testUpdatePost();
         testUpdateSection();
         testUpdateProject();
+        testUpdateComment();
 
 
+        testDeleteComment();
         testDeleteProject();
         testDeleteSection();
         testDeleteChapter();
@@ -839,6 +849,101 @@ class ComponentTest {
         assertThat(deletedProject.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
+    void testCreateComment() {
+        var body = new CreateCommentRequest("Comment 1", 1L, 1L);
+
+        var response = restTemplate.exchange(post(COMMENT_BASE_URL).body(body), COMMENT);
+
+        var createdComment = response.getBody();
+
+        assertThat(createdComment).isNotNull();
+
+        assertThat(createdComment.getCommentId()).isNotNull();
+        assertThat(createdComment.getContent()).isEqualTo("Comment 1");
+
+        assertThat(createdComment.getUser().getUserId()).isEqualTo(1L);
+        assertThat(createdComment.getUser().getName()).isEqualTo("User 1");
+        assertThat(createdComment.getUser().getEmail()).isEqualTo("user@email.com");
+
+        assertThat(createdComment.getPost().getPostId()).isNotNull();
+        assertThat(createdComment.getPost().getTitle()).isEqualTo("Post 1");
+        assertThat(createdComment.getPost().getContent()).isEqualTo("This is the first post");
+    }
+
+    void testListComments() {
+        var response = restTemplate.exchange(get(COMMENT_BASE_URL).build(), COMMENT_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var comments = response.getBody();
+
+        assertThat(comments).isNotNull();
+        assertThat(comments.size()).isEqualTo(1);
+
+        assertThat(comments.get(0).getContent()).isEqualTo("Comment 1");
+
+        assertThat(comments.get(0).getUser().getUserId()).isEqualTo(1L);
+        assertThat(comments.get(0).getUser().getName()).isEqualTo("User 1");
+        assertThat(comments.get(0).getUser().getEmail()).isEqualTo("user@email.com");
+
+        assertThat(comments.get(0).getPost().getPostId()).isNotNull();
+        assertThat(comments.get(0).getPost().getTitle()).isEqualTo("Post 1");
+        assertThat(comments.get(0).getPost().getContent()).isEqualTo("This is the first post");
+    }
+
+    void testFindComment() {
+        var response = restTemplate.exchange(get(COMMENT_BASE_URL + "/1").build(), COMMENT);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var comment = response.getBody();
+
+        assertThat(comment).isNotNull();
+
+        assertThat(comment.getCommentId()).isNotNull();
+        assertThat(comment.getContent()).isEqualTo("Comment 1");
+
+        assertThat(comment.getUser().getUserId()).isEqualTo(1L);
+        assertThat(comment.getUser().getName()).isEqualTo("User 1");
+        assertThat(comment.getUser().getEmail()).isEqualTo("user@email.com");
+
+        assertThat(comment.getPost().getPostId()).isNotNull();
+        assertThat(comment.getPost().getTitle()).isEqualTo("Post 1");
+        assertThat(comment.getPost().getContent()).isEqualTo("This is the first post");
+    }
+
+    void testUpdateComment() {
+        var body = new UpdateCommentRequest("Comment 1 Updated", 1L, 1L);
+
+        var response = restTemplate.exchange(put(COMMENT_BASE_URL + "/1").body(body), COMMENT);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedComment = response.getBody();
+
+        assertThat(updatedComment).isNotNull();
+
+        assertThat(updatedComment.getContent()).isEqualTo("Comment 1 Updated");
+
+        assertThat(updatedComment.getUser().getUserId()).isEqualTo(1L);
+        assertThat(updatedComment.getUser().getName()).isEqualTo("User 1 Updated");
+        assertThat(updatedComment.getUser().getEmail()).isEqualTo("USER@EMAIL.COM");
+
+        assertThat(updatedComment.getPost().getPostId()).isEqualTo(1L);
+        assertThat(updatedComment.getPost().getTitle()).isEqualTo("Post 1 Updated");
+        assertThat(updatedComment.getPost().getContent()).isEqualTo("This is the first post update");
+    }
+
+    void testDeleteComment() {
+        var response = restTemplate.exchange(delete(COMMENT_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedComment = restTemplate.exchange(get(COMMENT_BASE_URL + "/1").build(), COMMENT);
+
+        assertThat(deletedComment.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
@@ -849,6 +954,7 @@ class ComponentTest {
     static final String POST_BASE_URL = "/api/posts";
     static final String SECTION_BASE_URL = "/api/sections";
     static final String PROJECT_BASE_URL = "/api/projects";
+    static final String COMMENT_BASE_URL = "/api/comments";
 
     static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
 
@@ -870,5 +976,7 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Section>> SECTION_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Project> PROJECT = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Project>> PROJECT_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Comment> COMMENT = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Comment>> COMMENT_LIST = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }
