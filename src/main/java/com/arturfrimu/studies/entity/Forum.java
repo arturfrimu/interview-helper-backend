@@ -24,4 +24,9 @@ public class Forum {
     private String name;
 
     private String description;
+
+    public Forum(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

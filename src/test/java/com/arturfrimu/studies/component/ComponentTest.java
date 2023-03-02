@@ -1,8 +1,14 @@
 package com.arturfrimu.studies.component;
 
-import com.arturfrimu.studies.dto.request.CreateAchievementRequest;
-import com.arturfrimu.studies.dto.request.UpdateAchievementRequest;
+import com.arturfrimu.studies.dto.request.Requests;
+import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateChapterRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
 import com.arturfrimu.studies.entity.Achievement;
+import com.arturfrimu.studies.entity.Chapter;
 import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.entity.Forum;
 import com.arturfrimu.studies.entity.Topic;
@@ -16,6 +22,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
+import static com.arturfrimu.studies.dto.request.Requests.CreateAchievementRequest;
+import static com.arturfrimu.studies.dto.request.Requests.UpdateAchievementRequest;
+import static com.arturfrimu.studies.dto.request.Requests.UpdateUserRequest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -60,14 +69,21 @@ class ComponentTest {
         testFindAchievementsByUserId();
 
 
+        testCreateChapter();
+        testListChapters();
+        testFindChapter();
+
+
         testUpdateForum();
         testUpdateCourse();
         testUpdateTopic();
         testUpdateUser();
         testUpdateAchievement();
+        testUpdateChapter();
 
 
         testDeleteForum();
+        testDeleteChapter();
         testDeleteCourse();
         testDeleteTopic();
         testDeleteAchievement();
@@ -75,9 +91,7 @@ class ComponentTest {
     }
 
     void testCreateForum() {
-        var body = new Forum();
-        body.setName("Forum 1");
-        body.setDescription("This is the first forum");
+        var body = new Requests.CreateForumRequest("Forum 1", "This is the first forum");
 
         var response = restTemplate.exchange(post(FORUM_BASE_URL).body(body), FORUM);
 
@@ -85,6 +99,7 @@ class ComponentTest {
 
         assertThat(createdForum).isNotNull();
 
+        assertThat(createdForum.getForumId()).isNotNull();
         assertThat(createdForum.getName()).isEqualTo("Forum 1");
         assertThat(createdForum.getDescription()).isEqualTo("This is the first forum");
     }
@@ -117,9 +132,7 @@ class ComponentTest {
     }
 
     void testUpdateForum() {
-        var body = new Forum();
-        body.setName("Forum 1 Updated");
-        body.setDescription("This is the first forum updated");
+        var body = new Requests.UpdateForumRequest("Forum 1 Updated", "This is the first forum updated");
 
         var response = restTemplate.exchange(put(FORUM_BASE_URL + "/1").body(body), FORUM);
 
@@ -144,9 +157,7 @@ class ComponentTest {
     }
 
     void testCreateCourse() {
-        var body = new Course();
-        body.setName("Course 1");
-        body.setDescription("This is the first course");
+        var body = new CreateCourseRequest("Course 1", "This is the first course");
 
         var response = restTemplate.exchange(post(COURSE_BASE_URL).body(body), COURSE);
 
@@ -154,6 +165,7 @@ class ComponentTest {
 
         assertThat(createdCourse).isNotNull();
 
+        assertThat(createdCourse.getCourseId()).isNotNull();
         assertThat(createdCourse.getName()).isEqualTo("Course 1");
         assertThat(createdCourse.getDescription()).isEqualTo("This is the first course");
     }
@@ -186,9 +198,7 @@ class ComponentTest {
     }
 
     void testUpdateCourse() {
-        var body = new Course();
-        body.setName("Course 1 Updated");
-        body.setDescription("This is the first course updated");
+        var body = new Requests.UpdateCourseRequest("Course 1 Updated", "This is the first course updated");
 
         var response = restTemplate.exchange(put(COURSE_BASE_URL + "/1").body(body), COURSE);
 
@@ -213,9 +223,7 @@ class ComponentTest {
     }
 
     void testCreateTopic() {
-        var body = new Topic();
-        body.setName("Topic 1");
-        body.setDescription("This is the first topic");
+        var body = new CreateTopicRequest("Topic 1", "This is the first topic");
 
         var response = restTemplate.exchange(post(TOPIC_BASE_URL).body(body), TOPIC);
 
@@ -223,6 +231,7 @@ class ComponentTest {
 
         assertThat(createdTopic).isNotNull();
 
+        assertThat(createdTopic.getTopicId()).isNotNull();
         assertThat(createdTopic.getName()).isEqualTo("Topic 1");
         assertThat(createdTopic.getDescription()).isEqualTo("This is the first topic");
     }
@@ -255,9 +264,7 @@ class ComponentTest {
     }
 
     void testUpdateTopic() {
-        var body = new Topic();
-        body.setName("Topic 1 Updated");
-        body.setDescription("This is the first topic updated");
+        var body = new UpdateTopicRequest("Topic 1 Updated", "This is the first topic updated");
 
         var response = restTemplate.exchange(put(TOPIC_BASE_URL + "/1").body(body), TOPIC);
 
@@ -282,9 +289,7 @@ class ComponentTest {
     }
 
     void testCreateUser() {
-        var body = new User();
-        body.setName("User 1");
-        body.setEmail("user@email.com");
+        var body = new CreateUserRequest("User 1", "user@email.com");
 
         var response = restTemplate.exchange(post(USER_BASE_URL).body(body), USER);
 
@@ -292,6 +297,7 @@ class ComponentTest {
 
         assertThat(createdUser).isNotNull();
 
+        assertThat(createdUser.getUserId()).isNotNull();
         assertThat(createdUser.getName()).isEqualTo("User 1");
         assertThat(createdUser.getEmail()).isEqualTo("user@email.com");
     }
@@ -318,14 +324,13 @@ class ComponentTest {
         var user = response.getBody();
 
         assertThat(user).isNotNull();
+
         assertThat(user.getName()).isEqualTo("User 1");
         assertThat(user.getEmail()).isEqualTo("user@email.com");
     }
 
     void testUpdateUser() {
-        var body = new User();
-        body.setName("User 1 Updated");
-        body.setEmail("USER@EMAIL.COM");
+        var body = new UpdateUserRequest("User 1 Updated", "USER@EMAIL.COM");
 
         var response = restTemplate.exchange(put(USER_BASE_URL + "/1").body(body), USER);
 
@@ -334,6 +339,7 @@ class ComponentTest {
         var updatedUser = response.getBody();
 
         assertThat(updatedUser).isNotNull();
+
         assertThat(updatedUser.getName()).isEqualTo("User 1 Updated");
         assertThat(updatedUser.getEmail()).isEqualTo("USER@EMAIL.COM");
     }
@@ -453,12 +459,83 @@ class ComponentTest {
         assertThat(deletedAchievement.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
+    void testCreateChapter() {
+        var body = new CreateChapterRequest("Chapter 1", "This is the first chapter", 1L);
+
+        var response = restTemplate.exchange(post(CHAPTER_BASE_URL).body(body), CHAPTER);
+
+        var createdChapter = response.getBody();
+
+        assertThat(createdChapter).isNotNull();
+
+        assertThat(createdChapter.getChapterId()).isNotNull();
+        assertThat(createdChapter.getName()).isEqualTo("Chapter 1");
+        assertThat(createdChapter.getDescription()).isEqualTo("This is the first chapter");
+
+        assertThat(createdChapter.getCourse().getCourseId()).isEqualTo(1L);
+        assertThat(createdChapter.getCourse().getName()).isEqualTo("Course 1");
+        assertThat(createdChapter.getCourse().getDescription()).isEqualTo("This is the first course");
+    }
+
+    void testListChapters() {
+        var response = restTemplate.exchange(get(CHAPTER_BASE_URL).build(), CHAPTER_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var chapters = response.getBody();
+
+        assertThat(chapters).isNotNull();
+        assertThat(chapters.size()).isEqualTo(1);
+
+        assertThat(chapters.get(0).getName()).isEqualTo("Chapter 1");
+        assertThat(chapters.get(0).getDescription()).isEqualTo("This is the first chapter");
+    }
+
+    void testFindChapter() {
+        var response = restTemplate.exchange(get(CHAPTER_BASE_URL + "/1").build(), CHAPTER);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var chapter = response.getBody();
+
+        assertThat(chapter).isNotNull();
+
+        assertThat(chapter.getName()).isEqualTo("Chapter 1");
+        assertThat(chapter.getDescription()).isEqualTo("This is the first chapter");
+    }
+
+    void testUpdateChapter() {
+        var body = new UpdateChapterRequest("Chapter 1 Updated", "This is the first chapter update", 1L);
+
+        var response = restTemplate.exchange(put(CHAPTER_BASE_URL + "/1").body(body), CHAPTER);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedChapter = response.getBody();
+
+        assertThat(updatedChapter).isNotNull();
+
+        assertThat(updatedChapter.getName()).isEqualTo("Chapter 1 Updated");
+        assertThat(updatedChapter.getDescription()).isEqualTo("This is the first chapter update");
+    }
+
+    void testDeleteChapter() {
+        var response = restTemplate.exchange(delete(CHAPTER_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedChapter = restTemplate.exchange(get(CHAPTER_BASE_URL + "/1").build(), CHAPTER);
+
+        assertThat(deletedChapter.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
     static final String TOPIC_BASE_URL = "/api/topics";
     static final String USER_BASE_URL = "/api/users";
     static final String ACHIEVEMENT_BASE_URL = "/api/achievements";
+    static final String CHAPTER_BASE_URL = "/api/chapters";
 
     static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
 
@@ -472,5 +549,7 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<User>> USER_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Achievement> ACHIEVEMENT = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Achievement>> ACHIEVEMENT_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Chapter> CHAPTER = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Chapter>> CHAPTER_LIST = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }

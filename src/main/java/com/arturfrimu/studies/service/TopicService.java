@@ -1,5 +1,7 @@
 package com.arturfrimu.studies.service;
 
+import com.arturfrimu.studies.dto.command.Commands.CreateTopicCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateTopicCommand;
 import com.arturfrimu.studies.entity.Topic;
 import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.TopicRepository;
@@ -25,16 +27,17 @@ public class TopicService {
                 .orElseThrow(() -> new ResourceNotFoundException(format("Topic not found with id: %s", id)));
     }
 
-    public Topic create(Topic topic) {
-        return topicRepository.save(topic);
+    public Topic create(CreateTopicCommand command) {
+        var newTopic = new Topic(command.name(), command.description());
+        return topicRepository.save(newTopic);
     }
 
-    public Topic update(Long id, Topic command) {
+    public Topic update(Long id, UpdateTopicCommand command) {
         var existingTopic = topicRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Topic not found with id: %s", id)));
 
-        existingTopic.setName(command.getName());
-        existingTopic.setDescription(command.getDescription());
+        existingTopic.setName(command.name());
+        existingTopic.setDescription(command.description());
 
         return topicRepository.save(existingTopic);
     }

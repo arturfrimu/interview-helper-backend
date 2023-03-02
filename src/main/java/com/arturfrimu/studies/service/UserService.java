@@ -1,5 +1,7 @@
 package com.arturfrimu.studies.service;
 
+import com.arturfrimu.studies.dto.command.Commands.CreateUserCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateUserCommand;
 import com.arturfrimu.studies.entity.User;
 import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.UserRepository;
@@ -24,16 +26,17 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(format("User not found with id: %s", id)));
     }
 
-    public User create(User user) {
-        return userRepository.save(user);
+    public User create(CreateUserCommand command) {
+        var newUser = new User(command.name(), command.email());
+        return userRepository.save(newUser);
     }
 
-    public User update(Long id, User command) {
+    public User update(Long id, UpdateUserCommand command) {
         var existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("User not found with id: %s", id)));
 
-        existingUser.setName(command.getName());
-        existingUser.setEmail(command.getEmail());
+        existingUser.setName(command.name());
+        existingUser.setEmail(command.email());
 
         return userRepository.save(existingUser);
     }

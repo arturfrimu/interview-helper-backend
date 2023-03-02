@@ -1,9 +1,9 @@
 package com.arturfrimu.studies.controller;
 
-import com.arturfrimu.studies.dto.command.CreateAchievementCommand;
-import com.arturfrimu.studies.dto.command.UpdateAchievementCommand;
-import com.arturfrimu.studies.dto.request.CreateAchievementRequest;
-import com.arturfrimu.studies.dto.request.UpdateAchievementRequest;
+import com.arturfrimu.studies.dto.command.Commands.CreateAchievementCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateAchievementCommand;
+import com.arturfrimu.studies.dto.request.Requests.CreateAchievementRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateAchievementRequest;
 import com.arturfrimu.studies.entity.Achievement;
 import com.arturfrimu.studies.service.AchievementService;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,9 @@
 package com.arturfrimu.studies.controller;
 
+import com.arturfrimu.studies.dto.command.Commands.CreateCourseCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateCourseCommand;
+import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateCourseRequest;
 import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.service.CourseService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static java.util.Optional.of;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -37,14 +42,16 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<Course> create(@RequestBody Course course) {
-        var createdCourse = courseService.create(course);
+    public ResponseEntity<Course> create(@RequestBody CreateCourseRequest body) {
+        var command = of(body).map(CreateCourseCommand::valueOf).get();
+        var createdCourse = courseService.create(command);
         return ok(createdCourse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Course> update(@PathVariable Long id, @RequestBody Course courseDetails) {
-        var updatedCourse = courseService.update(id, courseDetails);
+    public ResponseEntity<Course> update(@PathVariable Long id, @RequestBody UpdateCourseRequest body) {
+        var command = of(body).map(UpdateCourseCommand::valueOf).get();
+        var updatedCourse = courseService.update(id, command);
         return ok(updatedCourse);
     }
 

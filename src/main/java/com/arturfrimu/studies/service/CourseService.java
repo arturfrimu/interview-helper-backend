@@ -1,5 +1,7 @@
 package com.arturfrimu.studies.service;
 
+import com.arturfrimu.studies.dto.command.Commands.CreateCourseCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateCourseCommand;
 import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.CourseRepository;
@@ -25,16 +27,17 @@ public class CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", id)));
     }
 
-    public Course create(Course course) {
-        return courseRepository.save(course);
+    public Course create(CreateCourseCommand command) {
+        var newCourse = new Course(command.name(), command.description());
+        return courseRepository.save(newCourse);
     }
 
-    public Course update(Long id, Course command) {
+    public Course update(Long id, UpdateCourseCommand command) {
         var existingCourse = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", id)));
 
-        existingCourse.setName(command.getName());
-        existingCourse.setDescription(command.getDescription());
+        existingCourse.setName(command.name());
+        existingCourse.setDescription(command.description());
 
         return courseRepository.save(existingCourse);
     }

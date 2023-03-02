@@ -1,5 +1,7 @@
 package com.arturfrimu.studies.service;
 
+import com.arturfrimu.studies.dto.command.Commands.CreateForumCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateForumCommand;
 import com.arturfrimu.studies.entity.Forum;
 import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.ForumRepository;
@@ -25,16 +27,17 @@ public class ForumService {
                 .orElseThrow(() -> new ResourceNotFoundException(format("Forum not found with id: %s", id)));
     }
 
-    public Forum create(Forum forum) {
-        return forumRepository.save(forum);
+    public Forum create(CreateForumCommand command) {
+        var newForum = new Forum(command.name(), command.description());
+        return forumRepository.save(newForum);
     }
 
-    public Forum update(Long id, Forum command) {
+    public Forum update(Long id, UpdateForumCommand command) {
         var existingForum = forumRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Forum not found with id: %s", id)));
 
-        existingForum.setName(command.getName());
-        existingForum.setDescription(command.getDescription());
+        existingForum.setName(command.name());
+        existingForum.setDescription(command.description());
 
         return forumRepository.save(existingForum);
     }
