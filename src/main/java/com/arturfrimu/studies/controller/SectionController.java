@@ -2,8 +2,8 @@ package com.arturfrimu.studies.controller;
 
 import com.arturfrimu.studies.dto.command.Commands.CreateSectionCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateSectionCommand;
-import com.arturfrimu.studies.dto.request.Requests;
 import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.studies.entity.Section;
 import com.arturfrimu.studies.service.SectionService;
 import lombok.RequiredArgsConstructor;
@@ -29,33 +29,33 @@ public class SectionController {
 
     private final SectionService sectionService;
 
-    @GetMapping("/sections")
+    @GetMapping
     public ResponseEntity<List<Section>> getAllSections() {
         var sections = sectionService.getAllSections();
         return ok(sections);
     }
 
-    @GetMapping("/sections/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Section> getSectionById(@PathVariable("id") Long id) {
         var section = sectionService.getSectionById(id);
         return ok(section);
     }
 
-    @PostMapping("/sections")
+    @PostMapping
     public ResponseEntity<Section> createSection(@RequestBody CreateSectionRequest body) {
         var command = of(body).map(CreateSectionCommand::valueOf).get();
         var createdSection = sectionService.createSection(command);
         return ok(createdSection);
     }
 
-    @PutMapping("/sections/{id}")
-    public ResponseEntity<Section> updateSection(@PathVariable("id") Long id, @RequestBody Requests.UpdateSectionRequest body) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Section> updateSection(@PathVariable("id") Long id, @RequestBody UpdateSectionRequest body) {
         var command = of(body).map(UpdateSectionCommand::valueOf).get();
         var updatedSection = sectionService.updateSection(id, command);
         return ok(updatedSection);
     }
 
-    @DeleteMapping("/sections/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSection(@PathVariable("id") Long id) {
         sectionService.deleteSection(id);
         return ok().build();

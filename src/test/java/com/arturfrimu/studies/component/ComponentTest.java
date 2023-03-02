@@ -4,10 +4,12 @@ import com.arturfrimu.studies.dto.request.Requests;
 import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
 import com.arturfrimu.studies.entity.Achievement;
 import com.arturfrimu.studies.entity.Chapter;
@@ -82,6 +84,11 @@ class ComponentTest {
         testFindPost();
 
 
+        testCreateSection();
+        testListSections();
+        testFindSection();
+
+
         testUpdateForum();
         testUpdateCourse();
         testUpdateTopic();
@@ -89,8 +96,10 @@ class ComponentTest {
         testUpdateAchievement();
         testUpdateChapter();
         testUpdatePost();
+        testUpdateSection();
 
 
+        testDeleteSection();
         testDeleteChapter();
         testDeleteCourse();
         testDeleteTopic();
@@ -142,7 +151,7 @@ class ComponentTest {
     }
 
     void testUpdateForum() {
-        var body = new Requests.UpdateForumRequest("Forum 1 Updated", "This is the first forum updated");
+        var body = new Requests.UpdateForumRequest("Forum 1 Updated", "This is the first forum update");
 
         var response = restTemplate.exchange(put(FORUM_BASE_URL + "/1").body(body), FORUM);
 
@@ -153,7 +162,7 @@ class ComponentTest {
         assertThat(updatedForum).isNotNull();
 
         assertThat(updatedForum.getName()).isEqualTo("Forum 1 Updated");
-        assertThat(updatedForum.getDescription()).isEqualTo("This is the first forum updated");
+        assertThat(updatedForum.getDescription()).isEqualTo("This is the first forum update");
     }
 
     void testDeleteForum() {
@@ -208,7 +217,7 @@ class ComponentTest {
     }
 
     void testUpdateCourse() {
-        var body = new Requests.UpdateCourseRequest("Course 1 Updated", "This is the first course updated");
+        var body = new Requests.UpdateCourseRequest("Course 1 Updated", "This is the first course update");
 
         var response = restTemplate.exchange(put(COURSE_BASE_URL + "/1").body(body), COURSE);
 
@@ -219,7 +228,7 @@ class ComponentTest {
         assertThat(updatedCourse).isNotNull();
 
         assertThat(updatedCourse.getName()).isEqualTo("Course 1 Updated");
-        assertThat(updatedCourse.getDescription()).isEqualTo("This is the first course updated");
+        assertThat(updatedCourse.getDescription()).isEqualTo("This is the first course update");
     }
 
     void testDeleteCourse() {
@@ -274,7 +283,7 @@ class ComponentTest {
     }
 
     void testUpdateTopic() {
-        var body = new UpdateTopicRequest("Topic 1 Updated", "This is the first topic updated");
+        var body = new UpdateTopicRequest("Topic 1 Updated", "This is the first topic update");
 
         var response = restTemplate.exchange(put(TOPIC_BASE_URL + "/1").body(body), TOPIC);
 
@@ -285,7 +294,7 @@ class ComponentTest {
         assertThat(updatedTopic).isNotNull();
 
         assertThat(updatedTopic.getName()).isEqualTo("Topic 1 Updated");
-        assertThat(updatedTopic.getDescription()).isEqualTo("This is the first topic updated");
+        assertThat(updatedTopic.getDescription()).isEqualTo("This is the first topic update");
     }
 
     void testDeleteTopic() {
@@ -609,7 +618,7 @@ class ComponentTest {
 
         assertThat(updatedPost.getForum().getForumId()).isEqualTo(1L);
         assertThat(updatedPost.getForum().getName()).isEqualTo("Forum 1 Updated");
-        assertThat(updatedPost.getForum().getDescription()).isEqualTo("This is the first forum updated");
+        assertThat(updatedPost.getForum().getDescription()).isEqualTo("This is the first forum update");
     }
 
     void testDeletePost() {
@@ -620,6 +629,105 @@ class ComponentTest {
         var deletedPost = restTemplate.exchange(get(POST_BASE_URL + "/1").build(), POST);
 
         assertThat(deletedPost.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
+    void testCreateSection() {
+        var body = new CreateSectionRequest("Section 1", "This is the first section", 1L, 1L);
+
+        var response = restTemplate.exchange(post(SECTION_BASE_URL).body(body), SECTION);
+
+        var createdSection = response.getBody();
+
+        assertThat(createdSection).isNotNull();
+
+        assertThat(createdSection.getSectionId()).isNotNull();
+        assertThat(createdSection.getName()).isEqualTo("Section 1");
+        assertThat(createdSection.getDescription()).isEqualTo("This is the first section");
+
+        assertThat(createdSection.getCourse().getCourseId()).isEqualTo(1L);
+        assertThat(createdSection.getCourse().getName()).isEqualTo("Course 1");
+        assertThat(createdSection.getCourse().getDescription()).isEqualTo("This is the first course");
+
+        assertThat(createdSection.getChapter().getChapterId()).isEqualTo(1L);
+        assertThat(createdSection.getChapter().getName()).isEqualTo("Chapter 1");
+        assertThat(createdSection.getChapter().getDescription()).isEqualTo("This is the first chapter");
+    }
+
+    void testListSections() {
+        var response = restTemplate.exchange(get(SECTION_BASE_URL).build(), SECTION_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var sections = response.getBody();
+
+        assertThat(sections).isNotNull();
+        assertThat(sections.size()).isEqualTo(1);
+
+        assertThat(sections.get(0).getName()).isEqualTo("Section 1");
+        assertThat(sections.get(0).getDescription()).isEqualTo("This is the first section");
+
+        assertThat(sections.get(0).getCourse().getCourseId()).isEqualTo(1L);
+        assertThat(sections.get(0).getCourse().getName()).isEqualTo("Course 1");
+        assertThat(sections.get(0).getCourse().getDescription()).isEqualTo("This is the first course");
+
+        assertThat(sections.get(0).getChapter().getChapterId()).isEqualTo(1L);
+        assertThat(sections.get(0).getChapter().getName()).isEqualTo("Chapter 1");
+        assertThat(sections.get(0).getChapter().getDescription()).isEqualTo("This is the first chapter");
+    }
+
+    void testFindSection() {
+        var response = restTemplate.exchange(get(SECTION_BASE_URL + "/1").build(), SECTION);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var section = response.getBody();
+
+        assertThat(section).isNotNull();
+
+        assertThat(section.getSectionId()).isNotNull();
+        assertThat(section.getName()).isEqualTo("Section 1");
+        assertThat(section.getDescription()).isEqualTo("This is the first section");
+
+        assertThat(section.getCourse().getCourseId()).isEqualTo(1L);
+        assertThat(section.getCourse().getName()).isEqualTo("Course 1");
+        assertThat(section.getCourse().getDescription()).isEqualTo("This is the first course");
+
+        assertThat(section.getChapter().getChapterId()).isEqualTo(1L);
+        assertThat(section.getChapter().getName()).isEqualTo("Chapter 1");
+        assertThat(section.getChapter().getDescription()).isEqualTo("This is the first chapter");
+    }
+
+    void testUpdateSection() {
+        var body = new UpdateSectionRequest("Section 1 Updated", "This is the first section update", 1L, 1L);
+
+        var response = restTemplate.exchange(put(SECTION_BASE_URL + "/1").body(body), SECTION);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedSection = response.getBody();
+
+        assertThat(updatedSection).isNotNull();
+
+        assertThat(updatedSection.getName()).isEqualTo("Section 1 Updated");
+        assertThat(updatedSection.getDescription()).isEqualTo("This is the first section update");
+
+        assertThat(updatedSection.getCourse().getCourseId()).isEqualTo(1L);
+        assertThat(updatedSection.getCourse().getName()).isEqualTo("Course 1 Updated");
+        assertThat(updatedSection.getCourse().getDescription()).isEqualTo("This is the first course update");
+
+        assertThat(updatedSection.getChapter().getChapterId()).isEqualTo(1L);
+        assertThat(updatedSection.getChapter().getName()).isEqualTo("Chapter 1 Updated");
+        assertThat(updatedSection.getChapter().getDescription()).isEqualTo("This is the first chapter update");
+    }
+
+    void testDeleteSection() {
+        var response = restTemplate.exchange(delete(SECTION_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedSection = restTemplate.exchange(get(SECTION_BASE_URL + "/1").build(), SECTION);
+
+        assertThat(deletedSection.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
     //@formatter:off
