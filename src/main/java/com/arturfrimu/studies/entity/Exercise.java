@@ -35,4 +35,11 @@ public class Exercise {
     @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "chapter_id")
     private Chapter chapter;
+
+    public Exercise(String name, String description, Course course, Chapter chapter) {
+        this.name = name;
+        this.description = description;
+        this.course = course;
+        this.chapter = chapter;
+    }
 }

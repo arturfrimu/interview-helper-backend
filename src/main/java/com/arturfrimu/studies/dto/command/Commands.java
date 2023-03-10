@@ -4,6 +4,7 @@ import com.arturfrimu.studies.dto.request.Requests.CreateAchievementRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateExerciseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateForumRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateProjectRequest;
@@ -13,6 +14,7 @@ import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateAchievementRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateCourseRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateExerciseRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateForumRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
@@ -161,6 +163,20 @@ public final class Commands {
 
         public static UpdateCommentCommand valueOf(UpdateCommentRequest request) {
             return new UpdateCommentCommand(request.content(), request.userId(), request.postId());
+        }
+    }
+
+    public record CreateExerciseCommand(String name, String description, Long courseId, Long chapterId) {
+
+        public static CreateExerciseCommand valueOf(CreateExerciseRequest request) {
+            return new CreateExerciseCommand(request.name(), request.description(), request.courseId(), request.chapterId());
+        }
+    }
+
+    public record UpdateExerciseCommand(String name, String description, Long courseId, Long chapterId) {
+
+        public static UpdateExerciseCommand valueOf(UpdateExerciseRequest request) {
+            return new UpdateExerciseCommand(request.name(), request.description(), request.courseId(), request.chapterId());
         }
     }
 }

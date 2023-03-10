@@ -4,6 +4,7 @@ import com.arturfrimu.studies.dto.request.Requests;
 import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateExerciseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
@@ -11,6 +12,7 @@ import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateCommentRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateExerciseRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
@@ -19,6 +21,7 @@ import com.arturfrimu.studies.entity.Achievement;
 import com.arturfrimu.studies.entity.Chapter;
 import com.arturfrimu.studies.entity.Comment;
 import com.arturfrimu.studies.entity.Course;
+import com.arturfrimu.studies.entity.Exercise;
 import com.arturfrimu.studies.entity.Forum;
 import com.arturfrimu.studies.entity.Post;
 import com.arturfrimu.studies.entity.Project;
@@ -105,6 +108,11 @@ class ComponentTest {
         testFindComment();
 
 
+        testCreateExercise();
+        testListExercises();
+        testFindExercise();
+
+
         testUpdateForum();
         testUpdateCourse();
         testUpdateTopic();
@@ -115,11 +123,13 @@ class ComponentTest {
         testUpdateSection();
         testUpdateProject();
         testUpdateComment();
+        testUpdateExercise();
 
 
         testDeleteComment();
         testDeleteProject();
         testDeleteSection();
+        testDeleteExercise();
         testDeleteChapter();
         testDeleteCourse();
         testDeleteTopic();
@@ -944,6 +954,107 @@ class ComponentTest {
         assertThat(deletedComment.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
+    void testCreateExercise() {
+        var body = new CreateExerciseRequest("Exercise 1", "This is the first exercise", 1L, 1L);
+
+        var response = restTemplate.exchange(post(EXERCISE_BASE_URL).body(body), EXERCISE);
+
+        var createdExercise = response.getBody();
+
+        assertThat(createdExercise).isNotNull();
+
+        assertThat(createdExercise.getExerciseId()).isNotNull();
+        assertThat(createdExercise.getName()).isEqualTo("Exercise 1");
+        assertThat(createdExercise.getDescription()).isEqualTo("This is the first exercise");
+
+        assertThat(createdExercise.getCourse().getCourseId()).isEqualTo(1L);
+        assertThat(createdExercise.getCourse().getName()).isEqualTo("Course 1");
+        assertThat(createdExercise.getCourse().getDescription()).isEqualTo("This is the first course");
+
+        assertThat(createdExercise.getChapter().getChapterId()).isNotNull();
+        assertThat(createdExercise.getChapter().getName()).isEqualTo("Chapter 1");
+        assertThat(createdExercise.getChapter().getDescription()).isEqualTo("This is the first chapter");
+    }
+
+    void testListExercises() {
+        var response = restTemplate.exchange(get(EXERCISE_BASE_URL).build(), EXERCISE_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var exercises = response.getBody();
+
+        assertThat(exercises).isNotNull();
+        assertThat(exercises.size()).isEqualTo(1);
+
+        assertThat(exercises.get(0).getExerciseId()).isNotNull();
+        assertThat(exercises.get(0).getName()).isEqualTo("Exercise 1");
+        assertThat(exercises.get(0).getDescription()).isEqualTo("This is the first exercise");
+
+        assertThat(exercises.get(0).getCourse().getCourseId()).isEqualTo(1L);
+        assertThat(exercises.get(0).getCourse().getName()).isEqualTo("Course 1");
+        assertThat(exercises.get(0).getCourse().getDescription()).isEqualTo("This is the first course");
+
+        assertThat(exercises.get(0).getChapter().getChapterId()).isNotNull();
+        assertThat(exercises.get(0).getChapter().getName()).isEqualTo("Chapter 1");
+        assertThat(exercises.get(0).getChapter().getDescription()).isEqualTo("This is the first chapter");
+    }
+
+    void testFindExercise() {
+        var response = restTemplate.exchange(get(EXERCISE_BASE_URL + "/1").build(), EXERCISE);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var exercise = response.getBody();
+
+        assertThat(exercise).isNotNull();
+
+        assertThat(exercise.getExerciseId()).isNotNull();
+        assertThat(exercise.getName()).isEqualTo("Exercise 1");
+        assertThat(exercise.getDescription()).isEqualTo("This is the first exercise");
+
+        assertThat(exercise.getCourse().getCourseId()).isEqualTo(1L);
+        assertThat(exercise.getCourse().getName()).isEqualTo("Course 1");
+        assertThat(exercise.getCourse().getDescription()).isEqualTo("This is the first course");
+
+        assertThat(exercise.getChapter().getChapterId()).isNotNull();
+        assertThat(exercise.getChapter().getName()).isEqualTo("Chapter 1");
+        assertThat(exercise.getChapter().getDescription()).isEqualTo("This is the first chapter");
+    }
+
+    void testUpdateExercise() {
+        var body = new UpdateExerciseRequest("Exercise 1 Updated", "This is the first exercise update", 1L, 1L);
+
+        var response = restTemplate.exchange(put(EXERCISE_BASE_URL + "/1").body(body), EXERCISE);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedExercise = response.getBody();
+
+        assertThat(updatedExercise).isNotNull();
+
+        assertThat(updatedExercise.getExerciseId()).isNotNull();
+        assertThat(updatedExercise.getName()).isEqualTo("Exercise 1 Updated");
+        assertThat(updatedExercise.getDescription()).isEqualTo("This is the first exercise update");
+
+        assertThat(updatedExercise.getCourse().getCourseId()).isEqualTo(1L);
+        assertThat(updatedExercise.getCourse().getName()).isEqualTo("Course 1 Updated");
+        assertThat(updatedExercise.getCourse().getDescription()).isEqualTo("This is the first course update");
+
+        assertThat(updatedExercise.getChapter().getChapterId()).isEqualTo(1L);
+        assertThat(updatedExercise.getChapter().getName()).isEqualTo("Chapter 1 Updated");
+        assertThat(updatedExercise.getChapter().getDescription()).isEqualTo("This is the first chapter update");
+    }
+
+    void testDeleteExercise() {
+        var response = restTemplate.exchange(delete(EXERCISE_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedExercise = restTemplate.exchange(get(EXERCISE_BASE_URL + "/1").build(), EXERCISE);
+
+        assertThat(deletedExercise.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
@@ -955,6 +1066,7 @@ class ComponentTest {
     static final String SECTION_BASE_URL = "/api/sections";
     static final String PROJECT_BASE_URL = "/api/projects";
     static final String COMMENT_BASE_URL = "/api/comments";
+    static final String EXERCISE_BASE_URL = "/api/exercises";
 
     static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
 
@@ -978,5 +1090,7 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Project>> PROJECT_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Comment> COMMENT = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Comment>> COMMENT_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Exercise> EXERCISE = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Exercise>> EXERCISE_LIST = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }
