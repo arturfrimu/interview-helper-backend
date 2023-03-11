@@ -1,13 +1,13 @@
 package com.arturfrimu.studies.service;
 
 import com.arturfrimu.studies.entity.Task;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import static java.lang.String.format;
 
 @Service

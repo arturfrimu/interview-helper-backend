@@ -3,7 +3,7 @@ package com.arturfrimu.studies.service;
 import com.arturfrimu.studies.dto.command.Commands.CreateChapterCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateChapterCommand;
 import com.arturfrimu.studies.entity.Chapter;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
+import com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.ChapterRepository;
 import com.arturfrimu.studies.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;

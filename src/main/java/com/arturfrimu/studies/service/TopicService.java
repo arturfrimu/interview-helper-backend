@@ -3,7 +3,7 @@ package com.arturfrimu.studies.service;
 import com.arturfrimu.studies.dto.command.Commands.CreateTopicCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateTopicCommand;
 import com.arturfrimu.studies.entity.Topic;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
+import com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

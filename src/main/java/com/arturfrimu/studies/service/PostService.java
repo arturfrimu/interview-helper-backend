@@ -3,7 +3,7 @@ package com.arturfrimu.studies.service;
 import com.arturfrimu.studies.dto.command.Commands.CreatePostCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdatePostCommand;
 import com.arturfrimu.studies.entity.Post;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
+import com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.ForumRepository;
 import com.arturfrimu.studies.repository.PostRepository;
 import lombok.RequiredArgsConstructor;

@@ -3,13 +3,13 @@ package com.arturfrimu.studies.service;
 import com.arturfrimu.studies.dto.command.Commands.CreateCourseCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateCourseCommand;
 import com.arturfrimu.studies.entity.Course;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import static java.lang.String.format;
 
 @Service

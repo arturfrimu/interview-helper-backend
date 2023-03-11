@@ -3,13 +3,13 @@ package com.arturfrimu.studies.service;
 import com.arturfrimu.studies.dto.command.Commands.CreateForumCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateForumCommand;
 import com.arturfrimu.studies.entity.Forum;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.ForumRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import static java.lang.String.format;
 
 @Service

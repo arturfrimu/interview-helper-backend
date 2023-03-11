@@ -3,7 +3,7 @@ package com.arturfrimu.studies.service;
 import com.arturfrimu.studies.dto.command.Commands.CreateProjectCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateProjectCommand;
 import com.arturfrimu.studies.entity.Project;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
+import com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.CourseRepository;
 import com.arturfrimu.studies.repository.ProjectRepository;
 import com.arturfrimu.studies.repository.SectionRepository;

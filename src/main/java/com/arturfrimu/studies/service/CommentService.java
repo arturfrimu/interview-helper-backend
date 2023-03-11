@@ -3,7 +3,7 @@ package com.arturfrimu.studies.service;
 import com.arturfrimu.studies.dto.command.Commands.CreateCommentCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateCommentCommand;
 import com.arturfrimu.studies.entity.Comment;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
+import com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.CommentRepository;
 import com.arturfrimu.studies.repository.PostRepository;
 import com.arturfrimu.studies.repository.UserRepository;

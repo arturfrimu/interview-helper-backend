@@ -3,7 +3,7 @@ package com.arturfrimu.studies.service;
 import com.arturfrimu.studies.dto.command.Commands.CreateAchievementCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateAchievementCommand;
 import com.arturfrimu.studies.entity.Achievement;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
+import com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.AchievementRepository;
 import com.arturfrimu.studies.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

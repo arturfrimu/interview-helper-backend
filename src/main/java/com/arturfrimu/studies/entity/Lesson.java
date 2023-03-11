@@ -16,6 +16,7 @@ import java.util.Set;
 
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.EAGER;
+import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -37,7 +38,7 @@ public class Lesson {
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    @OneToMany(mappedBy = "lesson", cascade = ALL)
+    @OneToMany(mappedBy = "lesson", cascade = ALL, fetch = LAZY)
     private Set<Quiz> quizzes = new LinkedHashSet<>();
 
     public Lesson(String name, String description, Topic topic) {

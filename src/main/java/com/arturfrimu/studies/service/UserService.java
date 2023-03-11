@@ -3,13 +3,13 @@ package com.arturfrimu.studies.service;
 import com.arturfrimu.studies.dto.command.Commands.CreateUserCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateUserCommand;
 import com.arturfrimu.studies.entity.User;
-import com.arturfrimu.studies.exception.ResourceNotFoundException;
 import com.arturfrimu.studies.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
 import static java.lang.String.format;
 
 @Service

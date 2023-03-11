@@ -8,6 +8,7 @@ import com.arturfrimu.studies.dto.request.Requests.CreateExerciseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateLessonRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateProjectRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateQuizRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
@@ -17,8 +18,10 @@ import com.arturfrimu.studies.dto.request.Requests.UpdateExerciseRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateLessonRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateQuizRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
+import com.arturfrimu.studies.dto.response.Response.QuizInfoResponse;
 import com.arturfrimu.studies.entity.Achievement;
 import com.arturfrimu.studies.entity.Chapter;
 import com.arturfrimu.studies.entity.Comment;
@@ -28,7 +31,6 @@ import com.arturfrimu.studies.entity.Forum;
 import com.arturfrimu.studies.entity.Lesson;
 import com.arturfrimu.studies.entity.Post;
 import com.arturfrimu.studies.entity.Project;
-import com.arturfrimu.studies.entity.Quiz;
 import com.arturfrimu.studies.entity.Section;
 import com.arturfrimu.studies.entity.Topic;
 import com.arturfrimu.studies.entity.User;
@@ -122,6 +124,11 @@ class ComponentTest {
         testFindLesson();
 
 
+        testCreateQuiz();
+        testListQuizzes();
+        testFindQuiz();
+
+
         testUpdateForum();
         testUpdateCourse();
         testUpdateTopic();
@@ -134,6 +141,7 @@ class ComponentTest {
         testUpdateComment();
         testUpdateExercise();
         testUpdateLesson();
+        testUpdateQuiz();
 
 
         testDeleteComment();
@@ -142,6 +150,7 @@ class ComponentTest {
         testDeleteExercise();
         testDeleteChapter();
         testDeleteCourse();
+        testDeleteQuiz();
         testDeleteLesson();
         testDeleteTopic();
         testDeleteAchievement();
@@ -414,7 +423,6 @@ class ComponentTest {
         assertThat(deletedUser.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
-    @Test
     void testCreateAchievement() {
         var body = new CreateAchievementRequest("New Achievement", 1L);
 
@@ -432,7 +440,6 @@ class ComponentTest {
         assertThat(createdAchievement.getUser().getEmail()).isEqualTo("user@email.com");
     }
 
-    @Test
     void testListAchievements() {
         var response = restTemplate.exchange(get(ACHIEVEMENT_BASE_URL).build(), ACHIEVEMENT_LIST);
 
@@ -451,7 +458,6 @@ class ComponentTest {
         assertThat(achievements.get(0).getUser().getEmail()).isEqualTo("user@email.com");
     }
 
-    @Test
     void testFindAchievement() {
         var response = restTemplate.exchange(get(ACHIEVEMENT_BASE_URL + "/1").build(), ACHIEVEMENT);
 
@@ -469,7 +475,6 @@ class ComponentTest {
         assertThat(achievement.getUser().getEmail()).isEqualTo("user@email.com");
     }
 
-    @Test
     void testFindAchievementsByUserId() {
         var response = restTemplate.exchange(get(ACHIEVEMENT_BASE_URL + "/users/1").build(), ACHIEVEMENT_LIST);
 
@@ -488,7 +493,6 @@ class ComponentTest {
         assertThat(achievements.get(0).getUser().getEmail()).isEqualTo("user@email.com");
     }
 
-    @Test
     void testUpdateAchievement() {
         var body = new UpdateAchievementRequest("Updated Achievement", 1L);
 
@@ -508,7 +512,6 @@ class ComponentTest {
         assertThat(updatedAchievement.getUser().getEmail()).isEqualTo("USER@EMAIL.COM");
     }
 
-    @Test
     void testDeleteAchievement() {
         var response = restTemplate.exchange(delete(ACHIEVEMENT_BASE_URL + "/1").build(), VOID);
 
@@ -1151,6 +1154,83 @@ class ComponentTest {
         assertThat(deletedLesson.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
+    void testCreateQuiz() {
+        var body = new CreateQuizRequest("Quiz 1", "This is the first quiz", 1L);
+
+        var response = restTemplate.exchange(post(QUIZ_BASE_URL).body(body), QUIZ);
+
+        var createdQuiz = response.getBody();
+
+        assertThat(createdQuiz).isNotNull();
+
+        assertThat(createdQuiz.quizId()).isNotNull();
+        assertThat(createdQuiz.name()).isEqualTo("Quiz 1");
+        assertThat(createdQuiz.description()).isEqualTo("This is the first quiz");
+
+        assertThat(createdQuiz.lessonId()).isEqualTo(1L);
+    }
+
+    void testListQuizzes() {
+        var response = restTemplate.exchange(get(QUIZ_BASE_URL).build(), QUIZ_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var quizzes = response.getBody();
+
+        assertThat(quizzes).isNotNull();
+        assertThat(quizzes.size()).isEqualTo(1);
+
+        assertThat(quizzes.get(0).quizId()).isNotNull();
+        assertThat(quizzes.get(0).name()).isEqualTo("Quiz 1");
+        assertThat(quizzes.get(0).description()).isEqualTo("This is the first quiz");
+
+        assertThat(quizzes.get(0).lessonId()).isEqualTo(1L);
+    }
+
+    void testFindQuiz() {
+        var response = restTemplate.exchange(get(QUIZ_BASE_URL + "/1").build(), QUIZ);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var quiz = response.getBody();
+
+        assertThat(quiz).isNotNull();
+
+        assertThat(quiz.quizId()).isNotNull();
+        assertThat(quiz.name()).isEqualTo("Quiz 1");
+        assertThat(quiz.description()).isEqualTo("This is the first quiz");
+
+        assertThat(quiz.lessonId()).isEqualTo(1L);
+    }
+
+    void testUpdateQuiz() {
+        var body = new UpdateQuizRequest("Quiz 1 Updated", "This is the first quiz update", 1L);
+
+        var response = restTemplate.exchange(put(QUIZ_BASE_URL + "/1").body(body), QUIZ);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedQuiz = response.getBody();
+
+        assertThat(updatedQuiz).isNotNull();
+
+        assertThat(updatedQuiz.quizId()).isNotNull();
+        assertThat(updatedQuiz.name()).isEqualTo("Quiz 1 Updated");
+        assertThat(updatedQuiz.description()).isEqualTo("This is the first quiz update");
+
+        assertThat(updatedQuiz.lessonId()).isEqualTo(1L);
+    }
+
+    void testDeleteQuiz() {
+        var response = restTemplate.exchange(delete(QUIZ_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedQuiz = restTemplate.exchange(get(QUIZ_BASE_URL + "/1").build(), QUIZ);
+
+        assertThat(deletedQuiz.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
@@ -1192,7 +1272,7 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Exercise>> EXERCISE_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Lesson> LESSON = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Lesson>> LESSON_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<Quiz> QUIZ = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<Quiz>> QUIZ_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<QuizInfoResponse> QUIZ = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<QuizInfoResponse>> QUIZ_LIST = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }
