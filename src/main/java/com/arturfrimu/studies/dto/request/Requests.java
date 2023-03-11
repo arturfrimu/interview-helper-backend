@@ -48,5 +48,13 @@ public final class Requests {
 
     public record UpdateExerciseRequest(String name, String description, Long courseId, Long chapterId) {}
 
+    public record CreateLessonRequest(String name, String description, Long topicId) {}
+
+    public record UpdateLessonRequest(String name, String description, Long topicId) {}
+
+    public record CreateQuizRequest(String name, String description, Long lessonId) {}
+
+    public record UpdateQuizRequest(String name, String description, Long lessonId) {}
+
     //@formatter:oon
 }

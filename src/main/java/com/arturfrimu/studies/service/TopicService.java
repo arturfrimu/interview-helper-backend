@@ -45,6 +45,7 @@ public class TopicService {
     public void delete(Long id) {
         var existingTopic = topicRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Topic not found with id: %s", id)));
+
         topicRepository.delete(existingTopic);
     }
 }

@@ -39,4 +39,10 @@ public class Lesson {
 
     @OneToMany(mappedBy = "lesson", cascade = ALL)
     private Set<Quiz> quizzes = new LinkedHashSet<>();
+
+    public Lesson(String name, String description, Topic topic) {
+        this.name = name;
+        this.description = description;
+        this.topic = topic;
+    }
 }

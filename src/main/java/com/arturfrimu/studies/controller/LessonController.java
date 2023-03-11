@@ -1,5 +1,9 @@
 package com.arturfrimu.studies.controller;
 
+import com.arturfrimu.studies.dto.command.Commands;
+import com.arturfrimu.studies.dto.command.Commands.UpdateLessonCommand;
+import com.arturfrimu.studies.dto.request.Requests.CreateLessonRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateLessonRequest;
 import com.arturfrimu.studies.entity.Lesson;
 import com.arturfrimu.studies.service.LessonService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static java.util.Optional.of;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -37,14 +42,16 @@ public class LessonController {
     }
 
     @PostMapping
-    public ResponseEntity<Lesson> create(@RequestBody Lesson lesson) {
-        var createdLesson = lessonService.create(lesson);
+    public ResponseEntity<Lesson> create(@RequestBody CreateLessonRequest body) {
+        var command = of(body).map(Commands.CreateLessonCommand::valueOf).get();
+        var createdLesson = lessonService.create(command);
         return ok(createdLesson);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Lesson> update(@PathVariable Long id, @RequestBody Lesson lesson) {
-        var updatedLesson = lessonService.update(id, lesson);
+    public ResponseEntity<Lesson> update(@PathVariable Long id, @RequestBody UpdateLessonRequest body) {
+        var command = of(body).map(UpdateLessonCommand::valueOf).get();
+        var updatedLesson = lessonService.update(id, command);
         return ok(updatedLesson);
     }
 

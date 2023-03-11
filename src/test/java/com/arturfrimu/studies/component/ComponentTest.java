@@ -5,6 +5,7 @@ import com.arturfrimu.studies.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateExerciseRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateLessonRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
@@ -13,6 +14,7 @@ import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateChapterRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateExerciseRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateLessonRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
@@ -23,8 +25,10 @@ import com.arturfrimu.studies.entity.Comment;
 import com.arturfrimu.studies.entity.Course;
 import com.arturfrimu.studies.entity.Exercise;
 import com.arturfrimu.studies.entity.Forum;
+import com.arturfrimu.studies.entity.Lesson;
 import com.arturfrimu.studies.entity.Post;
 import com.arturfrimu.studies.entity.Project;
+import com.arturfrimu.studies.entity.Quiz;
 import com.arturfrimu.studies.entity.Section;
 import com.arturfrimu.studies.entity.Topic;
 import com.arturfrimu.studies.entity.User;
@@ -113,6 +117,11 @@ class ComponentTest {
         testFindExercise();
 
 
+        testCreateLesson();
+        testListLessons();
+        testFindLesson();
+
+
         testUpdateForum();
         testUpdateCourse();
         testUpdateTopic();
@@ -124,6 +133,7 @@ class ComponentTest {
         testUpdateProject();
         testUpdateComment();
         testUpdateExercise();
+        testUpdateLesson();
 
 
         testDeleteComment();
@@ -132,6 +142,7 @@ class ComponentTest {
         testDeleteExercise();
         testDeleteChapter();
         testDeleteCourse();
+        testDeleteLesson();
         testDeleteTopic();
         testDeleteAchievement();
         testDeleteUser();
@@ -1055,6 +1066,91 @@ class ComponentTest {
         assertThat(deletedExercise.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
+    void testCreateLesson() {
+        var body = new CreateLessonRequest("Lesson 1", "This is the first lesson", 1L);
+
+        var response = restTemplate.exchange(post(LESSON_BASE_URL).body(body), LESSON);
+
+        var createdLesson = response.getBody();
+
+        assertThat(createdLesson).isNotNull();
+
+        assertThat(createdLesson.getLessonId()).isNotNull();
+        assertThat(createdLesson.getName()).isEqualTo("Lesson 1");
+        assertThat(createdLesson.getDescription()).isEqualTo("This is the first lesson");
+
+        assertThat(createdLesson.getTopic().getTopicId()).isEqualTo(1L);
+        assertThat(createdLesson.getTopic().getName()).isEqualTo("Topic 1");
+        assertThat(createdLesson.getTopic().getDescription()).isEqualTo("This is the first topic");
+    }
+
+    void testListLessons() {
+        var response = restTemplate.exchange(get(LESSON_BASE_URL).build(), LESSON_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var lessons = response.getBody();
+
+        assertThat(lessons).isNotNull();
+        assertThat(lessons.size()).isEqualTo(1);
+
+        assertThat(lessons.get(0).getLessonId()).isNotNull();
+        assertThat(lessons.get(0).getName()).isEqualTo("Lesson 1");
+        assertThat(lessons.get(0).getDescription()).isEqualTo("This is the first lesson");
+
+        assertThat(lessons.get(0).getTopic().getTopicId()).isEqualTo(1L);
+        assertThat(lessons.get(0).getTopic().getName()).isEqualTo("Topic 1");
+        assertThat(lessons.get(0).getTopic().getDescription()).isEqualTo("This is the first topic");
+    }
+
+    void testFindLesson() {
+        var response = restTemplate.exchange(get(LESSON_BASE_URL + "/1").build(), LESSON);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var lesson = response.getBody();
+
+        assertThat(lesson).isNotNull();
+
+        assertThat(lesson.getLessonId()).isNotNull();
+        assertThat(lesson.getName()).isEqualTo("Lesson 1");
+        assertThat(lesson.getDescription()).isEqualTo("This is the first lesson");
+
+        assertThat(lesson.getTopic().getTopicId()).isEqualTo(1L);
+        assertThat(lesson.getTopic().getName()).isEqualTo("Topic 1");
+        assertThat(lesson.getTopic().getDescription()).isEqualTo("This is the first topic");
+    }
+
+    void testUpdateLesson() {
+        var body = new UpdateLessonRequest("Lesson 1 Updated", "This is the first lesson update", 1L);
+
+        var response = restTemplate.exchange(put(LESSON_BASE_URL + "/1").body(body), LESSON);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedLesson = response.getBody();
+
+        assertThat(updatedLesson).isNotNull();
+
+        assertThat(updatedLesson.getLessonId()).isNotNull();
+        assertThat(updatedLesson.getName()).isEqualTo("Lesson 1 Updated");
+        assertThat(updatedLesson.getDescription()).isEqualTo("This is the first lesson update");
+
+        assertThat(updatedLesson.getTopic().getTopicId()).isEqualTo(1L);
+        assertThat(updatedLesson.getTopic().getName()).isEqualTo("Topic 1 Updated");
+        assertThat(updatedLesson.getTopic().getDescription()).isEqualTo("This is the first topic update");
+    }
+
+    void testDeleteLesson() {
+        var response = restTemplate.exchange(delete(LESSON_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedLesson = restTemplate.exchange(get(LESSON_BASE_URL + "/1").build(), LESSON);
+
+        assertThat(deletedLesson.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
     //@formatter:off
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
@@ -1067,6 +1163,8 @@ class ComponentTest {
     static final String PROJECT_BASE_URL = "/api/projects";
     static final String COMMENT_BASE_URL = "/api/comments";
     static final String EXERCISE_BASE_URL = "/api/exercises";
+    static final String LESSON_BASE_URL = "/api/lessons";
+    static final String QUIZ_BASE_URL = "/api/quizzes";
 
     static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
 
@@ -1092,5 +1190,9 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Comment>> COMMENT_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Exercise> EXERCISE = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Exercise>> EXERCISE_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Lesson> LESSON = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Lesson>> LESSON_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Quiz> QUIZ = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Quiz>> QUIZ_LIST = new ParameterizedTypeReference<>() {};
     //@formatter:on
 }

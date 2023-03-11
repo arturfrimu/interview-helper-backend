@@ -31,4 +31,10 @@ public class Quiz {
     @ManyToOne(cascade = ALL)
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
+
+    public Quiz(String name, String description, Lesson lesson) {
+        this.name = name;
+        this.description = description;
+        this.lesson = lesson;
+    }
 }

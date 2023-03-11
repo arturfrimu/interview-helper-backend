@@ -58,6 +58,7 @@ public class AchievementService {
     public void delete(Long id) {
         var existingAchievement = achievementRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Achievement not found with id: %s", id)));
+
         achievementRepository.delete(existingAchievement);
     }
 }

@@ -43,6 +43,7 @@ public class TaskService {
     public void delete(Long id) {
         var existingTask = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Task not found with id: %s", id)));
+
         taskRepository.delete(existingTask);
     }
 }

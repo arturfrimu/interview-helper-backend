@@ -45,6 +45,7 @@ public class ForumService {
     public void delete(Long id) {
         var existingForum = forumRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Forum not found with id: %s", id)));
+
         forumRepository.delete(existingForum);
     }
 }

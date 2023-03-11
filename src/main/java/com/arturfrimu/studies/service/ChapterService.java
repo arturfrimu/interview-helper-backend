@@ -55,6 +55,7 @@ public class ChapterService {
     public void delete(Long id) {
         var chapter = chapterRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Chapter not found with id: %s", id)));
+
         chapterRepository.delete(chapter);
     }
 }

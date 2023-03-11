@@ -45,6 +45,7 @@ public class CourseService {
     public void delete(Long id) {
         var course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Course not found by id: %s", id)));
+
         courseRepository.delete(course);
     }
 }

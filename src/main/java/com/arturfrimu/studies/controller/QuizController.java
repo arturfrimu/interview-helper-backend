@@ -1,5 +1,9 @@
 package com.arturfrimu.studies.controller;
 
+import com.arturfrimu.studies.dto.command.Commands.CreateQuizCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateQuizCommand;
+import com.arturfrimu.studies.dto.request.Requests;
+import com.arturfrimu.studies.dto.request.Requests.CreateQuizRequest;
 import com.arturfrimu.studies.entity.Quiz;
 import com.arturfrimu.studies.service.QuizService;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static java.util.Optional.of;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/quizzes")
+@RequestMapping("/api/quizzes")
 @RequiredArgsConstructor
 public class QuizController {
 
@@ -37,14 +42,16 @@ public class QuizController {
     }
 
     @PostMapping
-    public ResponseEntity<Quiz> create(@RequestBody Quiz quiz) {
-        var createdQuiz = quizService.create(quiz);
+    public ResponseEntity<Quiz> create(@RequestBody CreateQuizRequest body) {
+        var command = of(body).map(CreateQuizCommand::valueOf).get();
+        var createdQuiz = quizService.create(command);
         return ok().body(createdQuiz);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Quiz> update(@PathVariable Long id, @RequestBody Quiz quiz) {
-        var updatedQuiz = quizService.update(id, quiz);
+    public ResponseEntity<Quiz> update(@PathVariable Long id, @RequestBody Requests.UpdateQuizRequest body) {
+        var command = of(body).map(UpdateQuizCommand::valueOf).get();
+        var updatedQuiz = quizService.update(id, command);
         return ok().body(updatedQuiz);
     }
 

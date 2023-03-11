@@ -47,6 +47,7 @@ public class ReviewService {
     public void delete(Long id) {
         var existingReview = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Review not found with id: %s", id)));
+
         reviewRepository.delete(existingReview);
     }
 }

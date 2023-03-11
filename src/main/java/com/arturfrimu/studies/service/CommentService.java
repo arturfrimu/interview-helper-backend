@@ -64,6 +64,7 @@ public class CommentService {
     public void delete(Long id) {
         var existingComment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Comment not found with id: %s", id)));
+
         commentRepository.delete(existingComment);
     }
 }

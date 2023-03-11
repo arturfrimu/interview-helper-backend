@@ -6,8 +6,10 @@ import com.arturfrimu.studies.dto.request.Requests.CreateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateExerciseRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateForumRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateLessonRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateProjectRequest;
+import com.arturfrimu.studies.dto.request.Requests.CreateQuizRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.CreateUserRequest;
@@ -16,8 +18,10 @@ import com.arturfrimu.studies.dto.request.Requests.UpdateCommentRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateCourseRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateExerciseRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateForumRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateLessonRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdatePostRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
+import com.arturfrimu.studies.dto.request.Requests.UpdateQuizRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateUserRequest;
@@ -177,6 +181,34 @@ public final class Commands {
 
         public static UpdateExerciseCommand valueOf(UpdateExerciseRequest request) {
             return new UpdateExerciseCommand(request.name(), request.description(), request.courseId(), request.chapterId());
+        }
+    }
+
+    public record CreateLessonCommand(String name, String description, Long topicId) {
+
+        public static CreateLessonCommand valueOf(CreateLessonRequest request) {
+            return new CreateLessonCommand(request.name(), request.description(), request.topicId());
+        }
+    }
+
+    public record UpdateLessonCommand(String name, String description, Long topicId) {
+
+        public static UpdateLessonCommand valueOf(UpdateLessonRequest request) {
+            return new UpdateLessonCommand(request.name(), request.description(), request.topicId());
+        }
+    }
+
+    public record CreateQuizCommand(String name, String description, Long lessonId) {
+
+        public static CreateQuizCommand valueOf(CreateQuizRequest request) {
+            return new CreateQuizCommand(request.name(), request.description(), request.lessonId());
+        }
+    }
+
+    public record UpdateQuizCommand(String name, String description, Long lessonId) {
+
+        public static UpdateQuizCommand valueOf(UpdateQuizRequest request) {
+            return new UpdateQuizCommand(request.name(), request.description(), request.lessonId());
         }
     }
 }
