@@ -1,13 +1,15 @@
 package com.arturfrimu.studies.controller;
 
-import com.arturfrimu.studies.dto.command.Commands;
 import com.arturfrimu.studies.dto.command.Commands.CreateTopicCommand;
+import com.arturfrimu.studies.dto.command.Commands.UpdateTopicCommand;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
 import com.arturfrimu.studies.entity.Topic;
 import com.arturfrimu.studies.service.TopicService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequestMapping("/api/topics")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class TopicController {
 
     private final TopicService topicService;
@@ -42,15 +45,15 @@ public class TopicController {
     }
 
     @PostMapping
-    public ResponseEntity<Topic> create(@RequestBody CreateTopicRequest body) {
+    public ResponseEntity<Topic> create(@RequestBody @Valid CreateTopicRequest body) {
         var command = of(body).map(CreateTopicCommand::valueOf).get();
         var createdTopic = topicService.create(command);
         return ok(createdTopic);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Topic> update(@PathVariable Long id, @RequestBody UpdateTopicRequest body) {
-        var command = of(body).map(Commands.UpdateTopicCommand::valueOf).get();
+    public ResponseEntity<Topic> update(@PathVariable Long id, @RequestBody @Valid UpdateTopicRequest body) {
+        var command = of(body).map(UpdateTopicCommand::valueOf).get();
         var updatedTopic = topicService.update(id, command);
         return ok(updatedTopic);
     }
