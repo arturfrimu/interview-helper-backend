@@ -27,10 +27,8 @@ public class QuizService {
     }
 
     public QuizInfoResponse find(Long id) {
-        var existingQuiz = quizRepository.findById(id)
+        return quizRepository.findById(id).map(QuizInfoResponse::valueOf)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Quiz not found with id: %s", id)));
-
-        return QuizInfoResponse.valueOf(existingQuiz);
     }
 
     public QuizInfoResponse create(CreateQuizCommand command) {

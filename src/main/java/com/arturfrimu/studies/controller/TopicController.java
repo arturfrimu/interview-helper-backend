@@ -4,7 +4,7 @@ import com.arturfrimu.studies.dto.command.Commands.CreateTopicCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateTopicCommand;
 import com.arturfrimu.studies.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
-import com.arturfrimu.studies.entity.Topic;
+import com.arturfrimu.studies.dto.response.Response.TopicInfoResponse;
 import com.arturfrimu.studies.service.TopicService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,26 +33,26 @@ public class TopicController {
     private final TopicService topicService;
 
     @GetMapping
-    public ResponseEntity<List<Topic>> list() {
+    public ResponseEntity<List<TopicInfoResponse>> list() {
         var topics = topicService.list();
         return ok(topics);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Topic> find(@PathVariable Long id) {
+    public ResponseEntity<TopicInfoResponse> find(@PathVariable Long id) {
         var topic = topicService.find(id);
         return ok(topic);
     }
 
     @PostMapping
-    public ResponseEntity<Topic> create(@RequestBody @Valid CreateTopicRequest body) {
+    public ResponseEntity<TopicInfoResponse> create(@RequestBody @Valid CreateTopicRequest body) {
         var command = of(body).map(CreateTopicCommand::valueOf).get();
         var createdTopic = topicService.create(command);
         return ok(createdTopic);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Topic> update(@PathVariable Long id, @RequestBody @Valid UpdateTopicRequest body) {
+    public ResponseEntity<TopicInfoResponse> update(@PathVariable Long id, @RequestBody @Valid UpdateTopicRequest body) {
         var command = of(body).map(UpdateTopicCommand::valueOf).get();
         var updatedTopic = topicService.update(id, command);
         return ok(updatedTopic);

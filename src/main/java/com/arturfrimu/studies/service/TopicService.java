@@ -2,8 +2,10 @@ package com.arturfrimu.studies.service;
 
 import com.arturfrimu.studies.dto.command.Commands.CreateTopicCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateTopicCommand;
+import com.arturfrimu.studies.dto.response.Response.TopicInfoResponse;
 import com.arturfrimu.studies.entity.Topic;
 import com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
+import com.arturfrimu.studies.repository.ProjectRepository;
 import com.arturfrimu.studies.repository.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,29 +19,36 @@ import static java.lang.String.format;
 public class TopicService {
 
     private final TopicRepository topicRepository;
+    private final ProjectRepository projectRepository;
 
-    public List<Topic> list() {
-        return topicRepository.findAll();
+    public List<TopicInfoResponse> list() {
+        return topicRepository.findAll().stream().map(TopicInfoResponse::valueOf).toList();
     }
 
-    public Topic find(Long id) {
-        return topicRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(format("Topic not found with id: %s", id)));
+    public TopicInfoResponse find(Long id) {
+        return topicRepository.findById(id).map(TopicInfoResponse::valueOf)
+                .orElseThrow(() -> new ResourceNotFoundException(format("Lesson not found with id: %s", id)));
     }
 
-    public Topic create(CreateTopicCommand command) {
-        var newTopic = new Topic(command.name(), command.description());
-        return topicRepository.save(newTopic);
+    public TopicInfoResponse create(CreateTopicCommand command) {
+        var existingProject = projectRepository.findById(command.projectId())
+                .orElseThrow(() -> new ResourceNotFoundException(format("Project not found with id: %s", command.projectId())));
+
+        var newTopic = new Topic(command.name(), command.description(), existingProject);
+
+        return TopicInfoResponse.valueOf(topicRepository.save(newTopic));
     }
 
-    public Topic update(Long id, UpdateTopicCommand command) {
+    public TopicInfoResponse update(Long id, UpdateTopicCommand command) {
         var existingTopic = topicRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Topic not found with id: %s", id)));
 
-        existingTopic.setName(command.name());
-        existingTopic.setDescription(command.description());
+        var existingProject = projectRepository.findById(command.projectId())
+                .orElseThrow(() -> new ResourceNotFoundException(format("Project not found with id: %s", command.projectId())));
 
-        return topicRepository.save(existingTopic);
+        var updatedTopic = new Topic(existingTopic.getTopicId(), command.name(), command.description(), existingProject);
+
+        return TopicInfoResponse.valueOf(topicRepository.save(updatedTopic));
     }
 
     public void delete(Long id) {

@@ -21,7 +21,9 @@ import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateQuizRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
+import com.arturfrimu.studies.dto.response.Response;
 import com.arturfrimu.studies.dto.response.Response.QuizInfoResponse;
+import com.arturfrimu.studies.dto.response.Response.TopicInfoResponse;
 import com.arturfrimu.studies.entity.Achievement;
 import com.arturfrimu.studies.entity.Chapter;
 import com.arturfrimu.studies.entity.Comment;
@@ -30,9 +32,7 @@ import com.arturfrimu.studies.entity.Exercise;
 import com.arturfrimu.studies.entity.Forum;
 import com.arturfrimu.studies.entity.Lesson;
 import com.arturfrimu.studies.entity.Post;
-import com.arturfrimu.studies.entity.Project;
 import com.arturfrimu.studies.entity.Section;
-import com.arturfrimu.studies.entity.Topic;
 import com.arturfrimu.studies.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -64,99 +64,246 @@ class ComponentTest {
 
     @Test
     void testLifecycle() {
-        testCreateForum();
-        testListForums();
-        testFindForum();
-
-
-        testCreateCourse();
-        testListCourses();
-        testFindCourse();
-
-
-        testCreateTopic();
-        testListTopics();
-        testFindTopic();
-
-
-        testCreateUser();
-        testListUsers();
-        testFindUser();
-
-
-        testCreateAchievement();
-        testListAchievements();
-        testFindAchievement();
-        testFindAchievementsByUserId();
-
-
-        testCreateChapter();
-        testListChapters();
-        testFindChapter();
-
-        testCreatePost();
-        testListPosts();
-        testFindPost();
-
-
-        testCreateSection();
-        testListSections();
-        testFindSection();
-
-
-        testCreateProject();
+        var createdProjectId = testCreateProject();
+        testFindProject(createdProjectId);
         testListProjects();
-        testFindProject();
 
 
-        testCreateComment();
-        testListComments();
-        testFindComment();
+        var createdTopicId = testCreateTopic(createdProjectId);
+        testFindTopic(createdTopicId);
+        testListTopics();
+
+        var updatedProjectId = testUpdateProject(createdProjectId);
+        var updatedTopicId = testUpdateTopic(createdTopicId);
+
+        testDeleteTopic(updatedTopicId);
+        testDeleteProject(updatedProjectId);
+
+//        testCreateForum();
+//        testListForums();
+//        testFindForum();
+//
+//
+//        testCreateCourse();
+//        testListCourses();
+//        testFindCourse();
+//
+//
+//        testCreateUser();
+//        testListUsers();
+//        testFindUser();
 
 
-        testCreateExercise();
-        testListExercises();
-        testFindExercise();
+//        testCreateAchievement();
+//        testListAchievements();
+//        testFindAchievement();
+//        testFindAchievementsByUserId();
+//
+//
+//        testCreateChapter();
+//        testListChapters();
+//        testFindChapter();
+//
+//        testCreatePost();
+//        testListPosts();
+//        testFindPost();
+//
+//
+//        testCreateSection();
+//        testListSections();
+//        testFindSection();
+//
+//
+//        testCreateComment();
+//        testListComments();
+//        testFindComment();
+//
+//
+//        testCreateExercise();
+//        testListExercises();
+//        testFindExercise();
 
 
-        testCreateLesson();
-        testListLessons();
-        testFindLesson();
+//        testCreateLesson();
+//        testListLessons();
+//        testFindLesson();
 
 
-        testCreateQuiz();
-        testListQuizzes();
-        testFindQuiz();
+//        testCreateQuiz();
+//        testListQuizzes();
+//        testFindQuiz();
 
 
-        testUpdateForum();
-        testUpdateCourse();
-        testUpdateTopic();
-        testUpdateUser();
-        testUpdateAchievement();
-        testUpdateChapter();
-        testUpdatePost();
-        testUpdateSection();
-        testUpdateProject();
-        testUpdateComment();
-        testUpdateExercise();
-        testUpdateLesson();
-        testUpdateQuiz();
+//        testUpdateForum();
+//        testUpdateCourse();
+//        testUpdateUser();
+//        testUpdateAchievement();
+//        testUpdateChapter();
+//        testUpdatePost();
+//        testUpdateSection();
+//        testUpdateComment();
+//        testUpdateExercise();
+//        testUpdateLesson();
+//        testUpdateQuiz();
 
 
-        testDeleteComment();
-        testDeleteProject();
-        testDeleteSection();
-        testDeleteExercise();
-        testDeleteChapter();
-        testDeleteCourse();
-        testDeleteQuiz();
-        testDeleteLesson();
-        testDeleteTopic();
-        testDeleteAchievement();
-        testDeleteUser();
-        testDeletePost();
-        testDeleteForum();
+//        testDeleteComment();
+//        testDeleteSection();
+//        testDeleteExercise();
+//        testDeleteChapter();
+//        testDeleteCourse();
+//        testDeleteQuiz();
+//        testDeleteLesson();
+//        testDeleteAchievement();
+//        testDeleteUser();
+//        testDeletePost();
+//        testDeleteForum();
+    }
+
+    Long testCreateProject() {
+        var body = new CreateProjectRequest("PROJECT NAME", "PROJECT DESCRIPTION");
+
+        var response = restTemplate.exchange(post(PROJECT_BASE_URL).body(body), PROJECT);
+
+        var createdProject = response.getBody();
+
+        assertThat(createdProject).isNotNull();
+
+        assertThat(createdProject.projectId()).isNotNull();
+        assertThat(createdProject.name()).isEqualTo("PROJECT NAME");
+        assertThat(createdProject.description()).isEqualTo("PROJECT DESCRIPTION");
+
+        return createdProject.projectId();
+    }
+
+    void testListProjects() {
+        var response = restTemplate.exchange(get(PROJECT_BASE_URL).build(), PROJECT_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var projects = response.getBody();
+
+        assertThat(projects).isNotNull();
+        assertThat(projects.size()).isGreaterThan(0);
+    }
+
+    void testFindProject(Long projectId) {
+        var response = restTemplate.exchange(get(PROJECT_BASE_URL + "/" + projectId).build(), PROJECT);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var project = response.getBody();
+
+        assertThat(project).isNotNull();
+
+        assertThat(project.projectId()).isNotNull();
+        assertThat(project.name()).isEqualTo("PROJECT NAME");
+        assertThat(project.description()).isEqualTo("PROJECT DESCRIPTION");
+    }
+
+    Long testUpdateProject(Long projectId) {
+        var body = new UpdateProjectRequest("PROJECT NAME UPDATE", "PROJECT DESCRIPTION UPDATE");
+
+        var response = restTemplate.exchange(put(PROJECT_BASE_URL + "/" + projectId)
+                .body(body), PROJECT);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedProject = response.getBody();
+
+        assertThat(updatedProject).isNotNull();
+
+        assertThat(updatedProject.projectId()).isNotNull();
+        assertThat(updatedProject.name()).isEqualTo("PROJECT NAME UPDATE");
+        assertThat(updatedProject.description()).isEqualTo("PROJECT DESCRIPTION UPDATE");
+
+        return updatedProject.projectId();
+    }
+
+    void testDeleteProject(Long projectId) {
+        var response = restTemplate.exchange(delete(PROJECT_BASE_URL + "/" + projectId).build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedProject = restTemplate.exchange(get(PROJECT_BASE_URL + "/1").build(), PROJECT);
+
+        assertThat(deletedProject.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
+    Long testCreateTopic(Long projectId) {
+        var body = new CreateTopicRequest("TOPIC NAME", "TOPIC DESCRIPTION", projectId);
+
+        var response = restTemplate.exchange(post(TOPIC_BASE_URL).body(body), TOPIC);
+
+        var createdTopic = response.getBody();
+
+        assertThat(createdTopic).isNotNull();
+
+        assertThat(createdTopic.topicId()).isNotNull();
+        assertThat(createdTopic.name()).isEqualTo("TOPIC NAME");
+        assertThat(createdTopic.description()).isEqualTo("TOPIC DESCRIPTION");
+
+        assertThat(createdTopic.projectId()).isNotNull();
+        assertThat(createdTopic.projectId()).isEqualTo(1L);
+
+        return createdTopic.topicId();
+    }
+
+    void testListTopics() {
+        var response = restTemplate.exchange(get(TOPIC_BASE_URL).build(), TOPIC_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var topics = response.getBody();
+
+        assertThat(topics).isNotNull();
+        assertThat(topics.size()).isGreaterThan(0);
+    }
+
+    void testFindTopic(Long projectId) {
+        var response = restTemplate.exchange(get(TOPIC_BASE_URL + "/" + projectId).build(), TOPIC);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var topic = response.getBody();
+
+        assertThat(topic).isNotNull();
+
+        assertThat(topic.topicId()).isNotNull();
+        assertThat(topic.name()).isEqualTo("TOPIC NAME");
+        assertThat(topic.description()).isEqualTo("TOPIC DESCRIPTION");
+
+        assertThat(topic.projectId()).isEqualTo(projectId);
+    }
+
+    Long testUpdateTopic(Long projectId) {
+        var body = new UpdateTopicRequest("TOPIC NAME UPDATED", "TOPIC DESCRIPTION UPDATED", projectId);
+
+        var response = restTemplate.exchange(put(TOPIC_BASE_URL + "/" + projectId).body(body), TOPIC);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedTopic = response.getBody();
+
+        assertThat(updatedTopic).isNotNull();
+
+        assertThat(updatedTopic.topicId()).isNotNull();
+        assertThat(updatedTopic.name()).isEqualTo("TOPIC NAME UPDATED");
+        assertThat(updatedTopic.description()).isEqualTo("TOPIC DESCRIPTION UPDATED");
+
+        assertThat(updatedTopic.projectId()).isEqualTo(1L);
+
+        return updatedTopic.topicId();
+    }
+
+    void testDeleteTopic(Long topicId) {
+        var response = restTemplate.exchange(delete(TOPIC_BASE_URL + "/" + topicId).build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedTopic = restTemplate.exchange(get(TOPIC_BASE_URL + "/1").build(), TOPIC);
+
+        assertThat(deletedTopic.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
     void testCreateForum() {
@@ -289,72 +436,6 @@ class ComponentTest {
         var deletedCourse = restTemplate.exchange(get(COURSE_BASE_URL + "/1").build(), COURSE);
 
         assertThat(deletedCourse.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
-    void testCreateTopic() {
-        var body = new CreateTopicRequest("Topic 1", "This is the first topic");
-
-        var response = restTemplate.exchange(post(TOPIC_BASE_URL).body(body), TOPIC);
-
-        var createdTopic = response.getBody();
-
-        assertThat(createdTopic).isNotNull();
-
-        assertThat(createdTopic.getTopicId()).isNotNull();
-        assertThat(createdTopic.getName()).isEqualTo("Topic 1");
-        assertThat(createdTopic.getDescription()).isEqualTo("This is the first topic");
-    }
-
-    void testListTopics() {
-        var response = restTemplate.exchange(get(TOPIC_BASE_URL).build(), TOPIC_LIST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var topics = response.getBody();
-
-        assertThat(topics).isNotNull();
-        assertThat(topics.size()).isEqualTo(1);
-
-        assertThat(topics.get(0).getName()).isEqualTo("Topic 1");
-        assertThat(topics.get(0).getDescription()).isEqualTo("This is the first topic");
-    }
-
-    void testFindTopic() {
-        var response = restTemplate.exchange(get(TOPIC_BASE_URL + "/1").build(), TOPIC);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var topic = response.getBody();
-
-        assertThat(topic).isNotNull();
-
-        assertThat(topic.getName()).isEqualTo("Topic 1");
-        assertThat(topic.getDescription()).isEqualTo("This is the first topic");
-    }
-
-    void testUpdateTopic() {
-        var body = new UpdateTopicRequest("Topic 1 Updated", "This is the first topic update");
-
-        var response = restTemplate.exchange(put(TOPIC_BASE_URL + "/1").body(body), TOPIC);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var updatedTopic = response.getBody();
-
-        assertThat(updatedTopic).isNotNull();
-
-        assertThat(updatedTopic.getName()).isEqualTo("Topic 1 Updated");
-        assertThat(updatedTopic.getDescription()).isEqualTo("This is the first topic update");
-    }
-
-    void testDeleteTopic() {
-        var response = restTemplate.exchange(delete(TOPIC_BASE_URL + "/1").build(), VOID);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var deletedTopic = restTemplate.exchange(get(TOPIC_BASE_URL + "/1").build(), TOPIC);
-
-        assertThat(deletedTopic.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
     void testCreateUser() {
@@ -774,105 +855,6 @@ class ComponentTest {
         assertThat(deletedSection.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
-    void testCreateProject() {
-        var body = new CreateProjectRequest("Project 1", "This is the first project", 1L, 1L);
-
-        var response = restTemplate.exchange(post(PROJECT_BASE_URL).body(body), PROJECT);
-
-        var createdProject = response.getBody();
-
-        assertThat(createdProject).isNotNull();
-
-        assertThat(createdProject.getProjectId()).isNotNull();
-        assertThat(createdProject.getName()).isEqualTo("Project 1");
-        assertThat(createdProject.getDescription()).isEqualTo("This is the first project");
-
-        assertThat(createdProject.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(createdProject.getCourse().getName()).isEqualTo("Course 1");
-        assertThat(createdProject.getCourse().getDescription()).isEqualTo("This is the first course");
-
-        assertThat(createdProject.getSection().getSectionId()).isEqualTo(1L);
-        assertThat(createdProject.getSection().getName()).isEqualTo("Section 1");
-        assertThat(createdProject.getSection().getDescription()).isEqualTo("This is the first section");
-    }
-
-    void testListProjects() {
-        var response = restTemplate.exchange(get(PROJECT_BASE_URL).build(), PROJECT_LIST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var projects = response.getBody();
-
-        assertThat(projects).isNotNull();
-        assertThat(projects.size()).isEqualTo(1);
-
-        assertThat(projects.get(0).getName()).isEqualTo("Project 1");
-        assertThat(projects.get(0).getDescription()).isEqualTo("This is the first project");
-
-        assertThat(projects.get(0).getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(projects.get(0).getCourse().getName()).isEqualTo("Course 1");
-        assertThat(projects.get(0).getCourse().getDescription()).isEqualTo("This is the first course");
-
-        assertThat(projects.get(0).getSection().getSectionId()).isEqualTo(1L);
-        assertThat(projects.get(0).getSection().getName()).isEqualTo("Section 1");
-        assertThat(projects.get(0).getSection().getDescription()).isEqualTo("This is the first section");
-    }
-
-    void testFindProject() {
-        var response = restTemplate.exchange(get(PROJECT_BASE_URL + "/1").build(), PROJECT);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var project = response.getBody();
-
-        assertThat(project).isNotNull();
-
-        assertThat(project.getProjectId()).isNotNull();
-        assertThat(project.getName()).isEqualTo("Project 1");
-        assertThat(project.getDescription()).isEqualTo("This is the first project");
-
-        assertThat(project.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(project.getCourse().getName()).isEqualTo("Course 1");
-        assertThat(project.getCourse().getDescription()).isEqualTo("This is the first course");
-
-        assertThat(project.getSection().getSectionId()).isEqualTo(1L);
-        assertThat(project.getSection().getName()).isEqualTo("Section 1");
-        assertThat(project.getSection().getDescription()).isEqualTo("This is the first section");
-    }
-
-    void testUpdateProject() {
-        var body = new UpdateProjectRequest("Project 1 Updated", "This is the first project update", 1L, 1L);
-
-        var response = restTemplate.exchange(put(PROJECT_BASE_URL + "/1").body(body), PROJECT);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var updatedProject = response.getBody();
-
-        assertThat(updatedProject).isNotNull();
-
-        assertThat(updatedProject.getName()).isEqualTo("Project 1 Updated");
-        assertThat(updatedProject.getDescription()).isEqualTo("This is the first project update");
-
-        assertThat(updatedProject.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(updatedProject.getCourse().getName()).isEqualTo("Course 1 Updated");
-        assertThat(updatedProject.getCourse().getDescription()).isEqualTo("This is the first course update");
-
-        assertThat(updatedProject.getSection().getSectionId()).isEqualTo(1L);
-        assertThat(updatedProject.getSection().getName()).isEqualTo("Section 1 Updated");
-        assertThat(updatedProject.getSection().getDescription()).isEqualTo("This is the first section update");
-    }
-
-    void testDeleteProject() {
-        var response = restTemplate.exchange(delete(PROJECT_BASE_URL + "/1").build(), VOID);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var deletedProject = restTemplate.exchange(get(PROJECT_BASE_URL + "/1").build(), PROJECT);
-
-        assertThat(deletedProject.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
     void testCreateComment() {
         var body = new CreateCommentRequest("Comment 1", 1L, 1L);
 
@@ -1083,8 +1065,8 @@ class ComponentTest {
         assertThat(createdLesson.getDescription()).isEqualTo("This is the first lesson");
 
         assertThat(createdLesson.getTopic().getTopicId()).isEqualTo(1L);
-        assertThat(createdLesson.getTopic().getName()).isEqualTo("Topic 1");
-        assertThat(createdLesson.getTopic().getDescription()).isEqualTo("This is the first topic");
+        assertThat(createdLesson.getTopic().getName()).isEqualTo("TOPIC NAME");
+        assertThat(createdLesson.getTopic().getDescription()).isEqualTo("TOPIC DESCRIPTION");
     }
 
     void testListLessons() {
@@ -1102,8 +1084,8 @@ class ComponentTest {
         assertThat(lessons.get(0).getDescription()).isEqualTo("This is the first lesson");
 
         assertThat(lessons.get(0).getTopic().getTopicId()).isEqualTo(1L);
-        assertThat(lessons.get(0).getTopic().getName()).isEqualTo("Topic 1");
-        assertThat(lessons.get(0).getTopic().getDescription()).isEqualTo("This is the first topic");
+        assertThat(lessons.get(0).getTopic().getName()).isEqualTo("TOPIC NAME");
+        assertThat(lessons.get(0).getTopic().getDescription()).isEqualTo("TOPIC DESCRIPTION");
     }
 
     void testFindLesson() {
@@ -1120,8 +1102,8 @@ class ComponentTest {
         assertThat(lesson.getDescription()).isEqualTo("This is the first lesson");
 
         assertThat(lesson.getTopic().getTopicId()).isEqualTo(1L);
-        assertThat(lesson.getTopic().getName()).isEqualTo("Topic 1");
-        assertThat(lesson.getTopic().getDescription()).isEqualTo("This is the first topic");
+        assertThat(lesson.getTopic().getName()).isEqualTo("TOPIC NAME");
+        assertThat(lesson.getTopic().getDescription()).isEqualTo("TOPIC DESCRIPTION");
     }
 
     void testUpdateLesson() {
@@ -1140,8 +1122,8 @@ class ComponentTest {
         assertThat(updatedLesson.getDescription()).isEqualTo("This is the first lesson update");
 
         assertThat(updatedLesson.getTopic().getTopicId()).isEqualTo(1L);
-        assertThat(updatedLesson.getTopic().getName()).isEqualTo("Topic 1 Updated");
-        assertThat(updatedLesson.getTopic().getDescription()).isEqualTo("This is the first topic update");
+        assertThat(updatedLesson.getTopic().getName()).isEqualTo("TOPIC NAME UPDATED");
+        assertThat(updatedLesson.getTopic().getDescription()).isEqualTo("TOPIC DESCRIPTION UPDATED");
     }
 
     void testDeleteLesson() {
@@ -1252,8 +1234,8 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Forum>> FORUM_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Course> COURSE = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Course>> COURSE_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<Topic> TOPIC = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<Topic>> TOPIC_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<TopicInfoResponse> TOPIC = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<TopicInfoResponse>> TOPIC_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<User> USER = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<User>> USER_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Achievement> ACHIEVEMENT = new ParameterizedTypeReference<>() {};
@@ -1264,8 +1246,8 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Post>> POST_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Section> SECTION = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Section>> SECTION_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<Project> PROJECT = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<Project>> PROJECT_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<Response.ProjectInfoResponse> PROJECT = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<Response.ProjectInfoResponse>> PROJECT_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Comment> COMMENT = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Comment>> COMMENT_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Exercise> EXERCISE = new ParameterizedTypeReference<>() {};

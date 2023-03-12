@@ -2,15 +2,15 @@ package com.arturfrimu.studies.service;
 
 import com.arturfrimu.studies.dto.command.Commands.CreateProjectCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateProjectCommand;
+import com.arturfrimu.studies.dto.response.Response.ProjectInfoResponse;
 import com.arturfrimu.studies.entity.Project;
 import com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
-import com.arturfrimu.studies.repository.CourseRepository;
 import com.arturfrimu.studies.repository.ProjectRepository;
-import com.arturfrimu.studies.repository.SectionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.String.format;
 
@@ -19,46 +19,29 @@ import static java.lang.String.format;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final CourseRepository courseRepository;
-    private final SectionRepository sectionRepository;
 
-    public List<Project> list() {
-        return projectRepository.findAll();
+    public List<ProjectInfoResponse> list() {
+        return projectRepository.findAll().stream().map(ProjectInfoResponse::valueOf).toList();
     }
 
-    public Project find(Long id) {
-        return projectRepository.findById(id)
+    public ProjectInfoResponse find(Long id) {
+        return projectRepository.findById(id).map(ProjectInfoResponse::valueOf)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Project not found with id: %s", id)));
     }
 
-    public Project create(CreateProjectCommand command) {
-        var existingCourse = courseRepository.findById(command.courseId())
-                .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", command.courseId())));
+    public ProjectInfoResponse create(CreateProjectCommand command) {
+        var newProject = new Project(command.name(), command.description());
 
-        var existingSection = sectionRepository.findById(command.sectionId())
-                .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", command.sectionId())));
-
-        var newProject = new Project(command.name(), command.description(), existingCourse, existingSection);
-
-        return projectRepository.save(newProject);
+        return Optional.of(projectRepository.save(newProject)).map(ProjectInfoResponse::valueOf).get();
     }
 
-    public Project update(Long id, UpdateProjectCommand command) {
+    public ProjectInfoResponse update(Long id, UpdateProjectCommand command) {
         var existingProject = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Project not found with id: %s", id)));
 
-        var existingCourse = courseRepository.findById(command.courseId())
-                .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", command.courseId())));
+        var updatedProject = new Project(existingProject.getProjectId(), command.name(), command.description());
 
-        var existingSection = sectionRepository.findById(command.sectionId())
-                .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", command.sectionId())));
-
-        existingProject.setName(command.name());
-        existingProject.setDescription(command.description());
-        existingProject.setCourse(existingCourse);
-        existingProject.setSection(existingSection);
-
-        return projectRepository.save(existingProject);
+        return Optional.of(projectRepository.save(updatedProject)).map(ProjectInfoResponse::valueOf).get();
     }
 
     public void delete(Long id) {

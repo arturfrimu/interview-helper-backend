@@ -72,18 +72,19 @@ public final class Commands {
         }
     }
 
-    public record CreateTopicCommand(String name, String description) {
+    public record CreateTopicCommand(String name, String description, Long projectId) {
 
         public static CreateTopicCommand valueOf(CreateTopicRequest request) {
-            return new CreateTopicCommand(request.name(), request.description());
+            return new CreateTopicCommand(request.name(), request.description(), request.projectId());
         }
     }
 
-    public record UpdateTopicCommand(String name, String description) {
+    public record UpdateTopicCommand(String name, String description, Long projectId) {
 
         public static UpdateTopicCommand valueOf(UpdateTopicRequest request) {
-            return new UpdateTopicCommand(request.name(), request.description());
+            return new UpdateTopicCommand(request.name(), request.description(), request.projectId());
         }
+
     }
 
     public record CreateCourseCommand(String name, String description) {
@@ -142,17 +143,17 @@ public final class Commands {
         }
     }
 
-    public record CreateProjectCommand(String name, String description, Long courseId, Long sectionId) {
+    public record CreateProjectCommand(String name, String description) {
 
         public static CreateProjectCommand valueOf(CreateProjectRequest request) {
-            return new CreateProjectCommand(request.name(), request.description(), request.courseId(), request.sectionId());
+            return new CreateProjectCommand(request.name(), request.description());
         }
     }
 
-    public record UpdateProjectCommand(String name, String description, Long courseId, Long sectionId) {
+    public record UpdateProjectCommand(String name, String description) {
 
         public static UpdateProjectCommand valueOf(UpdateProjectRequest request) {
-            return new UpdateProjectCommand(request.name(), request.description(), request.courseId(), request.sectionId());
+            return new UpdateProjectCommand(request.name(), request.description());
         }
     }
 

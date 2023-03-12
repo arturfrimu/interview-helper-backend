@@ -2,10 +2,33 @@ package com.arturfrimu.studies.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public final class Requests {
 
     //@formatter:off
+
+    public record CreateProjectRequest(
+            @NotBlank(message = "Name of Project can not be null") String name,
+            String description
+    ) {}
+
+    public record UpdateProjectRequest(
+            @NotBlank(message = "Name of Project can not be null") String name,
+            String description
+    ) {}
+
+    public record CreateTopicRequest(
+            @NotBlank(message = "Name of Topic can not be null") String name,
+            String description,
+            @NotNull(message = "Topic needs to be assigned to a Project") Long projectId
+    ) {}
+
+    public record UpdateTopicRequest(
+            @NotBlank(message = "Name of Topic can not be null") String name,
+            String description,
+            @NotNull(message = "Topic needs to be assigned to a Project") Long projectId
+    ) {}
 
     public record CreateAchievementRequest(@NotBlank String description, Long userId) {}
 
@@ -18,16 +41,6 @@ public final class Requests {
     public record CreateUserRequest(@NotBlank String name, @Email String email) {}
 
     public record UpdateUserRequest(@NotBlank String name, @Email String email) {}
-
-    public record CreateTopicRequest(
-            @NotBlank(message = "The name of Topic can not be null") String name,
-            @NotBlank(message = "The description of Topic can not be null") String description
-    ) {}
-
-    public record UpdateTopicRequest(
-            @NotBlank(message = "The name of Topic can not be null") String name,
-            @NotBlank(message = "The description of Topic can not be null") String description
-    ) {}
 
     public record CreateCourseRequest(@NotBlank String name, @NotBlank String description) {}
 
@@ -44,10 +57,6 @@ public final class Requests {
     public record CreateSectionRequest(@NotBlank String name, @NotBlank String description, Long courseId, Long chapterId) {}
 
     public record UpdateSectionRequest(@NotBlank String name, @NotBlank String description, Long courseId, Long chapterId) {}
-
-    public record CreateProjectRequest(@NotBlank String name, @NotBlank String description, Long courseId, Long sectionId) {}
-
-    public record UpdateProjectRequest(@NotBlank String name, @NotBlank String description, Long courseId, Long sectionId) {}
 
     public record CreateCommentRequest(@NotBlank String content, Long userId, Long postId) {}
 
