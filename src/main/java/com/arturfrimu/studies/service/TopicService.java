@@ -27,7 +27,7 @@ public class TopicService {
 
     public TopicInfoResponse find(Long id) {
         return topicRepository.findById(id).map(TopicInfoResponse::valueOf)
-                .orElseThrow(() -> new ResourceNotFoundException(format("Lesson not found with id: %s", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(format("Topic not found with id: %s", id)));
     }
 
     public TopicInfoResponse create(CreateTopicCommand command) {

@@ -4,6 +4,7 @@ import com.arturfrimu.studies.dto.command.Commands.CreateProjectCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateProjectCommand;
 import com.arturfrimu.studies.dto.request.Requests.CreateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
+import com.arturfrimu.studies.dto.response.Response.ProjectDetailsResponse;
 import com.arturfrimu.studies.dto.response.Response.ProjectInfoResponse;
 import com.arturfrimu.studies.service.ProjectService;
 import jakarta.validation.Valid;
@@ -39,7 +40,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectInfoResponse> find(@PathVariable("id") Long projectId) {
+    public ResponseEntity<ProjectDetailsResponse> find(@PathVariable("id") Long projectId) {
         var project = projectService.find(projectId);
         return ok().body(project);
     }

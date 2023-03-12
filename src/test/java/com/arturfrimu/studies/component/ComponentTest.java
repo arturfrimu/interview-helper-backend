@@ -21,7 +21,8 @@ import com.arturfrimu.studies.dto.request.Requests.UpdateProjectRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateQuizRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.studies.dto.request.Requests.UpdateTopicRequest;
-import com.arturfrimu.studies.dto.response.Response;
+import com.arturfrimu.studies.dto.response.Response.ProjectDetailsResponse;
+import com.arturfrimu.studies.dto.response.Response.ProjectInfoResponse;
 import com.arturfrimu.studies.dto.response.Response.QuizInfoResponse;
 import com.arturfrimu.studies.dto.response.Response.TopicInfoResponse;
 import com.arturfrimu.studies.entity.Achievement;
@@ -163,7 +164,7 @@ class ComponentTest {
     Long testCreateProject() {
         var body = new CreateProjectRequest("PROJECT NAME", "PROJECT DESCRIPTION");
 
-        var response = restTemplate.exchange(post(PROJECT_BASE_URL).body(body), PROJECT);
+        var response = restTemplate.exchange(post(PROJECT_BASE_URL).body(body), PROJECT_INFO);
 
         var createdProject = response.getBody();
 
@@ -177,7 +178,7 @@ class ComponentTest {
     }
 
     void testListProjects() {
-        var response = restTemplate.exchange(get(PROJECT_BASE_URL).build(), PROJECT_LIST);
+        var response = restTemplate.exchange(get(PROJECT_BASE_URL).build(), PROJECT_INFO_LIST);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
 
@@ -188,7 +189,7 @@ class ComponentTest {
     }
 
     void testFindProject(Long projectId) {
-        var response = restTemplate.exchange(get(PROJECT_BASE_URL + "/" + projectId).build(), PROJECT);
+        var response = restTemplate.exchange(get(PROJECT_BASE_URL + "/" + projectId).build(), PROJECT_DETAILS);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
 
@@ -199,13 +200,14 @@ class ComponentTest {
         assertThat(project.projectId()).isNotNull();
         assertThat(project.name()).isEqualTo("PROJECT NAME");
         assertThat(project.description()).isEqualTo("PROJECT DESCRIPTION");
+        assertThat(project.topics()).isNotNull();
     }
 
     Long testUpdateProject(Long projectId) {
         var body = new UpdateProjectRequest("PROJECT NAME UPDATE", "PROJECT DESCRIPTION UPDATE");
 
         var response = restTemplate.exchange(put(PROJECT_BASE_URL + "/" + projectId)
-                .body(body), PROJECT);
+                .body(body), PROJECT_INFO);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
 
@@ -225,7 +227,7 @@ class ComponentTest {
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
 
-        var deletedProject = restTemplate.exchange(get(PROJECT_BASE_URL + "/1").build(), PROJECT);
+        var deletedProject = restTemplate.exchange(get(PROJECT_BASE_URL + "/1").build(), PROJECT_INFO);
 
         assertThat(deletedProject.getStatusCode()).isEqualTo(NOT_FOUND);
     }
@@ -1214,15 +1216,15 @@ class ComponentTest {
     }
 
     //@formatter:off
+    static final String PROJECT_BASE_URL = "/api/projects";
+    static final String TOPIC_BASE_URL = "/api/topics";
     static final String FORUM_BASE_URL = "/api/forums";
     static final String COURSE_BASE_URL = "/api/courses";
-    static final String TOPIC_BASE_URL = "/api/topics";
     static final String USER_BASE_URL = "/api/users";
     static final String ACHIEVEMENT_BASE_URL = "/api/achievements";
     static final String CHAPTER_BASE_URL = "/api/chapters";
     static final String POST_BASE_URL = "/api/posts";
     static final String SECTION_BASE_URL = "/api/sections";
-    static final String PROJECT_BASE_URL = "/api/projects";
     static final String COMMENT_BASE_URL = "/api/comments";
     static final String EXERCISE_BASE_URL = "/api/exercises";
     static final String LESSON_BASE_URL = "/api/lessons";
@@ -1230,12 +1232,15 @@ class ComponentTest {
 
     static final ParameterizedTypeReference<Void> VOID = new ParameterizedTypeReference<>() {};
 
+    static final ParameterizedTypeReference<ProjectInfoResponse> PROJECT_INFO = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<ProjectDetailsResponse> PROJECT_DETAILS = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<ProjectInfoResponse>> PROJECT_INFO_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<TopicInfoResponse> TOPIC = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<TopicInfoResponse>> TOPIC_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Forum> FORUM = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Forum>> FORUM_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Course> COURSE = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Course>> COURSE_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<TopicInfoResponse> TOPIC = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<TopicInfoResponse>> TOPIC_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<User> USER = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<User>> USER_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Achievement> ACHIEVEMENT = new ParameterizedTypeReference<>() {};
@@ -1246,8 +1251,6 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<Post>> POST_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Section> SECTION = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Section>> SECTION_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<Response.ProjectInfoResponse> PROJECT = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<Response.ProjectInfoResponse>> PROJECT_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Comment> COMMENT = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Comment>> COMMENT_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Exercise> EXERCISE = new ParameterizedTypeReference<>() {};

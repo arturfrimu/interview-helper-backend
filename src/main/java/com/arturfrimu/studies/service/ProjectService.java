@@ -2,6 +2,7 @@ package com.arturfrimu.studies.service;
 
 import com.arturfrimu.studies.dto.command.Commands.CreateProjectCommand;
 import com.arturfrimu.studies.dto.command.Commands.UpdateProjectCommand;
+import com.arturfrimu.studies.dto.response.Response.ProjectDetailsResponse;
 import com.arturfrimu.studies.dto.response.Response.ProjectInfoResponse;
 import com.arturfrimu.studies.entity.Project;
 import com.arturfrimu.studies.exception.ExceptionContainer.ResourceNotFoundException;
@@ -24,8 +25,8 @@ public class ProjectService {
         return projectRepository.findAll().stream().map(ProjectInfoResponse::valueOf).toList();
     }
 
-    public ProjectInfoResponse find(Long id) {
-        return projectRepository.findById(id).map(ProjectInfoResponse::valueOf)
+    public ProjectDetailsResponse find(Long id) {
+        return projectRepository.findById(id).map(ProjectDetailsResponse::valueOf)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Project not found with id: %s", id)));
     }
 
