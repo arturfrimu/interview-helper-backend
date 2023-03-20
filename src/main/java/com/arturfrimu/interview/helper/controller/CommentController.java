@@ -7,6 +7,7 @@ import com.arturfrimu.interview.helper.entity.Comment;
 import com.arturfrimu.interview.helper.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class CommentController {
 
     private final CommentService commentService;

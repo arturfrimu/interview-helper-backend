@@ -1,7 +1,11 @@
 package com.arturfrimu.interview.helper.dto.response;
 
+import com.arturfrimu.interview.helper.entity.Chapter;
+import com.arturfrimu.interview.helper.entity.Course;
+import com.arturfrimu.interview.helper.entity.Lesson;
 import com.arturfrimu.interview.helper.entity.Project;
 import com.arturfrimu.interview.helper.entity.Quiz;
+import com.arturfrimu.interview.helper.entity.Section;
 import com.arturfrimu.interview.helper.entity.Topic;
 
 import java.util.Set;
@@ -33,17 +37,45 @@ public final class Response {
         }
     }
 
-    public record TopicInfoResponse(Long topicId, String name, String description, Long projectId) {
+    public record TopicInfoResponse(Long topicId, String name, String description) {
 
         public static TopicInfoResponse valueOf(Topic response) {
-            return new TopicInfoResponse(response.getTopicId(), response.getName(), response.getDescription(), response.getProject().getProjectId());
+            return new TopicInfoResponse(response.getTopicId(), response.getName(), response.getDescription());
         }
     }
 
-    public record QuizInfoResponse(Long quizId, String name, String description, Long lessonId) {
+    public record CourseInfoResponse(Long courseId, String name, String description) {
+
+        public static CourseInfoResponse valueOf(Course response) {
+            return new CourseInfoResponse(response.getCourseId(), response.getName(), response.getDescription());
+        }
+    }
+
+    public record ChapterInfoResponse(Long chapterId, String name, String description) {
+
+        public static ChapterInfoResponse valueOf(Chapter response) {
+            return new ChapterInfoResponse(response.getChapterId(), response.getName(), response.getDescription());
+        }
+    }
+
+    public record SectionInfoResponse(Long sectionId, String name, String description) {
+
+        public static SectionInfoResponse valueOf(Section response) {
+            return new SectionInfoResponse(response.getSectionId(), response.getName(), response.getDescription());
+        }
+    }
+
+    public record LessonInfoResponse(Long lessonId, String name, String description) {
+
+        public static LessonInfoResponse valueOf(Lesson response) {
+            return new LessonInfoResponse(response.getLessonId(), response.getName(), response.getDescription());
+        }
+    }
+
+    public record QuizInfoResponse(Long quizId, String name, String description) {
 
         public static QuizInfoResponse valueOf(Quiz response) {
-            return new QuizInfoResponse(response.getQuizId(), response.getName(), response.getDescription(), response.getLesson().getLessonId());
+            return new QuizInfoResponse(response.getQuizId(), response.getName(), response.getDescription());
         }
     }
 }

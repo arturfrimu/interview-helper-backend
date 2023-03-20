@@ -7,6 +7,7 @@ import com.arturfrimu.interview.helper.dto.request.Requests.UpdateAchievementReq
 import com.arturfrimu.interview.helper.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequestMapping("/api/achievements")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class AchievementController {
 
     private final AchievementService achievementService;

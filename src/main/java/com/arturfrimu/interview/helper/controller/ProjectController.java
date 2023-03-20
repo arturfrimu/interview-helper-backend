@@ -1,6 +1,7 @@
 package com.arturfrimu.interview.helper.controller;
 
-import com.arturfrimu.interview.helper.dto.command.Commands;
+import com.arturfrimu.interview.helper.dto.command.Commands.CreateProjectCommand;
+import com.arturfrimu.interview.helper.dto.command.Commands.UpdateProjectCommand;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateProjectRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateProjectRequest;
 import com.arturfrimu.interview.helper.dto.response.Response.ProjectDetailsResponse;
@@ -46,16 +47,16 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<ProjectInfoResponse> create(@RequestBody @Valid CreateProjectRequest body) {
-        var command = of(body).map(Commands.CreateProjectCommand::valueOf).get();
+        var command = of(body).map(CreateProjectCommand::valueOf).get();
         var createdProject = projectService.create(command);
-        return ok(createdProject);
+        return ok().body(createdProject);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProjectInfoResponse> update(@PathVariable("id") Long id, @RequestBody UpdateProjectRequest body) {
-        var command = of(body).map(Commands.UpdateProjectCommand::valueOf).get();
+        var command = of(body).map(UpdateProjectCommand::valueOf).get();
         var updatedProject = projectService.update(id, command);
-        return ok(updatedProject);
+        return ok().body(updatedProject);
     }
 
     @DeleteMapping("/{id}")

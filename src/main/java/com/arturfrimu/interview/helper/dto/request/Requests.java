@@ -30,6 +30,42 @@ public final class Requests {
             @NotNull(message = "Topic needs to be assigned to a Project") Long projectId
     ) {}
 
+    public record CreateCourseRequest(
+            @NotBlank(message = "Name of Course can not be null") String name,
+            String description,
+            @NotNull Long topicId
+    ) {}
+
+    public record UpdateCourseRequest(
+            @NotBlank(message = "Name of Course can not be null") String name,
+            String description,
+            @NotNull Long topicId
+    ) {}
+
+    public record CreateChapterRequest(
+            @NotBlank(message = "Name of Chapter can not be null") String name,
+            String description,
+            @NotNull Long courseId
+    ) {}
+
+    public record UpdateChapterRequest(
+            @NotBlank(message = "Name of Chapter can not be null") String name,
+            String description,
+            @NotNull Long courseId
+    ) {}
+
+    public record CreateSectionRequest(
+            @NotBlank(message = "Name of Section can not be null") String name,
+            String description,
+            @NotNull Long chapterId
+    ) {}
+
+    public record UpdateSectionRequest(
+            @NotBlank(message = "Name of Section can not be null") String name,
+            String description,
+            @NotNull Long chapterId
+    ) {}
+
     public record CreateAchievementRequest(@NotBlank String description, Long userId) {}
 
     public record UpdateAchievementRequest(@NotBlank String description, Long userId) {}
@@ -42,21 +78,9 @@ public final class Requests {
 
     public record UpdateUserRequest(@NotBlank String name, @Email String email) {}
 
-    public record CreateCourseRequest(@NotBlank String name, @NotBlank String description) {}
-
-    public record UpdateCourseRequest(@NotBlank String name, @NotBlank String description) {}
-
-    public record CreateChapterRequest(@NotBlank String name, @NotBlank String description, Long courseId) {}
-
-    public record UpdateChapterRequest(@NotBlank String name, @NotBlank String description, Long courseId) {}
-
     public record CreatePostRequest(@NotBlank String title, @NotBlank String content, Long forumId) {}
 
     public record UpdatePostRequest(@NotBlank String title, @NotBlank String content, Long forumId) {}
-
-    public record CreateSectionRequest(@NotBlank String name, @NotBlank String description, Long courseId, Long chapterId) {}
-
-    public record UpdateSectionRequest(@NotBlank String name, @NotBlank String description, Long courseId, Long chapterId) {}
 
     public record CreateCommentRequest(@NotBlank String content, Long userId, Long postId) {}
 
@@ -66,9 +90,9 @@ public final class Requests {
 
     public record UpdateExerciseRequest(@NotBlank String name, @NotBlank String description, Long courseId, Long chapterId) {}
 
-    public record CreateLessonRequest(@NotBlank String name, @NotBlank String description, Long topicId) {}
+    public record CreateLessonRequest(@NotBlank String name, @NotBlank String description, Long sectionId) {}
 
-    public record UpdateLessonRequest(@NotBlank String name, @NotBlank String description, Long topicId) {}
+    public record UpdateLessonRequest(@NotBlank String name, @NotBlank String description, Long sectionId) {}
 
     public record CreateQuizRequest(@NotBlank String name, @NotBlank String description, Long lessonId) {}
 

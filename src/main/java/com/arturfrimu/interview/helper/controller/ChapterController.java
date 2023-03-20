@@ -3,10 +3,11 @@ package com.arturfrimu.interview.helper.controller;
 import com.arturfrimu.interview.helper.dto.command.Commands;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateChapterRequest;
-import com.arturfrimu.interview.helper.entity.Chapter;
+import com.arturfrimu.interview.helper.dto.response.Response.ChapterInfoResponse;
 import com.arturfrimu.interview.helper.service.ChapterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,31 +25,32 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequestMapping("/api/chapters")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class ChapterController {
 
     private final ChapterService chapterService;
 
     @GetMapping
-    public ResponseEntity<List<Chapter>> list() {
+    public ResponseEntity<List<ChapterInfoResponse>> list() {
         var chapters = chapterService.list();
         return ok(chapters);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Chapter> find(@PathVariable Long id) {
+    public ResponseEntity<ChapterInfoResponse> find(@PathVariable Long id) {
         var chapter = chapterService.find(id);
         return ok(chapter);
     }
 
     @PostMapping
-    public ResponseEntity<Chapter> create(@RequestBody CreateChapterRequest body) {
+    public ResponseEntity<ChapterInfoResponse> create(@RequestBody CreateChapterRequest body) {
         var command = of(body).map(Commands.CreateChapterCommand::valueOf).get();
         var createdChapter = chapterService.create(command);
         return ok(createdChapter);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Chapter> update(@PathVariable Long id, @RequestBody UpdateChapterRequest body) {
+    public ResponseEntity<ChapterInfoResponse> update(@PathVariable Long id, @RequestBody UpdateChapterRequest body) {
         var command = of(body).map(Commands.UpdateChapterCommand::valueOf).get();
         var updatedChapter = chapterService.update(id, command);
         return ok(updatedChapter);

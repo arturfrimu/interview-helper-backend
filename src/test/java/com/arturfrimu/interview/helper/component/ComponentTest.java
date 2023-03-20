@@ -14,6 +14,7 @@ import com.arturfrimu.interview.helper.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateChapterRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateCommentRequest;
+import com.arturfrimu.interview.helper.dto.request.Requests.UpdateCourseRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateExerciseRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateLessonRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdatePostRequest;
@@ -21,19 +22,19 @@ import com.arturfrimu.interview.helper.dto.request.Requests.UpdateProjectRequest
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateQuizRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateTopicRequest;
+import com.arturfrimu.interview.helper.dto.response.Response.ChapterInfoResponse;
+import com.arturfrimu.interview.helper.dto.response.Response.CourseInfoResponse;
+import com.arturfrimu.interview.helper.dto.response.Response.LessonInfoResponse;
 import com.arturfrimu.interview.helper.dto.response.Response.ProjectDetailsResponse;
 import com.arturfrimu.interview.helper.dto.response.Response.ProjectInfoResponse;
 import com.arturfrimu.interview.helper.dto.response.Response.QuizInfoResponse;
+import com.arturfrimu.interview.helper.dto.response.Response.SectionInfoResponse;
 import com.arturfrimu.interview.helper.dto.response.Response.TopicInfoResponse;
 import com.arturfrimu.interview.helper.entity.Achievement;
-import com.arturfrimu.interview.helper.entity.Chapter;
 import com.arturfrimu.interview.helper.entity.Comment;
-import com.arturfrimu.interview.helper.entity.Course;
 import com.arturfrimu.interview.helper.entity.Exercise;
 import com.arturfrimu.interview.helper.entity.Forum;
-import com.arturfrimu.interview.helper.entity.Lesson;
 import com.arturfrimu.interview.helper.entity.Post;
-import com.arturfrimu.interview.helper.entity.Section;
 import com.arturfrimu.interview.helper.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -66,28 +67,56 @@ class ComponentTest {
     @Test
     void testLifecycle() {
         var createdProjectId = testCreateProject();
-        testFindProject(createdProjectId);
+        var foundProjectId = testFindProject(createdProjectId);
         testListProjects();
 
 
-        var createdTopicId = testCreateTopic(createdProjectId);
-        testFindTopic(createdTopicId);
-        testListTopics();
+        var createdTopicId = testCreateTopic(foundProjectId);
+        var foundTopicId = testFindTopic(createdTopicId, foundProjectId);
+//        testListTopics();
 
-        var updatedProjectId = testUpdateProject(createdProjectId);
-        var updatedTopicId = testUpdateTopic(createdTopicId);
 
-        testDeleteTopic(updatedTopicId);
-        testDeleteProject(updatedProjectId);
+        var createdCourseId = testCreateCourse(foundTopicId);
+        var foundCourseId = testFindCourse(createdCourseId, foundTopicId);
+//        testListCourses();
+
+
+        var createdChapterId = testCreateChapter(foundCourseId);
+        var foundChapterId = testFindChapter(createdChapterId, foundCourseId);
+//        testListChapters();
+
+
+        var createdSectionId = testCreateSection(foundChapterId);
+        var foundSectionId = testFindSection(createdSectionId, foundChapterId);
+//        testListSections();
+
+
+        var createdLessonId = testCreateLesson(foundSectionId);
+        var foundLessonId = testFindLesson(createdLessonId, foundSectionId);
+//        testListLessons(createdLessonId, foundSectionId);
+
+
+        var updatedProjectId = testUpdateProject(foundProjectId);
+        var updatedTopicId = testUpdateTopic(foundTopicId, updatedProjectId);
+        var updatedCourseId = testUpdateCourse(foundCourseId, updatedTopicId);
+        var updateChapterId = testUpdateChapter(foundChapterId, updatedCourseId);
+        var updateSectionId = testUpdateSection(foundSectionId, updateChapterId);
+        var updateLessonId = testUpdateLesson(foundLessonId, foundSectionId);
+
+
+//        testDeleteLesson(updateLessonId);
+//        testDeleteSection(updateSectionId);
+//        testDeleteChapter(updateChapterId);
+//        testDeleteCourse(updatedCourseId);
+//        testDeleteTopic(updatedTopicId);
+//        testDeleteProject(updatedProjectId);
+
 
 //        testCreateForum();
 //        testListForums();
 //        testFindForum();
 //
 //
-//        testCreateCourse();
-//        testListCourses();
-//        testFindCourse();
 //
 //
 //        testCreateUser();
@@ -100,19 +129,12 @@ class ComponentTest {
 //        testFindAchievement();
 //        testFindAchievementsByUserId();
 //
-//
-//        testCreateChapter();
-//        testListChapters();
-//        testFindChapter();
-//
+
 //        testCreatePost();
 //        testListPosts();
 //        testFindPost();
 //
 //
-//        testCreateSection();
-//        testListSections();
-//        testFindSection();
 //
 //
 //        testCreateComment();
@@ -125,36 +147,27 @@ class ComponentTest {
 //        testFindExercise();
 
 
-//        testCreateLesson();
-//        testListLessons();
-//        testFindLesson();
-
-
 //        testCreateQuiz();
 //        testListQuizzes();
 //        testFindQuiz();
 
 
 //        testUpdateForum();
-//        testUpdateCourse();
 //        testUpdateUser();
 //        testUpdateAchievement();
-//        testUpdateChapter();
+
 //        testUpdatePost();
 //        testUpdateSection();
 //        testUpdateComment();
 //        testUpdateExercise();
-//        testUpdateLesson();
+
 //        testUpdateQuiz();
 
 
 //        testDeleteComment();
 //        testDeleteSection();
 //        testDeleteExercise();
-//        testDeleteChapter();
-//        testDeleteCourse();
 //        testDeleteQuiz();
-//        testDeleteLesson();
 //        testDeleteAchievement();
 //        testDeleteUser();
 //        testDeletePost();
@@ -188,7 +201,7 @@ class ComponentTest {
         assertThat(projects.size()).isGreaterThan(0);
     }
 
-    void testFindProject(Long projectId) {
+    Long testFindProject(Long projectId) {
         var response = restTemplate.exchange(get(PROJECT_BASE_URL + "/" + projectId).build(), PROJECT_DETAILS);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -201,6 +214,8 @@ class ComponentTest {
         assertThat(project.name()).isEqualTo("PROJECT NAME");
         assertThat(project.description()).isEqualTo("PROJECT DESCRIPTION");
         assertThat(project.topics()).isNotNull();
+
+        return project.projectId();
     }
 
     Long testUpdateProject(Long projectId) {
@@ -245,9 +260,6 @@ class ComponentTest {
         assertThat(createdTopic.name()).isEqualTo("TOPIC NAME");
         assertThat(createdTopic.description()).isEqualTo("TOPIC DESCRIPTION");
 
-        assertThat(createdTopic.projectId()).isNotNull();
-        assertThat(createdTopic.projectId()).isEqualTo(1L);
-
         return createdTopic.topicId();
     }
 
@@ -262,8 +274,8 @@ class ComponentTest {
         assertThat(topics.size()).isGreaterThan(0);
     }
 
-    void testFindTopic(Long projectId) {
-        var response = restTemplate.exchange(get(TOPIC_BASE_URL + "/" + projectId).build(), TOPIC);
+    Long testFindTopic(Long topicId, Long expectedProjectId) {
+        var response = restTemplate.exchange(get(TOPIC_BASE_URL + "/" + topicId).build(), TOPIC);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
 
@@ -275,13 +287,13 @@ class ComponentTest {
         assertThat(topic.name()).isEqualTo("TOPIC NAME");
         assertThat(topic.description()).isEqualTo("TOPIC DESCRIPTION");
 
-        assertThat(topic.projectId()).isEqualTo(projectId);
+        return topic.topicId();
     }
 
-    Long testUpdateTopic(Long projectId) {
-        var body = new UpdateTopicRequest("TOPIC NAME UPDATED", "TOPIC DESCRIPTION UPDATED", projectId);
+    Long testUpdateTopic(Long topicId, Long expectedProjectId) {
+        var body = new UpdateTopicRequest("TOPIC NAME UPDATED", "TOPIC DESCRIPTION UPDATED", expectedProjectId);
 
-        var response = restTemplate.exchange(put(TOPIC_BASE_URL + "/" + projectId).body(body), TOPIC);
+        var response = restTemplate.exchange(put(TOPIC_BASE_URL + "/" + topicId).body(body), TOPIC);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
 
@@ -292,8 +304,6 @@ class ComponentTest {
         assertThat(updatedTopic.topicId()).isNotNull();
         assertThat(updatedTopic.name()).isEqualTo("TOPIC NAME UPDATED");
         assertThat(updatedTopic.description()).isEqualTo("TOPIC DESCRIPTION UPDATED");
-
-        assertThat(updatedTopic.projectId()).isEqualTo(1L);
 
         return updatedTopic.topicId();
     }
@@ -306,6 +316,81 @@ class ComponentTest {
         var deletedTopic = restTemplate.exchange(get(TOPIC_BASE_URL + "/1").build(), TOPIC);
 
         assertThat(deletedTopic.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
+    Long testCreateCourse(Long topicId) {
+        var body = new CreateCourseRequest("COURSE NAME", "COURSE DESCRIPTION", topicId);
+
+        var response = restTemplate.exchange(post(COURSE_BASE_URL).body(body), COURSE);
+
+        var createdCourse = response.getBody();
+
+        assertThat(createdCourse).isNotNull();
+
+        assertThat(createdCourse.courseId()).isNotNull();
+        assertThat(createdCourse.name()).isEqualTo("COURSE NAME");
+        assertThat(createdCourse.description()).isEqualTo("COURSE DESCRIPTION");
+
+        return createdCourse.courseId();
+    }
+
+    void testListCourses() {
+        var response = restTemplate.exchange(get(COURSE_BASE_URL).build(), COURSE_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var courses = response.getBody();
+
+        assertThat(courses).isNotNull();
+
+        assertThat(courses.size()).isEqualTo(1);
+        assertThat(courses.get(0).name()).isEqualTo("COURSE NAME");
+        assertThat(courses.get(0).description()).isEqualTo("COURSE DESCRIPTION");
+    }
+
+    Long testFindCourse(Long courseId, Long expectedTopicId) {
+        var response = restTemplate.exchange(get(COURSE_BASE_URL + "/" + courseId).build(), COURSE);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var course = response.getBody();
+
+        assertThat(course).isNotNull();
+
+        assertThat(course.courseId()).isNotNull();
+        assertThat(course.name()).isEqualTo("COURSE NAME");
+        assertThat(course.description()).isEqualTo("COURSE DESCRIPTION");
+
+        return course.courseId();
+    }
+
+    Long testUpdateCourse(Long courseId, Long newTopicId) {
+        var body = new UpdateCourseRequest("COURSE NAME UPDATED", "COURSE DESCRIPTION UPDATED", newTopicId);
+
+        var response = restTemplate.exchange(put(COURSE_BASE_URL + "/" + courseId).body(body), COURSE);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedCourse = response.getBody();
+
+        assertThat(updatedCourse).isNotNull();
+
+        assertThat(updatedCourse.courseId()).isNotNull();
+        assertThat(updatedCourse.name()).isEqualTo("COURSE NAME UPDATED");
+        assertThat(updatedCourse.description()).isEqualTo("COURSE DESCRIPTION UPDATED");
+
+        return updatedCourse.courseId();
+    }
+
+    void testDeleteCourse(Long courseId) {
+        var URL = COURSE_BASE_URL + "/" + courseId;
+        var response = restTemplate.exchange(delete(URL).build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedCourse = restTemplate.exchange(get(URL).build(), COURSE);
+
+        assertThat(deletedCourse.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
     void testCreateForum() {
@@ -374,72 +459,6 @@ class ComponentTest {
         assertThat(deletedForum.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
-    void testCreateCourse() {
-        var body = new CreateCourseRequest("Course 1", "This is the first course");
-
-        var response = restTemplate.exchange(post(COURSE_BASE_URL).body(body), COURSE);
-
-        var createdCourse = response.getBody();
-
-        assertThat(createdCourse).isNotNull();
-
-        assertThat(createdCourse.getCourseId()).isNotNull();
-        assertThat(createdCourse.getName()).isEqualTo("Course 1");
-        assertThat(createdCourse.getDescription()).isEqualTo("This is the first course");
-    }
-
-    void testListCourses() {
-        var response = restTemplate.exchange(get(COURSE_BASE_URL).build(), COURSE_LIST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var courses = response.getBody();
-
-        assertThat(courses).isNotNull();
-
-        assertThat(courses.size()).isEqualTo(1);
-        assertThat(courses.get(0).getName()).isEqualTo("Course 1");
-        assertThat(courses.get(0).getDescription()).isEqualTo("This is the first course");
-    }
-
-    void testFindCourse() {
-        var response = restTemplate.exchange(get(COURSE_BASE_URL + "/1").build(), COURSE);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var course = response.getBody();
-
-        assertThat(course).isNotNull();
-
-        assertThat(course.getName()).isEqualTo("Course 1");
-        assertThat(course.getDescription()).isEqualTo("This is the first course");
-    }
-
-    void testUpdateCourse() {
-        var body = new Requests.UpdateCourseRequest("Course 1 Updated", "This is the first course update");
-
-        var response = restTemplate.exchange(put(COURSE_BASE_URL + "/1").body(body), COURSE);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var updatedCourse = response.getBody();
-
-        assertThat(updatedCourse).isNotNull();
-
-        assertThat(updatedCourse.getName()).isEqualTo("Course 1 Updated");
-        assertThat(updatedCourse.getDescription()).isEqualTo("This is the first course update");
-    }
-
-    void testDeleteCourse() {
-        var response = restTemplate.exchange(delete(COURSE_BASE_URL + "/1").build(), VOID);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var deletedCourse = restTemplate.exchange(get(COURSE_BASE_URL + "/1").build(), COURSE);
-
-        assertThat(deletedCourse.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
     void testCreateUser() {
         var body = new CreateUserRequest("User 1", "user@email.com");
 
@@ -504,6 +523,410 @@ class ComponentTest {
         var deletedUser = restTemplate.exchange(get(USER_BASE_URL + "/1").build(), USER);
 
         assertThat(deletedUser.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
+    Long testCreateChapter(Long courseId) {
+        var body = new CreateChapterRequest("CHAPTER NAME", "CHAPTER DESCRIPTION", courseId);
+
+        var response = restTemplate.exchange(post(CHAPTER_BASE_URL).body(body), CHAPTER);
+
+        var createdChapter = response.getBody();
+
+        assertThat(createdChapter).isNotNull();
+
+        assertThat(createdChapter.chapterId()).isNotNull();
+        assertThat(createdChapter.name()).isEqualTo("CHAPTER NAME");
+        assertThat(createdChapter.description()).isEqualTo("CHAPTER DESCRIPTION");
+
+        return createdChapter.chapterId();
+    }
+
+    void testListChapters() {
+        var response = restTemplate.exchange(get(CHAPTER_BASE_URL).build(), CHAPTER_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var chapters = response.getBody();
+
+        assertThat(chapters).isNotNull();
+        assertThat(chapters.size()).isEqualTo(1);
+
+        assertThat(chapters.get(0).name()).isEqualTo("CHAPTER NAME");
+        assertThat(chapters.get(0).description()).isEqualTo("CHAPTER DESCRIPTION");
+    }
+
+    Long testFindChapter(Long chapterId, Long courseId) {
+        var response = restTemplate.exchange(get(CHAPTER_BASE_URL + "/" + chapterId).build(), CHAPTER);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var chapter = response.getBody();
+
+        assertThat(chapter).isNotNull();
+
+        assertThat(chapter.chapterId()).isNotNull();
+        assertThat(chapter.name()).isEqualTo("CHAPTER NAME");
+        assertThat(chapter.description()).isEqualTo("CHAPTER DESCRIPTION");
+
+        return chapter.chapterId();
+    }
+
+    Long testUpdateChapter(Long chapterId, Long courseId) {
+        var body = new UpdateChapterRequest("CHAPTER NAME UPDATED", "CHAPTER DESCRIPTION UPDATED", courseId);
+
+        var response = restTemplate.exchange(put(CHAPTER_BASE_URL + "/" + chapterId).body(body), CHAPTER);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedChapter = response.getBody();
+
+        assertThat(updatedChapter).isNotNull();
+
+        assertThat(updatedChapter.name()).isEqualTo("CHAPTER NAME UPDATED");
+        assertThat(updatedChapter.description()).isEqualTo("CHAPTER DESCRIPTION UPDATED");
+
+        return updatedChapter.chapterId();
+    }
+
+    void testDeleteChapter(Long chapterId) {
+        var URL = CHAPTER_BASE_URL + "/" + chapterId;
+        var response = restTemplate.exchange(delete(URL).build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedChapter = restTemplate.exchange(get(URL).build(), CHAPTER);
+
+        assertThat(deletedChapter.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
+    Long testCreateSection(Long chapterId) {
+        var body = new CreateSectionRequest("SECTION NAME", "SECTION DESCRIPTION", chapterId);
+
+        var response = restTemplate.exchange(post(SECTION_BASE_URL).body(body), SECTION);
+
+        var createdSection = response.getBody();
+
+        assertThat(createdSection).isNotNull();
+
+        assertThat(createdSection.sectionId()).isNotNull();
+        assertThat(createdSection.name()).isEqualTo("SECTION NAME");
+        assertThat(createdSection.description()).isEqualTo("SECTION DESCRIPTION");
+
+        return createdSection.sectionId();
+    }
+
+    void testListSections() {
+        var response = restTemplate.exchange(get(SECTION_BASE_URL).build(), SECTION_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var sections = response.getBody();
+
+        assertThat(sections).isNotNull();
+        assertThat(sections.size()).isEqualTo(1);
+
+        assertThat(sections.get(0).name()).isEqualTo("SECTION NAME");
+        assertThat(sections.get(0).description()).isEqualTo("SECTION DESCRIPTION");
+    }
+
+    Long testFindSection(Long sectionId, Long chapterId) {
+        var response = restTemplate.exchange(get(SECTION_BASE_URL + "/" + sectionId).build(), SECTION);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var section = response.getBody();
+
+        assertThat(section).isNotNull();
+
+        assertThat(section.sectionId()).isEqualTo(sectionId);
+        assertThat(section.name()).isEqualTo("SECTION NAME");
+        assertThat(section.description()).isEqualTo("SECTION DESCRIPTION");
+
+        return section.sectionId();
+    }
+
+    Long testUpdateSection(Long sectionId, Long chapterId) {
+        var body = new UpdateSectionRequest("SECTION NAME UPDATE", "SECTION DESCRIPTION UPDATE", sectionId);
+
+        var response = restTemplate.exchange(put(SECTION_BASE_URL + "/1").body(body), SECTION);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedSection = response.getBody();
+
+        assertThat(updatedSection).isNotNull();
+
+        assertThat(updatedSection.sectionId()).isEqualTo(sectionId);
+        assertThat(updatedSection.name()).isEqualTo("SECTION NAME UPDATE");
+        assertThat(updatedSection.description()).isEqualTo("SECTION DESCRIPTION UPDATE");
+
+        return updatedSection.sectionId();
+    }
+
+    void testDeleteSection(Long sectionId) {
+        var URL = SECTION_BASE_URL + "/" + sectionId;
+        var response = restTemplate.exchange(delete(URL).build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedSection = restTemplate.exchange(get(URL).build(), SECTION);
+
+        assertThat(deletedSection.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
+    Long testCreateLesson(Long sectionId) {
+        var body = new CreateLessonRequest("LESSON NAME", "LESSON DESCRIPTION", sectionId);
+
+        var response = restTemplate.exchange(post(LESSON_BASE_URL).body(body), LESSON);
+
+        var createdLesson = response.getBody();
+
+        assertThat(createdLesson).isNotNull();
+
+        assertThat(createdLesson.lessonId()).isNotNull();
+        assertThat(createdLesson.name()).isEqualTo("LESSON NAME");
+        assertThat(createdLesson.description()).isEqualTo("LESSON DESCRIPTION");
+
+        return createdLesson.lessonId();
+    }
+
+    void testListLessons() {
+        var response = restTemplate.exchange(get(LESSON_BASE_URL).build(), LESSON_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var lessons = response.getBody();
+
+        assertThat(lessons).isNotNull();
+        assertThat(lessons.size()).isEqualTo(1);
+
+        assertThat(lessons.get(0).lessonId()).isNotNull();
+        assertThat(lessons.get(0).name()).isEqualTo("LESSON NAME");
+        assertThat(lessons.get(0).description()).isEqualTo("LESSON DESCRIPTION");
+
+    }
+
+    Long testFindLesson(Long lessonId, Long sectionId) {
+        var response = restTemplate.exchange(get(LESSON_BASE_URL + "/" + lessonId).build(), LESSON);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var lesson = response.getBody();
+
+        assertThat(lesson).isNotNull();
+
+        assertThat(lesson.lessonId()).isNotNull();
+        assertThat(lesson.name()).isEqualTo("LESSON NAME");
+        assertThat(lesson.description()).isEqualTo("LESSON DESCRIPTION");
+
+        return lesson.lessonId();
+    }
+
+    Long testUpdateLesson(Long lessonId, Long sectionId) {
+        var body = new UpdateLessonRequest("LESSON NAME UPDATE", "LESSON DESCRIPTION UPDATE", sectionId);
+
+        var response = restTemplate.exchange(put(LESSON_BASE_URL + "/" + lessonId).body(body), LESSON);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedLesson = response.getBody();
+
+        assertThat(updatedLesson).isNotNull();
+
+        assertThat(updatedLesson.lessonId()).isNotNull();
+        assertThat(updatedLesson.name()).isEqualTo("LESSON NAME UPDATE");
+        assertThat(updatedLesson.description()).isEqualTo("LESSON DESCRIPTION UPDATE");
+
+        return updatedLesson.lessonId();
+    }
+
+    void testDeleteLesson(Long lessonId) {
+        var URL = LESSON_BASE_URL + "/" + lessonId;
+        var response = restTemplate.exchange(delete(URL).build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedLesson = restTemplate.exchange(get(URL).build(), LESSON);
+
+        assertThat(deletedLesson.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
+    void testCreatePost() {
+        var body = new CreatePostRequest("Post 1", "This is the first post", 1L);
+
+        var response = restTemplate.exchange(post(POST_BASE_URL).body(body), POST);
+
+        var createdPost = response.getBody();
+
+        assertThat(createdPost).isNotNull();
+
+        assertThat(createdPost.getPostId()).isNotNull();
+        assertThat(createdPost.getTitle()).isEqualTo("Post 1");
+        assertThat(createdPost.getContent()).isEqualTo("This is the first post");
+
+        assertThat(createdPost.getForum().getForumId()).isEqualTo(1L);
+        assertThat(createdPost.getForum().getName()).isEqualTo("Forum 1");
+        assertThat(createdPost.getForum().getDescription()).isEqualTo("This is the first forum");
+    }
+
+    void testListPosts() {
+        var response = restTemplate.exchange(get(POST_BASE_URL).build(), POST_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var posts = response.getBody();
+
+        assertThat(posts).isNotNull();
+        assertThat(posts.size()).isEqualTo(1);
+
+        assertThat(posts.get(0).getTitle()).isEqualTo("Post 1");
+        assertThat(posts.get(0).getContent()).isEqualTo("This is the first post");
+
+        assertThat(posts.get(0).getForum().getForumId()).isEqualTo(1L);
+        assertThat(posts.get(0).getForum().getName()).isEqualTo("Forum 1");
+        assertThat(posts.get(0).getForum().getDescription()).isEqualTo("This is the first forum");
+    }
+
+    void testFindPost() {
+        var response = restTemplate.exchange(get(POST_BASE_URL + "/1").build(), POST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var post = response.getBody();
+
+        assertThat(post).isNotNull();
+
+        assertThat(post.getPostId()).isNotNull();
+        assertThat(post.getTitle()).isEqualTo("Post 1");
+        assertThat(post.getContent()).isEqualTo("This is the first post");
+
+        assertThat(post.getForum().getForumId()).isEqualTo(1L);
+        assertThat(post.getForum().getName()).isEqualTo("Forum 1");
+        assertThat(post.getForum().getDescription()).isEqualTo("This is the first forum");
+    }
+
+    void testUpdatePost() {
+        var body = new UpdatePostRequest("Post 1 Updated", "This is the first post update", 1L);
+
+        var response = restTemplate.exchange(put(POST_BASE_URL + "/1").body(body), POST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedPost = response.getBody();
+
+        assertThat(updatedPost).isNotNull();
+
+        assertThat(updatedPost.getTitle()).isEqualTo("Post 1 Updated");
+        assertThat(updatedPost.getContent()).isEqualTo("This is the first post update");
+
+        assertThat(updatedPost.getForum().getForumId()).isEqualTo(1L);
+        assertThat(updatedPost.getForum().getName()).isEqualTo("Forum 1 Updated");
+        assertThat(updatedPost.getForum().getDescription()).isEqualTo("This is the first forum update");
+    }
+
+    void testDeletePost() {
+        var response = restTemplate.exchange(delete(POST_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedPost = restTemplate.exchange(get(POST_BASE_URL + "/1").build(), POST);
+
+        assertThat(deletedPost.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
+    void testCreateComment() {
+        var body = new CreateCommentRequest("Comment 1", 1L, 1L);
+
+        var response = restTemplate.exchange(post(COMMENT_BASE_URL).body(body), COMMENT);
+
+        var createdComment = response.getBody();
+
+        assertThat(createdComment).isNotNull();
+
+        assertThat(createdComment.getCommentId()).isNotNull();
+        assertThat(createdComment.getContent()).isEqualTo("Comment 1");
+
+        assertThat(createdComment.getUser().getUserId()).isEqualTo(1L);
+        assertThat(createdComment.getUser().getName()).isEqualTo("User 1");
+        assertThat(createdComment.getUser().getEmail()).isEqualTo("user@email.com");
+
+        assertThat(createdComment.getPost().getPostId()).isNotNull();
+        assertThat(createdComment.getPost().getTitle()).isEqualTo("Post 1");
+        assertThat(createdComment.getPost().getContent()).isEqualTo("This is the first post");
+    }
+
+    void testListComments() {
+        var response = restTemplate.exchange(get(COMMENT_BASE_URL).build(), COMMENT_LIST);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var comments = response.getBody();
+
+        assertThat(comments).isNotNull();
+        assertThat(comments.size()).isEqualTo(1);
+
+        assertThat(comments.get(0).getContent()).isEqualTo("Comment 1");
+
+        assertThat(comments.get(0).getUser().getUserId()).isEqualTo(1L);
+        assertThat(comments.get(0).getUser().getName()).isEqualTo("User 1");
+        assertThat(comments.get(0).getUser().getEmail()).isEqualTo("user@email.com");
+
+        assertThat(comments.get(0).getPost().getPostId()).isNotNull();
+        assertThat(comments.get(0).getPost().getTitle()).isEqualTo("Post 1");
+        assertThat(comments.get(0).getPost().getContent()).isEqualTo("This is the first post");
+    }
+
+    void testFindComment() {
+        var response = restTemplate.exchange(get(COMMENT_BASE_URL + "/1").build(), COMMENT);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var comment = response.getBody();
+
+        assertThat(comment).isNotNull();
+
+        assertThat(comment.getCommentId()).isNotNull();
+        assertThat(comment.getContent()).isEqualTo("Comment 1");
+
+        assertThat(comment.getUser().getUserId()).isEqualTo(1L);
+        assertThat(comment.getUser().getName()).isEqualTo("User 1");
+        assertThat(comment.getUser().getEmail()).isEqualTo("user@email.com");
+
+        assertThat(comment.getPost().getPostId()).isNotNull();
+        assertThat(comment.getPost().getTitle()).isEqualTo("Post 1");
+        assertThat(comment.getPost().getContent()).isEqualTo("This is the first post");
+    }
+
+    void testUpdateComment() {
+        var body = new UpdateCommentRequest("Comment 1 Updated", 1L, 1L);
+
+        var response = restTemplate.exchange(put(COMMENT_BASE_URL + "/1").body(body), COMMENT);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var updatedComment = response.getBody();
+
+        assertThat(updatedComment).isNotNull();
+
+        assertThat(updatedComment.getContent()).isEqualTo("Comment 1 Updated");
+
+        assertThat(updatedComment.getUser().getUserId()).isEqualTo(1L);
+        assertThat(updatedComment.getUser().getName()).isEqualTo("User 1 Updated");
+        assertThat(updatedComment.getUser().getEmail()).isEqualTo("USER@EMAIL.COM");
+
+        assertThat(updatedComment.getPost().getPostId()).isEqualTo(1L);
+        assertThat(updatedComment.getPost().getTitle()).isEqualTo("Post 1 Updated");
+        assertThat(updatedComment.getPost().getContent()).isEqualTo("This is the first post update");
+    }
+
+    void testDeleteComment() {
+        var response = restTemplate.exchange(delete(COMMENT_BASE_URL + "/1").build(), VOID);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+
+        var deletedComment = restTemplate.exchange(get(COMMENT_BASE_URL + "/1").build(), COMMENT);
+
+        assertThat(deletedComment.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
     void testCreateAchievement() {
@@ -605,353 +1028,6 @@ class ComponentTest {
         assertThat(deletedAchievement.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
-    void testCreateChapter() {
-        var body = new CreateChapterRequest("Chapter 1", "This is the first chapter", 1L);
-
-        var response = restTemplate.exchange(post(CHAPTER_BASE_URL).body(body), CHAPTER);
-
-        var createdChapter = response.getBody();
-
-        assertThat(createdChapter).isNotNull();
-
-        assertThat(createdChapter.getChapterId()).isNotNull();
-        assertThat(createdChapter.getName()).isEqualTo("Chapter 1");
-        assertThat(createdChapter.getDescription()).isEqualTo("This is the first chapter");
-
-        assertThat(createdChapter.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(createdChapter.getCourse().getName()).isEqualTo("Course 1");
-        assertThat(createdChapter.getCourse().getDescription()).isEqualTo("This is the first course");
-    }
-
-    void testListChapters() {
-        var response = restTemplate.exchange(get(CHAPTER_BASE_URL).build(), CHAPTER_LIST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var chapters = response.getBody();
-
-        assertThat(chapters).isNotNull();
-        assertThat(chapters.size()).isEqualTo(1);
-
-        assertThat(chapters.get(0).getName()).isEqualTo("Chapter 1");
-        assertThat(chapters.get(0).getDescription()).isEqualTo("This is the first chapter");
-    }
-
-    void testFindChapter() {
-        var response = restTemplate.exchange(get(CHAPTER_BASE_URL + "/1").build(), CHAPTER);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var chapter = response.getBody();
-
-        assertThat(chapter).isNotNull();
-
-        assertThat(chapter.getName()).isEqualTo("Chapter 1");
-        assertThat(chapter.getDescription()).isEqualTo("This is the first chapter");
-    }
-
-    void testUpdateChapter() {
-        var body = new UpdateChapterRequest("Chapter 1 Updated", "This is the first chapter update", 1L);
-
-        var response = restTemplate.exchange(put(CHAPTER_BASE_URL + "/1").body(body), CHAPTER);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var updatedChapter = response.getBody();
-
-        assertThat(updatedChapter).isNotNull();
-
-        assertThat(updatedChapter.getName()).isEqualTo("Chapter 1 Updated");
-        assertThat(updatedChapter.getDescription()).isEqualTo("This is the first chapter update");
-    }
-
-    void testDeleteChapter() {
-        var response = restTemplate.exchange(delete(CHAPTER_BASE_URL + "/1").build(), VOID);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var deletedChapter = restTemplate.exchange(get(CHAPTER_BASE_URL + "/1").build(), CHAPTER);
-
-        assertThat(deletedChapter.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
-    void testCreatePost() {
-        var body = new CreatePostRequest("Post 1", "This is the first post", 1L);
-
-        var response = restTemplate.exchange(post(POST_BASE_URL).body(body), POST);
-
-        var createdPost = response.getBody();
-
-        assertThat(createdPost).isNotNull();
-
-        assertThat(createdPost.getPostId()).isNotNull();
-        assertThat(createdPost.getTitle()).isEqualTo("Post 1");
-        assertThat(createdPost.getContent()).isEqualTo("This is the first post");
-
-        assertThat(createdPost.getForum().getForumId()).isEqualTo(1L);
-        assertThat(createdPost.getForum().getName()).isEqualTo("Forum 1");
-        assertThat(createdPost.getForum().getDescription()).isEqualTo("This is the first forum");
-    }
-
-    void testListPosts() {
-        var response = restTemplate.exchange(get(POST_BASE_URL).build(), POST_LIST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var posts = response.getBody();
-
-        assertThat(posts).isNotNull();
-        assertThat(posts.size()).isEqualTo(1);
-
-        assertThat(posts.get(0).getTitle()).isEqualTo("Post 1");
-        assertThat(posts.get(0).getContent()).isEqualTo("This is the first post");
-
-        assertThat(posts.get(0).getForum().getForumId()).isEqualTo(1L);
-        assertThat(posts.get(0).getForum().getName()).isEqualTo("Forum 1");
-        assertThat(posts.get(0).getForum().getDescription()).isEqualTo("This is the first forum");
-    }
-
-    void testFindPost() {
-        var response = restTemplate.exchange(get(POST_BASE_URL + "/1").build(), POST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var post = response.getBody();
-
-        assertThat(post).isNotNull();
-
-        assertThat(post.getPostId()).isNotNull();
-        assertThat(post.getTitle()).isEqualTo("Post 1");
-        assertThat(post.getContent()).isEqualTo("This is the first post");
-
-        assertThat(post.getForum().getForumId()).isEqualTo(1L);
-        assertThat(post.getForum().getName()).isEqualTo("Forum 1");
-        assertThat(post.getForum().getDescription()).isEqualTo("This is the first forum");
-    }
-
-    void testUpdatePost() {
-        var body = new UpdatePostRequest("Post 1 Updated", "This is the first post update", 1L);
-
-        var response = restTemplate.exchange(put(POST_BASE_URL + "/1").body(body), POST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var updatedPost = response.getBody();
-
-        assertThat(updatedPost).isNotNull();
-
-        assertThat(updatedPost.getTitle()).isEqualTo("Post 1 Updated");
-        assertThat(updatedPost.getContent()).isEqualTo("This is the first post update");
-
-        assertThat(updatedPost.getForum().getForumId()).isEqualTo(1L);
-        assertThat(updatedPost.getForum().getName()).isEqualTo("Forum 1 Updated");
-        assertThat(updatedPost.getForum().getDescription()).isEqualTo("This is the first forum update");
-    }
-
-    void testDeletePost() {
-        var response = restTemplate.exchange(delete(POST_BASE_URL + "/1").build(), VOID);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var deletedPost = restTemplate.exchange(get(POST_BASE_URL + "/1").build(), POST);
-
-        assertThat(deletedPost.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
-    void testCreateSection() {
-        var body = new CreateSectionRequest("Section 1", "This is the first section", 1L, 1L);
-
-        var response = restTemplate.exchange(post(SECTION_BASE_URL).body(body), SECTION);
-
-        var createdSection = response.getBody();
-
-        assertThat(createdSection).isNotNull();
-
-        assertThat(createdSection.getSectionId()).isNotNull();
-        assertThat(createdSection.getName()).isEqualTo("Section 1");
-        assertThat(createdSection.getDescription()).isEqualTo("This is the first section");
-
-        assertThat(createdSection.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(createdSection.getCourse().getName()).isEqualTo("Course 1");
-        assertThat(createdSection.getCourse().getDescription()).isEqualTo("This is the first course");
-
-        assertThat(createdSection.getChapter().getChapterId()).isEqualTo(1L);
-        assertThat(createdSection.getChapter().getName()).isEqualTo("Chapter 1");
-        assertThat(createdSection.getChapter().getDescription()).isEqualTo("This is the first chapter");
-    }
-
-    void testListSections() {
-        var response = restTemplate.exchange(get(SECTION_BASE_URL).build(), SECTION_LIST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var sections = response.getBody();
-
-        assertThat(sections).isNotNull();
-        assertThat(sections.size()).isEqualTo(1);
-
-        assertThat(sections.get(0).getName()).isEqualTo("Section 1");
-        assertThat(sections.get(0).getDescription()).isEqualTo("This is the first section");
-
-        assertThat(sections.get(0).getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(sections.get(0).getCourse().getName()).isEqualTo("Course 1");
-        assertThat(sections.get(0).getCourse().getDescription()).isEqualTo("This is the first course");
-
-        assertThat(sections.get(0).getChapter().getChapterId()).isEqualTo(1L);
-        assertThat(sections.get(0).getChapter().getName()).isEqualTo("Chapter 1");
-        assertThat(sections.get(0).getChapter().getDescription()).isEqualTo("This is the first chapter");
-    }
-
-    void testFindSection() {
-        var response = restTemplate.exchange(get(SECTION_BASE_URL + "/1").build(), SECTION);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var section = response.getBody();
-
-        assertThat(section).isNotNull();
-
-        assertThat(section.getSectionId()).isNotNull();
-        assertThat(section.getName()).isEqualTo("Section 1");
-        assertThat(section.getDescription()).isEqualTo("This is the first section");
-
-        assertThat(section.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(section.getCourse().getName()).isEqualTo("Course 1");
-        assertThat(section.getCourse().getDescription()).isEqualTo("This is the first course");
-
-        assertThat(section.getChapter().getChapterId()).isEqualTo(1L);
-        assertThat(section.getChapter().getName()).isEqualTo("Chapter 1");
-        assertThat(section.getChapter().getDescription()).isEqualTo("This is the first chapter");
-    }
-
-    void testUpdateSection() {
-        var body = new UpdateSectionRequest("Section 1 Updated", "This is the first section update", 1L, 1L);
-
-        var response = restTemplate.exchange(put(SECTION_BASE_URL + "/1").body(body), SECTION);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var updatedSection = response.getBody();
-
-        assertThat(updatedSection).isNotNull();
-
-        assertThat(updatedSection.getName()).isEqualTo("Section 1 Updated");
-        assertThat(updatedSection.getDescription()).isEqualTo("This is the first section update");
-
-        assertThat(updatedSection.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(updatedSection.getCourse().getName()).isEqualTo("Course 1 Updated");
-        assertThat(updatedSection.getCourse().getDescription()).isEqualTo("This is the first course update");
-
-        assertThat(updatedSection.getChapter().getChapterId()).isEqualTo(1L);
-        assertThat(updatedSection.getChapter().getName()).isEqualTo("Chapter 1 Updated");
-        assertThat(updatedSection.getChapter().getDescription()).isEqualTo("This is the first chapter update");
-    }
-
-    void testDeleteSection() {
-        var response = restTemplate.exchange(delete(SECTION_BASE_URL + "/1").build(), VOID);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var deletedSection = restTemplate.exchange(get(SECTION_BASE_URL + "/1").build(), SECTION);
-
-        assertThat(deletedSection.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
-    void testCreateComment() {
-        var body = new CreateCommentRequest("Comment 1", 1L, 1L);
-
-        var response = restTemplate.exchange(post(COMMENT_BASE_URL).body(body), COMMENT);
-
-        var createdComment = response.getBody();
-
-        assertThat(createdComment).isNotNull();
-
-        assertThat(createdComment.getCommentId()).isNotNull();
-        assertThat(createdComment.getContent()).isEqualTo("Comment 1");
-
-        assertThat(createdComment.getUser().getUserId()).isEqualTo(1L);
-        assertThat(createdComment.getUser().getName()).isEqualTo("User 1");
-        assertThat(createdComment.getUser().getEmail()).isEqualTo("user@email.com");
-
-        assertThat(createdComment.getPost().getPostId()).isNotNull();
-        assertThat(createdComment.getPost().getTitle()).isEqualTo("Post 1");
-        assertThat(createdComment.getPost().getContent()).isEqualTo("This is the first post");
-    }
-
-    void testListComments() {
-        var response = restTemplate.exchange(get(COMMENT_BASE_URL).build(), COMMENT_LIST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var comments = response.getBody();
-
-        assertThat(comments).isNotNull();
-        assertThat(comments.size()).isEqualTo(1);
-
-        assertThat(comments.get(0).getContent()).isEqualTo("Comment 1");
-
-        assertThat(comments.get(0).getUser().getUserId()).isEqualTo(1L);
-        assertThat(comments.get(0).getUser().getName()).isEqualTo("User 1");
-        assertThat(comments.get(0).getUser().getEmail()).isEqualTo("user@email.com");
-
-        assertThat(comments.get(0).getPost().getPostId()).isNotNull();
-        assertThat(comments.get(0).getPost().getTitle()).isEqualTo("Post 1");
-        assertThat(comments.get(0).getPost().getContent()).isEqualTo("This is the first post");
-    }
-
-    void testFindComment() {
-        var response = restTemplate.exchange(get(COMMENT_BASE_URL + "/1").build(), COMMENT);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var comment = response.getBody();
-
-        assertThat(comment).isNotNull();
-
-        assertThat(comment.getCommentId()).isNotNull();
-        assertThat(comment.getContent()).isEqualTo("Comment 1");
-
-        assertThat(comment.getUser().getUserId()).isEqualTo(1L);
-        assertThat(comment.getUser().getName()).isEqualTo("User 1");
-        assertThat(comment.getUser().getEmail()).isEqualTo("user@email.com");
-
-        assertThat(comment.getPost().getPostId()).isNotNull();
-        assertThat(comment.getPost().getTitle()).isEqualTo("Post 1");
-        assertThat(comment.getPost().getContent()).isEqualTo("This is the first post");
-    }
-
-    void testUpdateComment() {
-        var body = new UpdateCommentRequest("Comment 1 Updated", 1L, 1L);
-
-        var response = restTemplate.exchange(put(COMMENT_BASE_URL + "/1").body(body), COMMENT);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var updatedComment = response.getBody();
-
-        assertThat(updatedComment).isNotNull();
-
-        assertThat(updatedComment.getContent()).isEqualTo("Comment 1 Updated");
-
-        assertThat(updatedComment.getUser().getUserId()).isEqualTo(1L);
-        assertThat(updatedComment.getUser().getName()).isEqualTo("User 1 Updated");
-        assertThat(updatedComment.getUser().getEmail()).isEqualTo("USER@EMAIL.COM");
-
-        assertThat(updatedComment.getPost().getPostId()).isEqualTo(1L);
-        assertThat(updatedComment.getPost().getTitle()).isEqualTo("Post 1 Updated");
-        assertThat(updatedComment.getPost().getContent()).isEqualTo("This is the first post update");
-    }
-
-    void testDeleteComment() {
-        var response = restTemplate.exchange(delete(COMMENT_BASE_URL + "/1").build(), VOID);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var deletedComment = restTemplate.exchange(get(COMMENT_BASE_URL + "/1").build(), COMMENT);
-
-        assertThat(deletedComment.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
     void testCreateExercise() {
         var body = new CreateExerciseRequest("Exercise 1", "This is the first exercise", 1L, 1L);
 
@@ -966,12 +1042,12 @@ class ComponentTest {
         assertThat(createdExercise.getDescription()).isEqualTo("This is the first exercise");
 
         assertThat(createdExercise.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(createdExercise.getCourse().getName()).isEqualTo("Course 1");
-        assertThat(createdExercise.getCourse().getDescription()).isEqualTo("This is the first course");
+        assertThat(createdExercise.getCourse().getName()).isEqualTo("COURSE NAME");
+        assertThat(createdExercise.getCourse().getDescription()).isEqualTo("COURSE DESCRIPTION");
 
         assertThat(createdExercise.getChapter().getChapterId()).isNotNull();
-        assertThat(createdExercise.getChapter().getName()).isEqualTo("Chapter 1");
-        assertThat(createdExercise.getChapter().getDescription()).isEqualTo("This is the first chapter");
+        assertThat(createdExercise.getChapter().getName()).isEqualTo("CHAPTER NAME");
+        assertThat(createdExercise.getChapter().getDescription()).isEqualTo("CHAPTER DESCRIPTION");
     }
 
     void testListExercises() {
@@ -989,12 +1065,12 @@ class ComponentTest {
         assertThat(exercises.get(0).getDescription()).isEqualTo("This is the first exercise");
 
         assertThat(exercises.get(0).getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(exercises.get(0).getCourse().getName()).isEqualTo("Course 1");
-        assertThat(exercises.get(0).getCourse().getDescription()).isEqualTo("This is the first course");
+        assertThat(exercises.get(0).getCourse().getName()).isEqualTo("COURSE NAME");
+        assertThat(exercises.get(0).getCourse().getDescription()).isEqualTo("COURSE DESCRIPTION");
 
         assertThat(exercises.get(0).getChapter().getChapterId()).isNotNull();
-        assertThat(exercises.get(0).getChapter().getName()).isEqualTo("Chapter 1");
-        assertThat(exercises.get(0).getChapter().getDescription()).isEqualTo("This is the first chapter");
+        assertThat(exercises.get(0).getChapter().getName()).isEqualTo("CHAPTER NAME");
+        assertThat(exercises.get(0).getChapter().getDescription()).isEqualTo("CHAPTER DESCRIPTION");
     }
 
     void testFindExercise() {
@@ -1011,12 +1087,12 @@ class ComponentTest {
         assertThat(exercise.getDescription()).isEqualTo("This is the first exercise");
 
         assertThat(exercise.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(exercise.getCourse().getName()).isEqualTo("Course 1");
-        assertThat(exercise.getCourse().getDescription()).isEqualTo("This is the first course");
+        assertThat(exercise.getCourse().getName()).isEqualTo("COURSE NAME");
+        assertThat(exercise.getCourse().getDescription()).isEqualTo("COURSE DESCRIPTION");
 
         assertThat(exercise.getChapter().getChapterId()).isNotNull();
-        assertThat(exercise.getChapter().getName()).isEqualTo("Chapter 1");
-        assertThat(exercise.getChapter().getDescription()).isEqualTo("This is the first chapter");
+        assertThat(exercise.getChapter().getName()).isEqualTo("CHAPTER NAME");
+        assertThat(exercise.getChapter().getDescription()).isEqualTo("CHAPTER DESCRIPTION");
     }
 
     void testUpdateExercise() {
@@ -1039,8 +1115,8 @@ class ComponentTest {
         assertThat(updatedExercise.getCourse().getDescription()).isEqualTo("This is the first course update");
 
         assertThat(updatedExercise.getChapter().getChapterId()).isEqualTo(1L);
-        assertThat(updatedExercise.getChapter().getName()).isEqualTo("Chapter 1 Updated");
-        assertThat(updatedExercise.getChapter().getDescription()).isEqualTo("This is the first chapter update");
+        assertThat(updatedExercise.getChapter().getName()).isEqualTo("CHAPTER NAME");
+        assertThat(updatedExercise.getChapter().getDescription()).isEqualTo("CHAPTER DESCRIPTION");
     }
 
     void testDeleteExercise() {
@@ -1051,91 +1127,6 @@ class ComponentTest {
         var deletedExercise = restTemplate.exchange(get(EXERCISE_BASE_URL + "/1").build(), EXERCISE);
 
         assertThat(deletedExercise.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
-    void testCreateLesson() {
-        var body = new CreateLessonRequest("Lesson 1", "This is the first lesson", 1L);
-
-        var response = restTemplate.exchange(post(LESSON_BASE_URL).body(body), LESSON);
-
-        var createdLesson = response.getBody();
-
-        assertThat(createdLesson).isNotNull();
-
-        assertThat(createdLesson.getLessonId()).isNotNull();
-        assertThat(createdLesson.getName()).isEqualTo("Lesson 1");
-        assertThat(createdLesson.getDescription()).isEqualTo("This is the first lesson");
-
-        assertThat(createdLesson.getTopic().getTopicId()).isEqualTo(1L);
-        assertThat(createdLesson.getTopic().getName()).isEqualTo("TOPIC NAME");
-        assertThat(createdLesson.getTopic().getDescription()).isEqualTo("TOPIC DESCRIPTION");
-    }
-
-    void testListLessons() {
-        var response = restTemplate.exchange(get(LESSON_BASE_URL).build(), LESSON_LIST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var lessons = response.getBody();
-
-        assertThat(lessons).isNotNull();
-        assertThat(lessons.size()).isEqualTo(1);
-
-        assertThat(lessons.get(0).getLessonId()).isNotNull();
-        assertThat(lessons.get(0).getName()).isEqualTo("Lesson 1");
-        assertThat(lessons.get(0).getDescription()).isEqualTo("This is the first lesson");
-
-        assertThat(lessons.get(0).getTopic().getTopicId()).isEqualTo(1L);
-        assertThat(lessons.get(0).getTopic().getName()).isEqualTo("TOPIC NAME");
-        assertThat(lessons.get(0).getTopic().getDescription()).isEqualTo("TOPIC DESCRIPTION");
-    }
-
-    void testFindLesson() {
-        var response = restTemplate.exchange(get(LESSON_BASE_URL + "/1").build(), LESSON);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var lesson = response.getBody();
-
-        assertThat(lesson).isNotNull();
-
-        assertThat(lesson.getLessonId()).isNotNull();
-        assertThat(lesson.getName()).isEqualTo("Lesson 1");
-        assertThat(lesson.getDescription()).isEqualTo("This is the first lesson");
-
-        assertThat(lesson.getTopic().getTopicId()).isEqualTo(1L);
-        assertThat(lesson.getTopic().getName()).isEqualTo("TOPIC NAME");
-        assertThat(lesson.getTopic().getDescription()).isEqualTo("TOPIC DESCRIPTION");
-    }
-
-    void testUpdateLesson() {
-        var body = new UpdateLessonRequest("Lesson 1 Updated", "This is the first lesson update", 1L);
-
-        var response = restTemplate.exchange(put(LESSON_BASE_URL + "/1").body(body), LESSON);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var updatedLesson = response.getBody();
-
-        assertThat(updatedLesson).isNotNull();
-
-        assertThat(updatedLesson.getLessonId()).isNotNull();
-        assertThat(updatedLesson.getName()).isEqualTo("Lesson 1 Updated");
-        assertThat(updatedLesson.getDescription()).isEqualTo("This is the first lesson update");
-
-        assertThat(updatedLesson.getTopic().getTopicId()).isEqualTo(1L);
-        assertThat(updatedLesson.getTopic().getName()).isEqualTo("TOPIC NAME UPDATED");
-        assertThat(updatedLesson.getTopic().getDescription()).isEqualTo("TOPIC DESCRIPTION UPDATED");
-    }
-
-    void testDeleteLesson() {
-        var response = restTemplate.exchange(delete(LESSON_BASE_URL + "/1").build(), VOID);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var deletedLesson = restTemplate.exchange(get(LESSON_BASE_URL + "/1").build(), LESSON);
-
-        assertThat(deletedLesson.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
     void testCreateQuiz() {
@@ -1150,8 +1141,6 @@ class ComponentTest {
         assertThat(createdQuiz.quizId()).isNotNull();
         assertThat(createdQuiz.name()).isEqualTo("Quiz 1");
         assertThat(createdQuiz.description()).isEqualTo("This is the first quiz");
-
-        assertThat(createdQuiz.lessonId()).isEqualTo(1L);
     }
 
     void testListQuizzes() {
@@ -1167,8 +1156,6 @@ class ComponentTest {
         assertThat(quizzes.get(0).quizId()).isNotNull();
         assertThat(quizzes.get(0).name()).isEqualTo("Quiz 1");
         assertThat(quizzes.get(0).description()).isEqualTo("This is the first quiz");
-
-        assertThat(quizzes.get(0).lessonId()).isEqualTo(1L);
     }
 
     void testFindQuiz() {
@@ -1183,8 +1170,6 @@ class ComponentTest {
         assertThat(quiz.quizId()).isNotNull();
         assertThat(quiz.name()).isEqualTo("Quiz 1");
         assertThat(quiz.description()).isEqualTo("This is the first quiz");
-
-        assertThat(quiz.lessonId()).isEqualTo(1L);
     }
 
     void testUpdateQuiz() {
@@ -1201,8 +1186,6 @@ class ComponentTest {
         assertThat(updatedQuiz.quizId()).isNotNull();
         assertThat(updatedQuiz.name()).isEqualTo("Quiz 1 Updated");
         assertThat(updatedQuiz.description()).isEqualTo("This is the first quiz update");
-
-        assertThat(updatedQuiz.lessonId()).isEqualTo(1L);
     }
 
     void testDeleteQuiz() {
@@ -1237,26 +1220,26 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<ProjectInfoResponse>> PROJECT_INFO_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<TopicInfoResponse> TOPIC = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<TopicInfoResponse>> TOPIC_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<CourseInfoResponse> COURSE = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<CourseInfoResponse>> COURSE_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<ChapterInfoResponse> CHAPTER = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<ChapterInfoResponse>> CHAPTER_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<SectionInfoResponse> SECTION = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<SectionInfoResponse>> SECTION_LIST = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<LessonInfoResponse> LESSON = new ParameterizedTypeReference<>() {};
+    static final ParameterizedTypeReference<List<LessonInfoResponse>> LESSON_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Forum> FORUM = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Forum>> FORUM_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<Course> COURSE = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<Course>> COURSE_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<User> USER = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<User>> USER_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Achievement> ACHIEVEMENT = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Achievement>> ACHIEVEMENT_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<Chapter> CHAPTER = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<Chapter>> CHAPTER_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Post> POST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Post>> POST_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<Section> SECTION = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<Section>> SECTION_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Comment> COMMENT = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Comment>> COMMENT_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<Exercise> EXERCISE = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<Exercise>> EXERCISE_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<Lesson> LESSON = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<Lesson>> LESSON_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<QuizInfoResponse> QUIZ = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<QuizInfoResponse>> QUIZ_LIST = new ParameterizedTypeReference<>() {};
     //@formatter:on

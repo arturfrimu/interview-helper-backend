@@ -87,17 +87,17 @@ public final class Commands {
 
     }
 
-    public record CreateCourseCommand(String name, String description) {
+    public record CreateCourseCommand(String name, String description, Long topicId) {
 
         public static CreateCourseCommand valueOf(CreateCourseRequest request) {
-            return new CreateCourseCommand(request.name(), request.description());
+            return new CreateCourseCommand(request.name(), request.description(), request.topicId());
         }
     }
 
-    public record UpdateCourseCommand(String name, String description) {
+    public record UpdateCourseCommand(String name, String description, Long topicId) {
 
         public static UpdateCourseCommand valueOf(UpdateCourseRequest request) {
-            return new UpdateCourseCommand(request.name(), request.description());
+            return new UpdateCourseCommand(request.name(), request.description(), request.topicId());
         }
     }
 
@@ -129,17 +129,17 @@ public final class Commands {
         }
     }
 
-    public record CreateSectionCommand(String name, String description, Long courseId, Long chapterId) {
+    public record CreateSectionCommand(String name, String description, Long chapterId) {
 
         public static CreateSectionCommand valueOf(CreateSectionRequest request) {
-            return new CreateSectionCommand(request.name(), request.description(), request.courseId(), request.chapterId());
+            return new CreateSectionCommand(request.name(), request.description(), request.chapterId());
         }
     }
 
-    public record UpdateSectionCommand(String name, String description, Long courseId, Long chapterId) {
+    public record UpdateSectionCommand(String name, String description, Long chapterId) {
 
         public static UpdateSectionCommand valueOf(UpdateSectionRequest request) {
-            return new UpdateSectionCommand(request.name(), request.description(), request.courseId(), request.chapterId());
+            return new UpdateSectionCommand(request.name(), request.description(), request.chapterId());
         }
     }
 
@@ -188,14 +188,14 @@ public final class Commands {
     public record CreateLessonCommand(String name, String description, Long topicId) {
 
         public static CreateLessonCommand valueOf(CreateLessonRequest request) {
-            return new CreateLessonCommand(request.name(), request.description(), request.topicId());
+            return new CreateLessonCommand(request.name(), request.description(), request.sectionId());
         }
     }
 
-    public record UpdateLessonCommand(String name, String description, Long topicId) {
+    public record UpdateLessonCommand(String name, String description, Long sectionId) {
 
         public static UpdateLessonCommand valueOf(UpdateLessonRequest request) {
-            return new UpdateLessonCommand(request.name(), request.description(), request.topicId());
+            return new UpdateLessonCommand(request.name(), request.description(), request.sectionId());
         }
     }
 

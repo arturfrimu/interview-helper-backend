@@ -15,7 +15,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -34,16 +33,23 @@ public class Lesson {
 
     private String description;
 
-    @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "topic_id")
-    private Topic topic;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "section_id")
+    private Section section;
 
     @OneToMany(mappedBy = "lesson", cascade = ALL, fetch = LAZY)
     private Set<Quiz> quizzes = new LinkedHashSet<>();
 
-    public Lesson(String name, String description, Topic topic) {
+    public Lesson(String name, String description, Section section) {
         this.name = name;
         this.description = description;
-        this.topic = topic;
+        this.section = section;
+    }
+
+    public Lesson(Long lessonId, String name, String description, Section section) {
+        this.lessonId = lessonId;
+        this.name = name;
+        this.description = description;
+        this.section = section;
     }
 }
