@@ -42,18 +42,6 @@ public final class Requests {
             @NotNull Long topicId
     ) {}
 
-    public record CreateChapterRequest(
-            @NotBlank(message = "Name of Chapter can not be null") String name,
-            String description,
-            @NotNull Long courseId
-    ) {}
-
-    public record UpdateChapterRequest(
-            @NotBlank(message = "Name of Chapter can not be null") String name,
-            String description,
-            @NotNull Long courseId
-    ) {}
-
     public record CreateSectionRequest(
             @NotBlank(message = "Name of Section can not be null") String name,
             String description,
@@ -66,17 +54,9 @@ public final class Requests {
             @NotNull Long chapterId
     ) {}
 
-    public record CreateAchievementRequest(@NotBlank String description, Long userId) {}
+    public record CreateLessonRequest(@NotBlank String name, @NotBlank String description, Long sectionId) {}
 
-    public record UpdateAchievementRequest(@NotBlank String description, Long userId) {}
-
-    public record CreateForumRequest(@NotBlank String name, @NotBlank String description) {}
-
-    public record UpdateForumRequest(@NotBlank String name, @NotBlank String description) {}
-
-    public record CreateUserRequest(@NotBlank String name, @Email String email) {}
-
-    public record UpdateUserRequest(@NotBlank String name, @Email String email) {}
+    public record UpdateLessonRequest(@NotBlank String name, @NotBlank String description, Long sectionId) {}
 
     public record CreatePostRequest(@NotBlank String title, @NotBlank String content, Long forumId) {}
 
@@ -90,13 +70,25 @@ public final class Requests {
 
     public record UpdateExerciseRequest(@NotBlank String name, @NotBlank String description, Long courseId, Long chapterId) {}
 
-    public record CreateLessonRequest(@NotBlank String name, @NotBlank String description, Long sectionId) {}
-
-    public record UpdateLessonRequest(@NotBlank String name, @NotBlank String description, Long sectionId) {}
-
     public record CreateQuizRequest(@NotBlank String name, @NotBlank String description, Long lessonId) {}
 
     public record UpdateQuizRequest(@NotBlank String name, @NotBlank String description, Long lessonId) {}
+
+    public record CreateAchievementRequest(@NotBlank String description, Long lessonId) {}
+
+    public record UpdateAchievementRequest(@NotBlank String description, Long lessonId) {}
+
+    public record CreateForumRequest(@NotBlank String name, @NotBlank String description) {}
+
+    public record UpdateForumRequest(@NotBlank String name, @NotBlank String description) {}
+
+    public record CreateUserRequest(@NotBlank String name, @Email String email) {}
+
+    public record UpdateUserRequest(@NotBlank String name, @Email String email) {}
+
+    public record CreateTaskRequest(@NotBlank String name, @NotBlank String description, Long lessonId) {}
+
+    public record UpdateTaskRequest(@NotBlank String name, @NotBlank String description, Long lessonId) {}
 
     //@formatter:oon
 }

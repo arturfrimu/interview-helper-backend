@@ -34,22 +34,22 @@ public class Section {
     private String description;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "chapter_chapter_id", nullable = false)
-    private Chapter chapter;
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 
     @OneToMany(mappedBy = "section", cascade = ALL, fetch = LAZY)
     private Set<Lesson> lessons = new LinkedHashSet<>();
 
-    public Section(String name, String description, Chapter chapter) {
+    public Section(String name, String description, Course course) {
         this.name = name;
         this.description = description;
-        this.chapter = chapter;
+        this.course = course;
     }
 
-    public Section(Long sectionId, String name, String description, Chapter chapter) {
+    public Section(Long sectionId, String name, String description, Course course) {
         this.sectionId = sectionId;
         this.name = name;
         this.description = description;
-        this.chapter = chapter;
+        this.course = course;
     }
 }

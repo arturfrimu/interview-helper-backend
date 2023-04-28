@@ -1,11 +1,11 @@
 package com.arturfrimu.interview.helper.dto.response;
 
-import com.arturfrimu.interview.helper.entity.Chapter;
 import com.arturfrimu.interview.helper.entity.Course;
 import com.arturfrimu.interview.helper.entity.Lesson;
 import com.arturfrimu.interview.helper.entity.Project;
 import com.arturfrimu.interview.helper.entity.Quiz;
 import com.arturfrimu.interview.helper.entity.Section;
+import com.arturfrimu.interview.helper.entity.Task;
 import com.arturfrimu.interview.helper.entity.Topic;
 
 import java.util.Set;
@@ -51,13 +51,6 @@ public final class Response {
         }
     }
 
-    public record ChapterInfoResponse(Long chapterId, String name, String description) {
-
-        public static ChapterInfoResponse valueOf(Chapter response) {
-            return new ChapterInfoResponse(response.getChapterId(), response.getName(), response.getDescription());
-        }
-    }
-
     public record SectionInfoResponse(Long sectionId, String name, String description) {
 
         public static SectionInfoResponse valueOf(Section response) {
@@ -76,6 +69,13 @@ public final class Response {
 
         public static QuizInfoResponse valueOf(Quiz response) {
             return new QuizInfoResponse(response.getQuizId(), response.getName(), response.getDescription());
+        }
+    }
+
+    public record TaskInfoResponse(Long quizId, String name, String description) {
+
+        public static TaskInfoResponse valueOf(Task response) {
+            return new TaskInfoResponse(response.getTaskId(), response.getName(), response.getDescription());
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.arturfrimu.interview.helper.dto.command;
 
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateAchievementRequest;
-import com.arturfrimu.interview.helper.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateCommentRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateCourseRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateExerciseRequest;
@@ -11,6 +10,7 @@ import com.arturfrimu.interview.helper.dto.request.Requests.CreatePostRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateProjectRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateQuizRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateSectionRequest;
+import com.arturfrimu.interview.helper.dto.request.Requests.CreateTaskRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateUserRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateAchievementRequest;
@@ -23,52 +23,23 @@ import com.arturfrimu.interview.helper.dto.request.Requests.UpdatePostRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateProjectRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateQuizRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateSectionRequest;
+import com.arturfrimu.interview.helper.dto.request.Requests.UpdateTaskRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateTopicRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateUserRequest;
 
-import static com.arturfrimu.interview.helper.dto.request.Requests.UpdateChapterRequest;
-
 public final class Commands {
 
-    public record CreateAchievementCommand(String description, Long userId) {
+    public record CreateProjectCommand(String name, String description) {
 
-        public static CreateAchievementCommand valueOf(CreateAchievementRequest request) {
-            return new CreateAchievementCommand(request.description(), request.userId());
+        public static CreateProjectCommand valueOf(CreateProjectRequest request) {
+            return new CreateProjectCommand(request.name(), request.description());
         }
     }
 
-    public record UpdateAchievementCommand(String description, Long userId) {
+    public record UpdateProjectCommand(String name, String description) {
 
-        public static UpdateAchievementCommand valueOf(UpdateAchievementRequest request) {
-            return new UpdateAchievementCommand(request.description(), request.userId());
-        }
-    }
-
-    public record CreateForumCommand(String name, String description) {
-
-        public static CreateForumCommand valueOf(CreateForumRequest request) {
-            return new CreateForumCommand(request.name(), request.description());
-        }
-    }
-
-    public record UpdateForumCommand(String name, String description) {
-
-        public static UpdateForumCommand valueOf(UpdateForumRequest request) {
-            return new UpdateForumCommand(request.name(), request.description());
-        }
-    }
-
-    public record CreateUserCommand(String name, String email) {
-
-        public static CreateUserCommand valueOf(CreateUserRequest request) {
-            return new CreateUserCommand(request.name(), request.email());
-        }
-    }
-
-    public record UpdateUserCommand(String name, String email) {
-
-        public static UpdateUserCommand valueOf(UpdateUserRequest request) {
-            return new UpdateUserCommand(request.name(), request.email());
+        public static UpdateProjectCommand valueOf(UpdateProjectRequest request) {
+            return new UpdateProjectCommand(request.name(), request.description());
         }
     }
 
@@ -101,87 +72,17 @@ public final class Commands {
         }
     }
 
-    public record CreateChapterCommand(String name, String description, Long courseId) {
-
-        public static CreateChapterCommand valueOf(CreateChapterRequest request) {
-            return new CreateChapterCommand(request.name(), request.description(), request.courseId());
-        }
-    }
-
-    public record UpdateChapterCommand(String name, String description, Long courseId) {
-
-        public static UpdateChapterCommand valueOf(UpdateChapterRequest request) {
-            return new UpdateChapterCommand(request.name(), request.description(), request.courseId());
-        }
-    }
-
-    public record CreatePostCommand(String title, String content, Long forumId) {
-
-        public static CreatePostCommand valueOf(CreatePostRequest request) {
-            return new CreatePostCommand(request.title(), request.content(), request.forumId());
-        }
-    }
-
-    public record UpdatePostCommand(String title, String content, Long forumId) {
-
-        public static UpdatePostCommand valueOf(UpdatePostRequest request) {
-            return new UpdatePostCommand(request.title(), request.content(), request.forumId());
-        }
-    }
-
-    public record CreateSectionCommand(String name, String description, Long chapterId) {
+    public record CreateSectionCommand(String name, String description, Long courseId) {
 
         public static CreateSectionCommand valueOf(CreateSectionRequest request) {
             return new CreateSectionCommand(request.name(), request.description(), request.chapterId());
         }
     }
 
-    public record UpdateSectionCommand(String name, String description, Long chapterId) {
+    public record UpdateSectionCommand(String name, String description, Long courseId) {
 
         public static UpdateSectionCommand valueOf(UpdateSectionRequest request) {
             return new UpdateSectionCommand(request.name(), request.description(), request.chapterId());
-        }
-    }
-
-    public record CreateProjectCommand(String name, String description) {
-
-        public static CreateProjectCommand valueOf(CreateProjectRequest request) {
-            return new CreateProjectCommand(request.name(), request.description());
-        }
-    }
-
-    public record UpdateProjectCommand(String name, String description) {
-
-        public static UpdateProjectCommand valueOf(UpdateProjectRequest request) {
-            return new UpdateProjectCommand(request.name(), request.description());
-        }
-    }
-
-    public record CreateCommentCommand(String contend, Long userId, Long postId) {
-
-        public static CreateCommentCommand valueOf(CreateCommentRequest request) {
-            return new CreateCommentCommand(request.content(), request.userId(), request.postId());
-        }
-    }
-
-    public record UpdateCommentCommand(String content, Long userId, Long postId) {
-
-        public static UpdateCommentCommand valueOf(UpdateCommentRequest request) {
-            return new UpdateCommentCommand(request.content(), request.userId(), request.postId());
-        }
-    }
-
-    public record CreateExerciseCommand(String name, String description, Long courseId, Long chapterId) {
-
-        public static CreateExerciseCommand valueOf(CreateExerciseRequest request) {
-            return new CreateExerciseCommand(request.name(), request.description(), request.courseId(), request.chapterId());
-        }
-    }
-
-    public record UpdateExerciseCommand(String name, String description, Long courseId, Long chapterId) {
-
-        public static UpdateExerciseCommand valueOf(UpdateExerciseRequest request) {
-            return new UpdateExerciseCommand(request.name(), request.description(), request.courseId(), request.chapterId());
         }
     }
 
@@ -199,6 +100,34 @@ public final class Commands {
         }
     }
 
+    public record CreateCommentCommand(String contend, Long userId, Long postId) {
+
+        public static CreateCommentCommand valueOf(CreateCommentRequest request) {
+            return new CreateCommentCommand(request.content(), request.userId(), request.postId());
+        }
+    }
+
+    public record UpdateCommentCommand(String content, Long userId, Long postId) {
+
+        public static UpdateCommentCommand valueOf(UpdateCommentRequest request) {
+            return new UpdateCommentCommand(request.content(), request.userId(), request.postId());
+        }
+    }
+
+    public record CreateExerciseCommand(String name, String description, Long lessonId) {
+
+        public static CreateExerciseCommand valueOf(CreateExerciseRequest request) {
+            return new CreateExerciseCommand(request.name(), request.description(), request.courseId());
+        }
+    }
+
+    public record UpdateExerciseCommand(String name, String description, Long lessonId) {
+
+        public static UpdateExerciseCommand valueOf(UpdateExerciseRequest request) {
+            return new UpdateExerciseCommand(request.name(), request.description(), request.courseId());
+        }
+    }
+
     public record CreateQuizCommand(String name, String description, Long lessonId) {
 
         public static CreateQuizCommand valueOf(CreateQuizRequest request) {
@@ -210,6 +139,76 @@ public final class Commands {
 
         public static UpdateQuizCommand valueOf(UpdateQuizRequest request) {
             return new UpdateQuizCommand(request.name(), request.description(), request.lessonId());
+        }
+    }
+
+    public record CreateAchievementCommand(String description, Long lessonId) {
+
+        public static CreateAchievementCommand valueOf(CreateAchievementRequest request) {
+            return new CreateAchievementCommand(request.description(), request.lessonId());
+        }
+    }
+
+    public record UpdateAchievementCommand(String description, Long lessonId) {
+
+        public static UpdateAchievementCommand valueOf(UpdateAchievementRequest request) {
+            return new UpdateAchievementCommand(request.description(), request.lessonId());
+        }
+    }
+
+    public record CreateForumCommand(String name, String description) {
+
+        public static CreateForumCommand valueOf(CreateForumRequest request) {
+            return new CreateForumCommand(request.name(), request.description());
+        }
+    }
+
+    public record UpdateForumCommand(String name, String description) {
+
+        public static UpdateForumCommand valueOf(UpdateForumRequest request) {
+            return new UpdateForumCommand(request.name(), request.description());
+        }
+    }
+
+    public record CreateTaskCommand(String name, String description, Long lessonId) {
+
+        public static CreateTaskCommand valueOf(CreateTaskRequest request) {
+            return new CreateTaskCommand(request.name(), request.description(), request.lessonId());
+        }
+    }
+
+    public record UpdateTaskCommand(String name, String description, Long lessonId) {
+
+        public static UpdateTaskCommand valueOf(UpdateTaskRequest request) {
+            return new UpdateTaskCommand(request.name(), request.description(), request.lessonId());
+        }
+    }
+
+    public record CreateUserCommand(String name, String email) {
+
+        public static CreateUserCommand valueOf(CreateUserRequest request) {
+            return new CreateUserCommand(request.name(), request.email());
+        }
+    }
+
+    public record UpdateUserCommand(String name, String email) {
+
+        public static UpdateUserCommand valueOf(UpdateUserRequest request) {
+            return new UpdateUserCommand(request.name(), request.email());
+        }
+    }
+
+    public record CreatePostCommand(String title, String content, Long forumId) {
+
+        public static CreatePostCommand valueOf(CreatePostRequest request) {
+            return new CreatePostCommand(request.title(), request.content(), request.forumId());
+        }
+    }
+
+    public record UpdatePostCommand(String title, String content, Long forumId) {
+
+        public static UpdatePostCommand valueOf(UpdatePostRequest request) {
+            return new UpdatePostCommand(request.title(), request.content(), request.forumId());
         }
     }
 }

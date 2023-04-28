@@ -1,10 +1,10 @@
 package com.arturfrimu.interview.helper.service;
 
 import com.arturfrimu.interview.helper.dto.command.Commands;
+import com.arturfrimu.interview.helper.dto.command.Commands.CreateExerciseCommand;
 import com.arturfrimu.interview.helper.entity.Exercise;
 import com.arturfrimu.interview.helper.exception.ExceptionContainer;
-import com.arturfrimu.interview.helper.repository.ChapterRepository;
-import com.arturfrimu.interview.helper.repository.CourseRepository;
+import com.arturfrimu.interview.helper.repository.LessonRepository;
 import com.arturfrimu.interview.helper.repository.ExerciseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,7 @@ import static java.lang.String.format;
 public class ExerciseService {
 
     private final ExerciseRepository exerciseRepository;
-    private final CourseRepository courseRepository;
-    private final ChapterRepository chapterRepository;
+    private final LessonRepository lessonRepository;
 
     public List<Exercise> list() {
         return exerciseRepository.findAll();
@@ -30,14 +29,11 @@ public class ExerciseService {
                 .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Exercise not found with id: %s", id)));
     }
 
-    public Exercise create(Commands.CreateExerciseCommand command) {
-        var existingChapter = chapterRepository.findById(command.chapterId())
-                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Chapter not found with id: %s", command.chapterId())));
+    public Exercise create(CreateExerciseCommand command) {
+        var existingLesson = lessonRepository.findById(command.lessonId())
+                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Lesson not found with id: %s", command.lessonId())));
 
-        var existingCourse = courseRepository.findById(command.courseId())
-                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Course not found with id: %s", command.courseId())));
-
-        var newExercise = new Exercise(command.name(), command.description(), existingCourse, existingChapter);
+        var newExercise = new Exercise(command.name(), command.description(), existingLesson);
 
         return exerciseRepository.save(newExercise);
     }
@@ -46,16 +42,12 @@ public class ExerciseService {
         var existingExercise = exerciseRepository.findById(id)
                 .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Exercise not found with id: %s", id)));
 
-        var existingChapter = chapterRepository.findById(command.chapterId())
-                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Chapter not found with id: %s", command.chapterId())));
-
-        var existingCourse = courseRepository.findById(command.courseId())
-                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Course not found with id: %s", command.courseId())));
+        var existingLesson = lessonRepository.findById(command.lessonId())
+                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Lesson not found with id: %s", command.lessonId())));
 
         existingExercise.setName(command.name());
         existingExercise.setDescription(command.description());
-        existingExercise.setChapter(existingChapter);
-        existingExercise.setCourse(existingCourse);
+        existingExercise.setLesson(existingLesson);
 
         return exerciseRepository.save(existingExercise);
     }

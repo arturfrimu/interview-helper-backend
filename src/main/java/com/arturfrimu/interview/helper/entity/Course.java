@@ -42,7 +42,7 @@ public class Course {
     private Topic topic;
 
     @OneToMany(mappedBy = "course", cascade = ALL, fetch = LAZY)
-    private Set<Chapter> chapters = new LinkedHashSet<>();
+    private Set<Section> sections = new LinkedHashSet<>();
 
     public Course(String name, String description, Topic topic) {
         this.name = name;

@@ -42,9 +42,9 @@ public class AchievementController {
         return ok(achievement);
     }
 
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<List<Achievement>> findAchievementsByUserId(@PathVariable Long userId) {
-        var achievements = achievementService.getAchievementsByUserId(userId);
+    @GetMapping("/lessons/{lessonId}")
+    public ResponseEntity<List<Achievement>> findByLessonId(@PathVariable Long lessonId) {
+        var achievements = achievementService.findByLessonId(lessonId);
         return ok(achievements);
     }
 

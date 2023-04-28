@@ -35,11 +35,7 @@ public class ReviewService {
 
         existingReview.setContent(command.getContent());
         existingReview.setRating(command.getRating());
-        existingReview.setCourse(command.getCourse());
         existingReview.setLesson(command.getLesson());
-        existingReview.setQuiz(command.getQuiz());
-        existingReview.setExercise(command.getExercise());
-        existingReview.setProject(command.getProject());
 
         return reviewRepository.save(existingReview);
     }

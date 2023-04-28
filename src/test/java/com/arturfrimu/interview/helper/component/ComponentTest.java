@@ -1,7 +1,6 @@
 package com.arturfrimu.interview.helper.component;
 
 import com.arturfrimu.interview.helper.dto.request.Requests;
-import com.arturfrimu.interview.helper.dto.request.Requests.CreateChapterRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateCommentRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateCourseRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateExerciseRequest;
@@ -12,7 +11,6 @@ import com.arturfrimu.interview.helper.dto.request.Requests.CreateQuizRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateSectionRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateTopicRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.CreateUserRequest;
-import com.arturfrimu.interview.helper.dto.request.Requests.UpdateChapterRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateCommentRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateCourseRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateExerciseRequest;
@@ -22,7 +20,6 @@ import com.arturfrimu.interview.helper.dto.request.Requests.UpdateProjectRequest
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateQuizRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateSectionRequest;
 import com.arturfrimu.interview.helper.dto.request.Requests.UpdateTopicRequest;
-import com.arturfrimu.interview.helper.dto.response.Response.ChapterInfoResponse;
 import com.arturfrimu.interview.helper.dto.response.Response.CourseInfoResponse;
 import com.arturfrimu.interview.helper.dto.response.Response.LessonInfoResponse;
 import com.arturfrimu.interview.helper.dto.response.Response.ProjectDetailsResponse;
@@ -72,106 +69,26 @@ class ComponentTest {
 
 
         var createdTopicId = testCreateTopic(foundProjectId);
-        var foundTopicId = testFindTopic(createdTopicId, foundProjectId);
-//        testListTopics();
+        var foundTopicId = testFindTopic(createdTopicId);
 
 
         var createdCourseId = testCreateCourse(foundTopicId);
-        var foundCourseId = testFindCourse(createdCourseId, foundTopicId);
-//        testListCourses();
+        var foundCourseId = testFindCourse(createdCourseId);
 
 
-        var createdChapterId = testCreateChapter(foundCourseId);
-        var foundChapterId = testFindChapter(createdChapterId, foundCourseId);
-//        testListChapters();
-
-
-        var createdSectionId = testCreateSection(foundChapterId);
-        var foundSectionId = testFindSection(createdSectionId, foundChapterId);
-//        testListSections();
+        var createdSectionId = testCreateSection(foundCourseId);
+        var foundSectionId = testFindSection(createdSectionId, foundCourseId);
 
 
         var createdLessonId = testCreateLesson(foundSectionId);
         var foundLessonId = testFindLesson(createdLessonId, foundSectionId);
-//        testListLessons(createdLessonId, foundSectionId);
 
 
         var updatedProjectId = testUpdateProject(foundProjectId);
         var updatedTopicId = testUpdateTopic(foundTopicId, updatedProjectId);
         var updatedCourseId = testUpdateCourse(foundCourseId, updatedTopicId);
-        var updateChapterId = testUpdateChapter(foundChapterId, updatedCourseId);
-        var updateSectionId = testUpdateSection(foundSectionId, updateChapterId);
+        var updateSectionId = testUpdateSection(foundSectionId, updatedCourseId);
         var updateLessonId = testUpdateLesson(foundLessonId, foundSectionId);
-
-
-//        testDeleteLesson(updateLessonId);
-//        testDeleteSection(updateSectionId);
-//        testDeleteChapter(updateChapterId);
-//        testDeleteCourse(updatedCourseId);
-//        testDeleteTopic(updatedTopicId);
-//        testDeleteProject(updatedProjectId);
-
-
-//        testCreateForum();
-//        testListForums();
-//        testFindForum();
-//
-//
-//
-//
-//        testCreateUser();
-//        testListUsers();
-//        testFindUser();
-
-
-//        testCreateAchievement();
-//        testListAchievements();
-//        testFindAchievement();
-//        testFindAchievementsByUserId();
-//
-
-//        testCreatePost();
-//        testListPosts();
-//        testFindPost();
-//
-//
-//
-//
-//        testCreateComment();
-//        testListComments();
-//        testFindComment();
-//
-//
-//        testCreateExercise();
-//        testListExercises();
-//        testFindExercise();
-
-
-//        testCreateQuiz();
-//        testListQuizzes();
-//        testFindQuiz();
-
-
-//        testUpdateForum();
-//        testUpdateUser();
-//        testUpdateAchievement();
-
-//        testUpdatePost();
-//        testUpdateSection();
-//        testUpdateComment();
-//        testUpdateExercise();
-
-//        testUpdateQuiz();
-
-
-//        testDeleteComment();
-//        testDeleteSection();
-//        testDeleteExercise();
-//        testDeleteQuiz();
-//        testDeleteAchievement();
-//        testDeleteUser();
-//        testDeletePost();
-//        testDeleteForum();
     }
 
     Long testCreateProject() {
@@ -274,7 +191,7 @@ class ComponentTest {
         assertThat(topics.size()).isGreaterThan(0);
     }
 
-    Long testFindTopic(Long topicId, Long expectedProjectId) {
+    Long testFindTopic(Long topicId) {
         var response = restTemplate.exchange(get(TOPIC_BASE_URL + "/" + topicId).build(), TOPIC);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -348,7 +265,7 @@ class ComponentTest {
         assertThat(courses.get(0).description()).isEqualTo("COURSE DESCRIPTION");
     }
 
-    Long testFindCourse(Long courseId, Long expectedTopicId) {
+    Long testFindCourse(Long courseId) {
         var response = restTemplate.exchange(get(COURSE_BASE_URL + "/" + courseId).build(), COURSE);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -523,80 +440,6 @@ class ComponentTest {
         var deletedUser = restTemplate.exchange(get(USER_BASE_URL + "/1").build(), USER);
 
         assertThat(deletedUser.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
-    Long testCreateChapter(Long courseId) {
-        var body = new CreateChapterRequest("CHAPTER NAME", "CHAPTER DESCRIPTION", courseId);
-
-        var response = restTemplate.exchange(post(CHAPTER_BASE_URL).body(body), CHAPTER);
-
-        var createdChapter = response.getBody();
-
-        assertThat(createdChapter).isNotNull();
-
-        assertThat(createdChapter.chapterId()).isNotNull();
-        assertThat(createdChapter.name()).isEqualTo("CHAPTER NAME");
-        assertThat(createdChapter.description()).isEqualTo("CHAPTER DESCRIPTION");
-
-        return createdChapter.chapterId();
-    }
-
-    void testListChapters() {
-        var response = restTemplate.exchange(get(CHAPTER_BASE_URL).build(), CHAPTER_LIST);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var chapters = response.getBody();
-
-        assertThat(chapters).isNotNull();
-        assertThat(chapters.size()).isEqualTo(1);
-
-        assertThat(chapters.get(0).name()).isEqualTo("CHAPTER NAME");
-        assertThat(chapters.get(0).description()).isEqualTo("CHAPTER DESCRIPTION");
-    }
-
-    Long testFindChapter(Long chapterId, Long courseId) {
-        var response = restTemplate.exchange(get(CHAPTER_BASE_URL + "/" + chapterId).build(), CHAPTER);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var chapter = response.getBody();
-
-        assertThat(chapter).isNotNull();
-
-        assertThat(chapter.chapterId()).isNotNull();
-        assertThat(chapter.name()).isEqualTo("CHAPTER NAME");
-        assertThat(chapter.description()).isEqualTo("CHAPTER DESCRIPTION");
-
-        return chapter.chapterId();
-    }
-
-    Long testUpdateChapter(Long chapterId, Long courseId) {
-        var body = new UpdateChapterRequest("CHAPTER NAME UPDATED", "CHAPTER DESCRIPTION UPDATED", courseId);
-
-        var response = restTemplate.exchange(put(CHAPTER_BASE_URL + "/" + chapterId).body(body), CHAPTER);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var updatedChapter = response.getBody();
-
-        assertThat(updatedChapter).isNotNull();
-
-        assertThat(updatedChapter.name()).isEqualTo("CHAPTER NAME UPDATED");
-        assertThat(updatedChapter.description()).isEqualTo("CHAPTER DESCRIPTION UPDATED");
-
-        return updatedChapter.chapterId();
-    }
-
-    void testDeleteChapter(Long chapterId) {
-        var URL = CHAPTER_BASE_URL + "/" + chapterId;
-        var response = restTemplate.exchange(delete(URL).build(), VOID);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        var deletedChapter = restTemplate.exchange(get(URL).build(), CHAPTER);
-
-        assertThat(deletedChapter.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
     Long testCreateSection(Long chapterId) {
@@ -845,14 +688,6 @@ class ComponentTest {
 
         assertThat(createdComment.getCommentId()).isNotNull();
         assertThat(createdComment.getContent()).isEqualTo("Comment 1");
-
-        assertThat(createdComment.getUser().getUserId()).isEqualTo(1L);
-        assertThat(createdComment.getUser().getName()).isEqualTo("User 1");
-        assertThat(createdComment.getUser().getEmail()).isEqualTo("user@email.com");
-
-        assertThat(createdComment.getPost().getPostId()).isNotNull();
-        assertThat(createdComment.getPost().getTitle()).isEqualTo("Post 1");
-        assertThat(createdComment.getPost().getContent()).isEqualTo("This is the first post");
     }
 
     void testListComments() {
@@ -866,14 +701,6 @@ class ComponentTest {
         assertThat(comments.size()).isEqualTo(1);
 
         assertThat(comments.get(0).getContent()).isEqualTo("Comment 1");
-
-        assertThat(comments.get(0).getUser().getUserId()).isEqualTo(1L);
-        assertThat(comments.get(0).getUser().getName()).isEqualTo("User 1");
-        assertThat(comments.get(0).getUser().getEmail()).isEqualTo("user@email.com");
-
-        assertThat(comments.get(0).getPost().getPostId()).isNotNull();
-        assertThat(comments.get(0).getPost().getTitle()).isEqualTo("Post 1");
-        assertThat(comments.get(0).getPost().getContent()).isEqualTo("This is the first post");
     }
 
     void testFindComment() {
@@ -887,14 +714,6 @@ class ComponentTest {
 
         assertThat(comment.getCommentId()).isNotNull();
         assertThat(comment.getContent()).isEqualTo("Comment 1");
-
-        assertThat(comment.getUser().getUserId()).isEqualTo(1L);
-        assertThat(comment.getUser().getName()).isEqualTo("User 1");
-        assertThat(comment.getUser().getEmail()).isEqualTo("user@email.com");
-
-        assertThat(comment.getPost().getPostId()).isNotNull();
-        assertThat(comment.getPost().getTitle()).isEqualTo("Post 1");
-        assertThat(comment.getPost().getContent()).isEqualTo("This is the first post");
     }
 
     void testUpdateComment() {
@@ -909,14 +728,6 @@ class ComponentTest {
         assertThat(updatedComment).isNotNull();
 
         assertThat(updatedComment.getContent()).isEqualTo("Comment 1 Updated");
-
-        assertThat(updatedComment.getUser().getUserId()).isEqualTo(1L);
-        assertThat(updatedComment.getUser().getName()).isEqualTo("User 1 Updated");
-        assertThat(updatedComment.getUser().getEmail()).isEqualTo("USER@EMAIL.COM");
-
-        assertThat(updatedComment.getPost().getPostId()).isEqualTo(1L);
-        assertThat(updatedComment.getPost().getTitle()).isEqualTo("Post 1 Updated");
-        assertThat(updatedComment.getPost().getContent()).isEqualTo("This is the first post update");
     }
 
     void testDeleteComment() {
@@ -940,10 +751,6 @@ class ComponentTest {
 
         assertThat(createdAchievement.getAchievementId()).isNotNull();
         assertThat(createdAchievement.getDescription()).isEqualTo("New Achievement");
-
-        assertThat(createdAchievement.getUser().getUserId()).isEqualTo(1L);
-        assertThat(createdAchievement.getUser().getName()).isEqualTo("User 1");
-        assertThat(createdAchievement.getUser().getEmail()).isEqualTo("user@email.com");
     }
 
     void testListAchievements() {
@@ -958,10 +765,6 @@ class ComponentTest {
 
         assertThat(achievements.get(0).getAchievementId()).isEqualTo(1L);
         assertThat(achievements.get(0).getDescription()).isEqualTo("New Achievement");
-
-        assertThat(achievements.get(0).getUser().getUserId()).isEqualTo(1L);
-        assertThat(achievements.get(0).getUser().getName()).isEqualTo("User 1");
-        assertThat(achievements.get(0).getUser().getEmail()).isEqualTo("user@email.com");
     }
 
     void testFindAchievement() {
@@ -975,10 +778,6 @@ class ComponentTest {
 
         assertThat(achievement.getAchievementId()).isEqualTo(1L);
         assertThat(achievement.getDescription()).isEqualTo("New Achievement");
-
-        assertThat(achievement.getUser().getUserId()).isEqualTo(1L);
-        assertThat(achievement.getUser().getName()).isEqualTo("User 1");
-        assertThat(achievement.getUser().getEmail()).isEqualTo("user@email.com");
     }
 
     void testFindAchievementsByUserId() {
@@ -993,10 +792,6 @@ class ComponentTest {
 
         assertThat(achievements.get(0).getAchievementId()).isEqualTo(1L);
         assertThat(achievements.get(0).getDescription()).isEqualTo("New Achievement");
-
-        assertThat(achievements.get(0).getUser().getUserId()).isEqualTo(1L);
-        assertThat(achievements.get(0).getUser().getName()).isEqualTo("User 1");
-        assertThat(achievements.get(0).getUser().getEmail()).isEqualTo("user@email.com");
     }
 
     void testUpdateAchievement() {
@@ -1012,10 +807,6 @@ class ComponentTest {
 
         assertThat(updatedAchievement.getAchievementId()).isEqualTo(1L);
         assertThat(updatedAchievement.getDescription()).isEqualTo("Updated Achievement");
-
-        assertThat(updatedAchievement.getUser().getUserId()).isEqualTo(1L);
-        assertThat(updatedAchievement.getUser().getName()).isEqualTo("User 1 Updated");
-        assertThat(updatedAchievement.getUser().getEmail()).isEqualTo("USER@EMAIL.COM");
     }
 
     void testDeleteAchievement() {
@@ -1040,14 +831,6 @@ class ComponentTest {
         assertThat(createdExercise.getExerciseId()).isNotNull();
         assertThat(createdExercise.getName()).isEqualTo("Exercise 1");
         assertThat(createdExercise.getDescription()).isEqualTo("This is the first exercise");
-
-        assertThat(createdExercise.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(createdExercise.getCourse().getName()).isEqualTo("COURSE NAME");
-        assertThat(createdExercise.getCourse().getDescription()).isEqualTo("COURSE DESCRIPTION");
-
-        assertThat(createdExercise.getChapter().getChapterId()).isNotNull();
-        assertThat(createdExercise.getChapter().getName()).isEqualTo("CHAPTER NAME");
-        assertThat(createdExercise.getChapter().getDescription()).isEqualTo("CHAPTER DESCRIPTION");
     }
 
     void testListExercises() {
@@ -1063,14 +846,6 @@ class ComponentTest {
         assertThat(exercises.get(0).getExerciseId()).isNotNull();
         assertThat(exercises.get(0).getName()).isEqualTo("Exercise 1");
         assertThat(exercises.get(0).getDescription()).isEqualTo("This is the first exercise");
-
-        assertThat(exercises.get(0).getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(exercises.get(0).getCourse().getName()).isEqualTo("COURSE NAME");
-        assertThat(exercises.get(0).getCourse().getDescription()).isEqualTo("COURSE DESCRIPTION");
-
-        assertThat(exercises.get(0).getChapter().getChapterId()).isNotNull();
-        assertThat(exercises.get(0).getChapter().getName()).isEqualTo("CHAPTER NAME");
-        assertThat(exercises.get(0).getChapter().getDescription()).isEqualTo("CHAPTER DESCRIPTION");
     }
 
     void testFindExercise() {
@@ -1085,14 +860,6 @@ class ComponentTest {
         assertThat(exercise.getExerciseId()).isNotNull();
         assertThat(exercise.getName()).isEqualTo("Exercise 1");
         assertThat(exercise.getDescription()).isEqualTo("This is the first exercise");
-
-        assertThat(exercise.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(exercise.getCourse().getName()).isEqualTo("COURSE NAME");
-        assertThat(exercise.getCourse().getDescription()).isEqualTo("COURSE DESCRIPTION");
-
-        assertThat(exercise.getChapter().getChapterId()).isNotNull();
-        assertThat(exercise.getChapter().getName()).isEqualTo("CHAPTER NAME");
-        assertThat(exercise.getChapter().getDescription()).isEqualTo("CHAPTER DESCRIPTION");
     }
 
     void testUpdateExercise() {
@@ -1109,14 +876,6 @@ class ComponentTest {
         assertThat(updatedExercise.getExerciseId()).isNotNull();
         assertThat(updatedExercise.getName()).isEqualTo("Exercise 1 Updated");
         assertThat(updatedExercise.getDescription()).isEqualTo("This is the first exercise update");
-
-        assertThat(updatedExercise.getCourse().getCourseId()).isEqualTo(1L);
-        assertThat(updatedExercise.getCourse().getName()).isEqualTo("Course 1 Updated");
-        assertThat(updatedExercise.getCourse().getDescription()).isEqualTo("This is the first course update");
-
-        assertThat(updatedExercise.getChapter().getChapterId()).isEqualTo(1L);
-        assertThat(updatedExercise.getChapter().getName()).isEqualTo("CHAPTER NAME");
-        assertThat(updatedExercise.getChapter().getDescription()).isEqualTo("CHAPTER DESCRIPTION");
     }
 
     void testDeleteExercise() {
@@ -1205,7 +964,6 @@ class ComponentTest {
     static final String COURSE_BASE_URL = "/api/courses";
     static final String USER_BASE_URL = "/api/users";
     static final String ACHIEVEMENT_BASE_URL = "/api/achievements";
-    static final String CHAPTER_BASE_URL = "/api/chapters";
     static final String POST_BASE_URL = "/api/posts";
     static final String SECTION_BASE_URL = "/api/sections";
     static final String COMMENT_BASE_URL = "/api/comments";
@@ -1222,8 +980,6 @@ class ComponentTest {
     static final ParameterizedTypeReference<List<TopicInfoResponse>> TOPIC_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<CourseInfoResponse> COURSE = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<CourseInfoResponse>> COURSE_LIST = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<ChapterInfoResponse> CHAPTER = new ParameterizedTypeReference<>() {};
-    static final ParameterizedTypeReference<List<ChapterInfoResponse>> CHAPTER_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<SectionInfoResponse> SECTION = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<List<SectionInfoResponse>> SECTION_LIST = new ParameterizedTypeReference<>() {};
     static final ParameterizedTypeReference<LessonInfoResponse> LESSON = new ParameterizedTypeReference<>() {};

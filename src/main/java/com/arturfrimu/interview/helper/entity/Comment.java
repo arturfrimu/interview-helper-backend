@@ -11,7 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.CascadeType.DETACH;
+import static jakarta.persistence.CascadeType.MERGE;
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REFRESH;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -27,17 +30,11 @@ public class Comment {
 
     private String content;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @ManyToOne(cascade = {PERSIST, MERGE, REFRESH, DETACH})
+    @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    public Comment(String content, Post post, User user) {
+    public Comment(String content) {
         this.content = content;
-        this.post = post;
-        this.user = user;
     }
 }

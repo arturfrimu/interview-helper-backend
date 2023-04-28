@@ -10,6 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static jakarta.persistence.CascadeType.DETACH;
+import static jakarta.persistence.CascadeType.MERGE;
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REFRESH;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -28,23 +32,7 @@ public class Review {
 
     private int rating;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
-
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = {PERSIST, MERGE, REFRESH, DETACH})
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "quiz_id")
-    private Quiz quiz;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "exercise_id")
-    private Exercise exercise;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "project_id")
-    private Project project;
 }

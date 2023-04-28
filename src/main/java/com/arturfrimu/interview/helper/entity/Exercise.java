@@ -29,17 +29,12 @@ public class Exercise {
     private String description;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "chapter_id")
-    private Chapter chapter;
-
-    public Exercise(String name, String description, Course course, Chapter chapter) {
+    public Exercise(String name, String description, Lesson lesson) {
         this.name = name;
         this.description = description;
-        this.course = course;
-        this.chapter = chapter;
+        this.lesson = lesson;
     }
 }

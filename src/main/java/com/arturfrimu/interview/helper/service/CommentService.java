@@ -31,13 +31,7 @@ public class CommentService {
     }
 
     public Comment create(Commands.CreateCommentCommand command) {
-        var existingUser = userRepository.findById(command.userId())
-                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("User not found with id: %s", command.userId())));
-
-        var existingPost = postRepository.findById(command.postId())
-                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Post not found with id: %s", command.postId())));
-
-        var newComment = new Comment(command.contend(), existingPost, existingUser);
+        var newComment = new Comment(command.contend());
 
         return commentRepository.save(newComment);
     }
@@ -46,16 +40,7 @@ public class CommentService {
         var existingComment = commentRepository.findById(id)
                 .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Comment not found with id: %s", id)));
 
-        var existingUser = userRepository.findById(command.userId())
-                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("User not found with id: %s", command.userId())));
-
-        var existingPost = postRepository.findById(command.postId())
-                .orElseThrow(() -> new ExceptionContainer.ResourceNotFoundException(format("Post not found with id: %s", command.postId())));
-
-
         existingComment.setContent(command.content());
-        existingComment.setPost(existingPost);
-        existingComment.setUser(existingUser);
 
         return commentRepository.save(existingComment);
     }

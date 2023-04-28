@@ -6,7 +6,6 @@ import com.arturfrimu.interview.helper.dto.response.Response;
 import com.arturfrimu.interview.helper.dto.response.Response.SectionInfoResponse;
 import com.arturfrimu.interview.helper.entity.Section;
 import com.arturfrimu.interview.helper.exception.ExceptionContainer.ResourceNotFoundException;
-import com.arturfrimu.interview.helper.repository.ChapterRepository;
 import com.arturfrimu.interview.helper.repository.CourseRepository;
 import com.arturfrimu.interview.helper.repository.SectionRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ import static java.lang.String.format;
 public class SectionService {
 
     private final SectionRepository sectionRepository;
-    private final ChapterRepository chapterRepository;
+    private final CourseRepository courseRepository;
 
     public List<SectionInfoResponse> list() {
         return sectionRepository.findAll().stream().map(Response.SectionInfoResponse::valueOf).toList();
@@ -33,10 +32,10 @@ public class SectionService {
     }
 
     public SectionInfoResponse create(CreateSectionCommand command) {
-        var existingChapter = chapterRepository.findById(command.chapterId())
-                .orElseThrow(() -> new ResourceNotFoundException(format("Chapter not found with id: %s", command.chapterId())));
+        var existingCourse = courseRepository.findById(command.courseId())
+                .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", command.courseId())));
 
-        var newSection = new Section(command.name(), command.description(), existingChapter);
+        var newSection = new Section(command.name(), command.description(), existingCourse);
 
         return SectionInfoResponse.valueOf(sectionRepository.save(newSection));
     }
@@ -45,10 +44,10 @@ public class SectionService {
         var existingSection = sectionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(format("Section not found with id: %s", id)));
 
-        var existingChapter = chapterRepository.findById(command.chapterId())
-                .orElseThrow(() -> new ResourceNotFoundException(format("Chapter not found with id: %s", command.chapterId())));
+        var existingCourse = courseRepository.findById(command.courseId())
+                .orElseThrow(() -> new ResourceNotFoundException(format("Course not found with id: %s", command.courseId())));
 
-        var newSection = new Section(existingSection.getSectionId(), command.name(), command.description(), existingChapter);
+        var newSection = new Section(existingSection.getSectionId(), command.name(), command.description(), existingCourse);
 
         return SectionInfoResponse.valueOf(sectionRepository.save(newSection));
     }

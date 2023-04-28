@@ -40,6 +40,21 @@ public class Lesson {
     @OneToMany(mappedBy = "lesson", cascade = ALL, fetch = LAZY)
     private Set<Quiz> quizzes = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "lesson", cascade = ALL, fetch = LAZY)
+    private Set<Exercise> exercises = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "lesson", cascade = ALL, fetch = LAZY)
+    private Set<Review> reviews = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "lesson", cascade = ALL, fetch = LAZY)
+    private Set<Comment> comments = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "lesson", cascade = ALL, fetch = LAZY)
+    private Set<Achievement> achievements = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "lesson", cascade = ALL, fetch = LAZY)
+    private Set<Task> tasks = new LinkedHashSet<>();
+
     public Lesson(String name, String description, Section section) {
         this.name = name;
         this.description = description;
